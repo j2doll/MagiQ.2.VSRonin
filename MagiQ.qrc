@@ -1,0 +1,42 @@
+<RCC>
+    <qresource prefix="/CardImage">
+        <file alias="DefaultImage.png">Resources/DefaultImage.png</file>
+        <file alias="CBase.png">Resources/Card/CBase.png</file>
+        <file alias="Rear.png">Resources/Card/Rear.png</file>
+    </qresource>
+    <qresource prefix="/ManaSymbols">
+        <file alias="BManaSha.png">Resources/BManaSha.png</file>
+        <file alias="CManaSha.png">Resources/CManaSha.png</file>
+        <file alias="GManaSha.png">Resources/GManaSha.png</file>
+        <file alias="RManaSha.png">Resources/RManaSha.png</file>
+        <file alias="UManaSha.png">Resources/UManaSha.png</file>
+        <file alias="WManaSha.png">Resources/WManaSha.png</file>
+        <file alias="BMana.png">Resources/BMana.png</file>
+        <file alias="CMana.png">Resources/CMana.png</file>
+        <file alias="GMana.png">Resources/GMana.png</file>
+        <file alias="RMana.png">Resources/RMana.png</file>
+        <file alias="UMana.png">Resources/UMana.png</file>
+        <file alias="WMana.png">Resources/WMana.png</file>
+        <file alias="BGMana.png">Resources/BGMana.png</file>
+        <file alias="BRMana.png">Resources/BRMana.png</file>
+        <file alias="CBMana.png">Resources/CBMana.png</file>
+        <file alias="CGMana.png">Resources/CGMana.png</file>
+        <file alias="CRMana.png">Resources/CRMana.png</file>
+        <file alias="CUMana.png">Resources/CUMana.png</file>
+        <file alias="CWMana.png">Resources/CWMana.png</file>
+        <file alias="RGMana.png">Resources/RGMana.png</file>
+        <file alias="UBMana.png">Resources/UBMana.png</file>
+        <file alias="UGMana.png">Resources/UGMana.png</file>
+        <file alias="URMana.png">Resources/URMana.png</file>
+        <file alias="WBMana.png">Resources/WBMana.png</file>
+        <file alias="WGMana.png">Resources/WGMana.png</file>
+        <file alias="WRMana.png">Resources/WRMana.png</file>
+        <file alias="WUMana.png">Resources/WUMana.png</file>
+    </qresource>
+    <qresource prefix="/Editions">
+        <file alias="TSP.png">Resources/Editions/TSP.png</file>
+        <file alias="CommonBackground.png">Resources/Editions/CommonBackground.png</file>
+        <file alias="RareBackground.png">Resources/Editions/RareBackground.png</file>
+        <file alias="UncommonBackground.png">Resources/Editions/UncommonBackground.png</file>
+    </qresource>
+</RCC>
