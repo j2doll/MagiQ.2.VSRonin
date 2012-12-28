@@ -28,7 +28,8 @@ void FromEnumToString::EnumToString(){
 	QString Risultato("");
 	for (QStringList::const_iterator i=Righe.begin();i!=Righe.end();i++){
 		if(i!=Righe.begin()) Risultato.append("\n,");
-		Risultato.append('\"'+i->trimmed()+'\"');
+		//Risultato.append('\"'+i->trimmed()+'\"');
+		Risultato.append("QObject::tr(\""+i->trimmed()+"\")");
 	}
 	StringFormat->setPlainText(Risultato.trimmed());
 }

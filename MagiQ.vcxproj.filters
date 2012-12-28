@@ -101,6 +101,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PowerToughnesLabel.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="CardBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_CardBuilder.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_CardBuilder.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -133,6 +142,9 @@
       <Filter>Header Files\Test Files</Filter>
     </CustomBuild>
     <CustomBuild Include="PowerToughnesLabel.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CardBuilder.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

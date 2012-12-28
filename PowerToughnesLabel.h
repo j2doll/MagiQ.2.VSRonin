@@ -12,12 +12,17 @@ private:
 	int SelectedBase;
 	QString PTString;
 	QBitmap LabelBase;
+	int Loyalty;
 	void UpadateAspect();
+	bool IsPT;
 public:
 	PowerToughnesLabel(QWidget* parent=0);
+	void SetCountPT() {IsPT=true;}
+	void SetCountLoyalty() {IsPT=false;}
 	void SetSelectedBase(int a);
 	int GetSelectedBase() const {return SelectedBase;}
 	void SetPTString(const QString& a){PTString=a; UpadateAspect();}
+	void SetLoyalty(int a){if (a<0) a=0; Loyalty=a;}
 	const QString& GetPTString() const {return PTString;}
 protected:
 	void resizeEvent(QResizeEvent* event);

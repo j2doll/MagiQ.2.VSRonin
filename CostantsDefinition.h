@@ -2,6 +2,7 @@
 #define COSTANTSDEFINITION_H
 #include <QSize>
 #include <QString>
+#include <QObject>
 namespace Constants{
 	namespace CardRarities{
 		enum {Common,Uncommon,Rare,Timeshifted,MythicRare};
@@ -81,7 +82,7 @@ namespace Constants{
 	namespace CardTypes{enum {
 		NONE=-1
 		,Artifact
-		,BasicLand
+		,Basic
 		,Creature
 		,Enchantment
 		,Instant
@@ -92,6 +93,7 @@ namespace Constants{
 		,Sorcery
 		,Tribal
 		,World
+		,END
 	};}
 	namespace CardSubTypes{enum {
 		NONE=-1
@@ -163,7 +165,8 @@ namespace Constants{
 		,Warrior
 		,Wizard
 		,Wurm
-		,Zombie	
+		,Zombie
+		,END
 	};}
 	namespace CardBacksrounds{enum {
 		LandColorless,
@@ -200,13 +203,92 @@ namespace Constants{
 		BlackRed,
 		BlackGreen,
 		RedGreen,
+		END
 	};}
+	const QString BackgroundNames[]={
+		QObject::tr("Land Colorless")
+		,QObject::tr("Land White")
+		,QObject::tr("Land Blue")
+		,QObject::tr("Land Black")
+		,QObject::tr("Land Red")
+		,QObject::tr("Land Green")
+		,QObject::tr("Land Gold")
+		,QObject::tr("Land White Blue")
+		,QObject::tr("Land White Black")
+		,QObject::tr("Land White Red")
+		,QObject::tr("Land White Green")
+		,QObject::tr("Land Blue Black")
+		,QObject::tr("Land Blue Red")
+		,QObject::tr("Land Blue Green")
+		,QObject::tr("Land Black Red")
+		,QObject::tr("Land Black Green")
+		,QObject::tr("Land Red Green")
+		,QObject::tr("Colorless")
+		,QObject::tr("White")
+		,QObject::tr("Blue")
+		,QObject::tr("Black")
+		,QObject::tr("Red")
+		,QObject::tr("Green")
+		,QObject::tr("Gold")
+		,QObject::tr("White Blue")
+		,QObject::tr("White Black")
+		,QObject::tr("White Red")
+		,QObject::tr("White Green")
+		,QObject::tr("Blue Black")
+		,QObject::tr("Blue Red")
+		,QObject::tr("Blue Green")
+		,QObject::tr("Black Red")
+		,QObject::tr("Black Green")
+		,QObject::tr("Red Green")
+	};
+	const QString BackgroundImages[]={
+		""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,""
+		,":/CardImage/CBase.png"
+		,""
+		,""
+		,""
+		,""
+		,":/CardImage/GBase.png"
+	};
+	namespace Editions{
+		enum{
+			NONE=-1
+			,TSP
+			,AVR
+			,END
+		};
+	}
+	const QString EditionNames[]={
+		QObject::tr("Time Spiral")
+		,QObject::tr("Avacyn Restored")
+	};
+	const QString EditionSymbolsIcons[]={
+		":/Editions/TSP.png"
+		,":/Editions/AVR.png"
+	};
 	const QSize EditionSymbolSyze[]={
 		QSize(89,101) //TSP
+		,QSize(92,93) //AVR
 	};
 	const QString CardTypeNames[]={
-		"Artifact"
-		,"BasicLand"
+		QObject::tr("Artifact")
+		,"Basic"
 		,"Creature"
 		,"Enchantment"
 		,"Instant"
@@ -293,6 +375,7 @@ namespace Constants{
 		enum{
 			Plus1Plus1
 			,Minus1Minus1
+			,Age
 		};
 	}
 }

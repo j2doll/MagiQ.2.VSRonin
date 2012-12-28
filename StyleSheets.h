@@ -2,7 +2,7 @@
 #define STYLESHEETS_H
 #include "CostantsDefinition.h"
 namespace StyleSheets{
-	const QString GlobalCSS(
+	const QString CardCSS(
 	//PTLabel
 			"PowerToughnesLabel #MainLabel{"
 				"border-image: url(:/PTLabelBases/CBox.png);"
@@ -27,11 +27,23 @@ namespace StyleSheets{
 			"}"
 	//Card
 		//Background
-			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Colorless)+
-				"border-image: url(:/CardImage/CBase.png);"
+			"Card #Background{"
+				+QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Colorless])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::White)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::White])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Blue)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Blue])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Black)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Black])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Red)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Red])+
 			"}"
 			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Green)+
-				"border-image: url(:/CardImage/GBase.png);"
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Green])+
 			"}"
 			"Card #Rear{"
 				"border-image: url(:/CardImage/Rear.png);"

@@ -55,6 +55,7 @@ private:
 	int CardRarity;
 	int CardImage;
 	bool ManaSource;
+	bool Certified;
 // Game Properties
 	bool Covered;
 	bool Tapped;
@@ -88,21 +89,28 @@ public:
 	void SetTapped(bool a){Tapped=a;}
 	void SetManaSource(bool a){ManaSource=a;}
 	Card(QWidget* parent=0);
+	void SetCardType(){CardType.clear();}
 	void SetCardType(const int& a){CardType.clear(); CardType.append(a);}
+	void AddCardType(const int& a){if(a>=0 && a<Constants::CardTypes::END) CardType.append(a);}
 	void SetCardType(const QList<int>& a){CardType.clear(); CardType=a;}
 	const QList<int>& GetCardType() const {return CardType;}
+	void SetCardSubType(){CardSubType.clear();}
 	void SetCardSubType(const int& a){CardSubType.clear(); CardSubType.append(a);}
+	void AddCardSubType(const int& a){if(a>=0 && a<Constants::CardSubTypes::END) CardSubType.append(a);}
 	void SetCardSubType(const QList<int>& a){CardSubType.clear(); CardSubType=a;}
 	const QList<int>& GetCardSubType() const {return CardSubType;}
-	void SetEdition(int a){if(a<0 || a>=AvailableEditions.size()) return; CardEdition=AvailableEditions.at(a);}
+	void SetEdition(int a){if(AvailableEditions.contains(a)) CardEdition=a;}
 	int GetEdition() const {return CardEdition;}
-	void SetCardColor(const int& a){CardColor.clear(); CardColor.append(a);}
+	void SetCardColor(const int& a){CardColor.clear(); if(a>=Constants::CardColor::Colorless && a<=Constants::CardColor::Green) CardColor.append(a);}
 	void SetCardColor(const QList<int>& a){CardColor.clear(); CardColor=a;}
+	void AddCardColor(const int& a){if(a>=Constants::CardColor::Colorless && a<=Constants::CardColor::Green) CardColor.append(a);}
 	const QList<int>& GetCardColor() const {return CardColor;}
 	void SetCardCost(int key, int cost);
+	void AddCardCost(int key, int cost);
+	void SetCardCost(){ResetCardCost();}
 	void SetCardCost(const QMap<int,int>& a){ResetCardCost(); CardCost=a;}
 	const QMap<int,int>& GetCardCost() const {return CardCost;}
-	void SetCardName(const QString& a){if(!a.isEmpty()) CardName=a;}
+	void SetCardName(const QString& a){CardName=a;}
 	QString GetCardName() const {return CardName;}
 	QString GetCardFlavorText() const {return CardFlavorText;}
 	void SetCardFlavorText(const QString& a){if(!a.isEmpty()) CardFlavorText=a;}
@@ -112,20 +120,28 @@ public:
 	const QList<int>& GetAvailableBackgrounds() const {return AvailableBackgrounds;}
 	int GetCardBackground() const {return CardBackground;}
 	const QList<QPixmap>& GetAvailableImages() const {return AvailableImages;}
-	void SetCardBackground(int a){if(a<0 || a>=AvailableBackgrounds.size()) return; CardBackground=AvailableBackgrounds.at(a);}
+	void SetCardBackground(int a){if(AvailableBackgrounds.contains(a)) CardBackground=a;}
 	void SetCardImage(int a){if(a<0 || a>=AvailableImages.size()) return; CardImage=a;}
 	int GetCardImage() const {return CardImage;}
+	void SetAvailableEditions(){AvailableEditions.clear(); AvailableEditions.append(Constants::Editions::NONE);}
+	void AddAvailableEditions(const int& a);
 	void SetAvailableEditions(const int& a){AvailableEditions.clear(); AvailableEditions.append(a);}
 	void SetAvailableEditions(const QList<int>& a){AvailableEditions.clear(); AvailableEditions=a;}
+	void SetAvailableBackgrounds(){AvailableBackgrounds.clear();}
+	void AddAvailableBackground(const int& a){if (a>=0 && a<Constants::CardBacksrounds::END) AvailableBackgrounds.append(a);}
 	void SetAvailableBackgrounds(const int& a){AvailableBackgrounds.clear(); AvailableBackgrounds.append(a);}
 	void SetAvailableBackgrounds(const QList<int>& a){AvailableBackgrounds.clear(); AvailableBackgrounds=a;}
 	void SetAvailableImages(const QPixmap& a);
+	void SetAvailableImages();
+	void AddAvailableImages(const QPixmap& a);
 	void SetAvailableImages(const QList<QPixmap>& a);
 	bool IsLand() const;
 	bool IsCovered() const {return Covered;}
 	bool GetHasPT() const {return HasPT;}
 	void SetCovered(bool a){Covered=a;}
 	void SetHasPT(bool a){HasPT=a;}
+	bool GetCertified() const {return Certified;}
+	void SetCertified(bool a){Certified=a;}
 public slots:
 	void UpdateAspect();
 protected:

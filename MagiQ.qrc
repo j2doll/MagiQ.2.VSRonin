@@ -35,12 +35,14 @@
         <file alias="WGMana.png">Resources/WGMana.png</file>
         <file alias="WRMana.png">Resources/WRMana.png</file>
         <file alias="WUMana.png">Resources/WUMana.png</file>
+        <file alias="SnowMana.png">Resources/SnowMana.png</file>
     </qresource>
     <qresource prefix="/Editions">
         <file alias="TSP.png">Resources/Editions/TSP.png</file>
         <file alias="CommonBackground.png">Resources/Editions/CommonBackground.png</file>
         <file alias="RareBackground.png">Resources/Editions/RareBackground.png</file>
         <file alias="UncommonBackground.png">Resources/Editions/UncommonBackground.png</file>
+        <file alias="AVR.png">Resources/Editions/AVR.png</file>
     </qresource>
     <qresource prefix="/PTLabelBases">
         <file alias="BBox.png">Resources/PTBoxes/BBox.png</file>

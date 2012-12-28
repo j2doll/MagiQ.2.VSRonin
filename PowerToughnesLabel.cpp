@@ -10,6 +10,8 @@
 #include "CostantsDefinition.h"
 PowerToughnesLabel::PowerToughnesLabel(QWidget* parent/* =0 */)
 	:QWidget(parent)
+	,IsPT(true)
+	,Loyalty(0)
 {
 	MainLabel=new QLabel(this);
 	MainLabel->setObjectName("MainLabel");
@@ -40,52 +42,55 @@ void PowerToughnesLabel::SetSelectedBase(int a){
 }
 void PowerToughnesLabel::UpadateAspect(){
 	MainLabel->setMask(LabelBase.scaled(width(),height()).mask());
-	if (PTString=="") {MainLabel->setText(""); return;}
-	QStringList PandT=PTString.split('/');
-	QString Temp(PandT.at(0));
-	QString LabelText("");
-	int ContPlus=0;
-	int ContMinus=0;
-	if (QRegExp("[\\d\\*]+[\\+-]*").exactMatch(Temp) && PandT.size()==2){
-		ContPlus=Temp.count('+');			
-		ContMinus=Temp.count('-');
-		Temp.replace('+',"");
-		Temp.replace('-',"");
-		if (ContPlus>ContMinus)
-			LabelText.append(
-				"<FONT COLOR='#00ff00'><b>"+Temp+"</b></FONT><b>/</b>"
-			);
-		else if (ContPlus<ContMinus)
-			LabelText.append(
-				"<FONT COLOR='#ff0000'><b>"+Temp+"</b></FONT><b>/</b>"
-			);
-		else LabelText.append("<b>"+Temp+"/</b>");
+	if (IsPT){
+		if (PTString=="") {MainLabel->setText(""); return;}
+		QStringList PandT=PTString.split('/');
+		QString Temp(PandT.at(0));
+		QString LabelText("");
+		int ContPlus=0;
+		int ContMinus=0;
+		if (QRegExp("[\\d\\*]+[\\+-]*").exactMatch(Temp) && PandT.size()==2){
+			ContPlus=Temp.count('+');			
+			ContMinus=Temp.count('-');
+			Temp.replace('+',"");
+			Temp.replace('-',"");
+			if (ContPlus>ContMinus)
+				LabelText.append(
+					"<FONT COLOR='#00ff00'><b>"+Temp+"</b></FONT><b>/</b>"
+				);
+			else if (ContPlus<ContMinus)
+				LabelText.append(
+					"<FONT COLOR='#ff0000'><b>"+Temp+"</b></FONT><b>/</b>"
+				);
+			else LabelText.append("<b>"+Temp+"/</b>");
+		}
+		else {
+			MainLabel->setText("");
+			QMessageBox::critical(this,tr("Wrong P/T Code"),tr("Error: Unable to Interpret Card Power and Toughness"));
+		}
+		Temp=PandT.at(1);
+		if (QRegExp("[\\d\\*]+[\\+-]*").exactMatch(Temp)){
+			ContPlus=Temp.count('+');			
+			ContMinus=Temp.count('-');
+			Temp.replace('+',"");
+			Temp.replace('-',"");
+			if (ContPlus>ContMinus)
+				LabelText.append(
+				"<FONT COLOR='#00ff00'><b>"+Temp+"</b></FONT>"
+				);
+			else if (ContPlus<ContMinus)
+				LabelText.append(
+				"<FONT COLOR='#ff0000'><b>"+Temp+"</b></FONT>"
+				);
+			else LabelText.append("<b>"+Temp+"</b>");
+		}
+		else {
+			MainLabel->setText("");
+			QMessageBox::critical(this,tr("Wrong P/T Code"),tr("Error: Unable to Interpret Card Power and Toughness"));
+		}
+		MainLabel->setText(LabelText);
 	}
-	else {
-		MainLabel->setText("");
-		QMessageBox::critical(this,tr("Wrong P/T Code"),tr("Error: Unable to Interpret Card Power and Toughness"));
-	}
-	Temp=PandT.at(1);
-	if (QRegExp("[\\d\\*]+[\\+-]*").exactMatch(Temp)){
-		ContPlus=Temp.count('+');			
-		ContMinus=Temp.count('-');
-		Temp.replace('+',"");
-		Temp.replace('-',"");
-		if (ContPlus>ContMinus)
-			LabelText.append(
-			"<FONT COLOR='#00ff00'><b>"+Temp+"</b></FONT>"
-			);
-		else if (ContPlus<ContMinus)
-			LabelText.append(
-			"<FONT COLOR='#ff0000'><b>"+Temp+"</b></FONT>"
-			);
-		else LabelText.append("<b>"+Temp+"</b>");
-	}
-	else {
-		MainLabel->setText("");
-		QMessageBox::critical(this,tr("Wrong P/T Code"),tr("Error: Unable to Interpret Card Power and Toughness"));
-	}
-	MainLabel->setText(LabelText);
+	else MainLabel->setText(QString("%1").arg(Loyalty));
 	style()->unpolish(this);
 	style()->polish(this);
 }

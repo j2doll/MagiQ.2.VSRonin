@@ -10,15 +10,19 @@
 #include <QStyle>
 #include <QMessageBox>
 #include "PowerToughnesLabel.h"
-Card::Card(QWidget* parent/* =0 */)
+Card::Card(QWidget* parent)
 	:QWidget(parent)
 	,CardEdition(0)
 	,CardPower(-1)
 	,CardToughness(-1)
+	,CardImage(0)
 	,PTBox(":/CardImage/PTBox.png")
 	,PTMask(":/CardImage/PTBoxMask.png")
 	,Covered(false)
 	,HasPT(false)
+	,ManaSource(false)
+	,Certified(false)
+	,CardName("")
 {
 	setObjectName("Card");
 	Background=new QFrame(this);
@@ -45,11 +49,16 @@ Card::Card(QWidget* parent/* =0 */)
 	EditionLabel=new QLabel(this);
 	EditionLabel->setObjectName("EditionLabel");
 	EditionLabel->setScaledContents(true);
+	AvailableEditions.append(Constants::Editions::NONE);
 	PTLabel=new PowerToughnesLabel(this);
 	PTLabel->setObjectName("PTLabel");
 	ResetCardCost();
-	setStyleSheet(StyleSheets::GlobalCSS);
-	TestStuff();
+	CardBackground=Constants::CardBacksrounds::Colorless;
+	CardRarity=Constants::CardRarities::Common;
+	setMinimumSize(200,279);
+	setStyleSheet(StyleSheets::CardCSS); //Test
+	UpdateAspect();
+	//TestStuff(); //Test
 }
 void Card::TestStuff(){
 	CardBackground=Constants::CardBacksrounds::Green;
@@ -84,7 +93,7 @@ void Card::resizeEvent(QResizeEvent* event){
 		,(Constants::EditionSymbolSyze[CardEdition].width()*(10*height()/279)/Constants::EditionSymbolSyze[CardEdition].height())*width()/200
 		,10*height()/279
 	);
-	EditionLabel->setMask(QPixmap(":/Editions/TSP.png").scaled(
+	EditionLabel->setMask(QPixmap(Constants::EditionSymbolsIcons[CardEdition]).scaled(
 		(Constants::EditionSymbolSyze[CardEdition].width()*(10*height()/279)/Constants::EditionSymbolSyze[CardEdition].height())*width()/200
 		,10*height()/279
 		).mask());
@@ -94,11 +103,13 @@ void Card::SetAvailableImages(const QPixmap& a){
 	AvailableImages.clear();
 	AvailableImages.append(a);
 }
+void Card::SetAvailableImages(){AvailableImages.clear();}
+void Card::AddAvailableImages(const QPixmap& a){AvailableImages.append(a);}
 void Card::SetAvailableImages(const QList<QPixmap>& a){
 	AvailableImages.clear();
 	AvailableImages=a;
 }
-bool Card::IsLand() const {return CardType.contains(Constants::CardTypes::Land);}
+bool Card::IsLand() const {return CardType.contains(Constants::CardTypes::Land) && !CardType.contains(Constants::CardTypes::Creature);}
 void Card::UpdateAspect(){
 	if (Covered){
 		Background->hide();
@@ -109,6 +120,8 @@ void Card::UpdateAspect(){
 		TypeLabel->hide();
 		EditionLabel->hide();
 		PTLabel->hide();
+		setStyleSheet(StyleSheets::CardCSS);
+		return;
 	}
 	else{
 		Background->show();
@@ -126,7 +139,14 @@ void Card::UpdateAspect(){
 	GhostWriter.setFont(QFont("Arial",TextFontSize,QFont::Bold));
 	GhostWriter.drawText(NamePixmap.rect(),Qt::AlignLeft,CardName);
 	NameLabel->setPixmap(NamePixmap);
+	if (IsLand()) CostLabel->hide();
 	CostLabel->SetCostString(CreateManaCostString());
+	CostLabel->setGeometry(
+		(181-(11*CostLabel->GetNumberOfSymbols()))*width()/200,
+		17*height()/279,
+		(11*CostLabel->GetNumberOfSymbols())*width()/200,
+		11*height()/279
+		);
 	if(AvailableImages.isEmpty() || CardImage<0 || CardImage>AvailableImages.size())
 		ImageLabel->setPixmap(QPixmap(":/CardImage/DefaultImage.png"));
 	else
@@ -144,49 +164,60 @@ void Card::UpdateAspect(){
 	}
 	GhostWriter.drawText(NamePixmap.rect(),Qt::AlignLeft,TextToPrint);
 	TypeLabel->setPixmap(NamePixmap);
+	if (AvailableEditions.contains(Constants::Editions::NONE)) EditionLabel->hide();
+	else EditionLabel->show();
+	EditionLabel->setMask(QPixmap(Constants::EditionSymbolsIcons[CardEdition]).scaled(
+		(Constants::EditionSymbolSyze[CardEdition].width()*(10*height()/279)/Constants::EditionSymbolSyze[CardEdition].height())*width()/200
+		,10*height()/279
+		).mask());
 	if (HasPT){
-		switch(CardBackground){
-		case Constants::CardBacksrounds::White:
-			PTLabel->SetSelectedBase(Constants::PTBoxTypes::WBox); break;
-		case Constants::CardBacksrounds::Blue:
-			PTLabel->SetSelectedBase(Constants::PTBoxTypes::UBox); break;
-		case Constants::CardBacksrounds::Black:
-			PTLabel->SetSelectedBase(Constants::PTBoxTypes::BBox); break;
-		case Constants::CardBacksrounds::Red:
-			PTLabel->SetSelectedBase(Constants::PTBoxTypes::RBox); break;
-		case Constants::CardBacksrounds::Green:
-			PTLabel->SetSelectedBase(Constants::PTBoxTypes::GBox); break;
-		case Constants::CardBacksrounds::Gold:
-			PTLabel->SetSelectedBase(Constants::PTBoxTypes::GoldBox); break;
-		default:
-			PTLabel->SetSelectedBase(Constants::PTBoxTypes::CBox);
+		if (CardType.contains(Constants::CardTypes::Planeswalker)){
+			PTLabel->SetCountLoyalty();
+			PTLabel->SetLoyalty(CardPower);
 		}
-		QString PTString("");
-		if (CardPower==StarPowerToughness) PTString.append('*');
 		else{
-			for (QList<int>::const_iterator i=CardPowerModifiers.begin();i!=CardPowerModifiers.end();i++){
-				if (*i<0) PTString.append('-');
-				else PTString.append('+');
+			switch(CardBackground){
+			case Constants::CardBacksrounds::White:
+				PTLabel->SetSelectedBase(Constants::PTBoxTypes::WBox); break;
+			case Constants::CardBacksrounds::Blue:
+				PTLabel->SetSelectedBase(Constants::PTBoxTypes::UBox); break;
+			case Constants::CardBacksrounds::Black:
+				PTLabel->SetSelectedBase(Constants::PTBoxTypes::BBox); break;
+			case Constants::CardBacksrounds::Red:
+				PTLabel->SetSelectedBase(Constants::PTBoxTypes::RBox); break;
+			case Constants::CardBacksrounds::Green:
+				PTLabel->SetSelectedBase(Constants::PTBoxTypes::GBox); break;
+			case Constants::CardBacksrounds::Gold:
+				PTLabel->SetSelectedBase(Constants::PTBoxTypes::GoldBox); break;
+			default:
+				PTLabel->SetSelectedBase(Constants::PTBoxTypes::CBox);
 			}
-			PTString.prepend(QString("%1").arg(CardPower+PTString.count('+')-PTString.count('-')));
-		}
-		PTString.append('/');
-		if (CardToughness==StarPowerToughness) PTString.append('*');
-		else{
-			QString Temp("");
-			for (QList<int>::const_iterator i=CardToughnessModifiers.begin();i!=CardToughnessModifiers.end();i++){
-				if (*i<0) Temp.append('-');
-				else Temp.append('+');
+			QString PTString("");
+			if (CardPower==StarPowerToughness) PTString.append('*');
+			else{
+				for (QList<int>::const_iterator i=CardPowerModifiers.begin();i!=CardPowerModifiers.end();i++){
+					if (*i<0) PTString.append('-');
+					else PTString.append('+');
+				}
+				PTString.prepend(QString("%1").arg(CardPower+PTString.count('+')-PTString.count('-')));
 			}
-			Temp.prepend(QString("%1").arg(CardToughness+PTString.count('+')-PTString.count('-')));
-			PTString.append(Temp);
+			PTString.append('/');
+			if (CardToughness==StarPowerToughness) PTString.append('*');
+			else{
+				QString Temp("");
+				for (QList<int>::const_iterator i=CardToughnessModifiers.begin();i!=CardToughnessModifiers.end();i++){
+					if (*i<0) Temp.append('-');
+					else Temp.append('+');
+				}
+				Temp.prepend(QString("%1").arg(CardToughness+PTString.count('+')-PTString.count('-')));
+				PTString.append(Temp);
+			}
+			PTLabel->SetPTString(PTString);
+			PTLabel->show();
 		}
-		PTLabel->SetPTString(PTString);
-		PTLabel->show();
 	}
 	else PTLabel->hide();
-	style()->unpolish(this);
-	style()->polish(this);
+	setStyleSheet(StyleSheets::CardCSS);
 }
 QString Card::CreateManaCostString() const{
 	QString Result="";
@@ -239,6 +270,7 @@ QDataStream &operator<<(QDataStream &out, const Card &card)
 		<< qint32(card.GetCardRarity())
 		<< qint32(card.GetCardImage())
 		<< card.IsManaSource()
+		<< card.GetCertified()
 	;
 	return out;
 }
@@ -301,6 +333,8 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	card.SetCardImage(Numbers);
 	input >> Booleans;
 	card.SetManaSource(Booleans);
+	input >> Booleans;
+	card.SetCertified(Booleans);
 	card.UpdateAspect();
 	return input;
 }
@@ -318,4 +352,20 @@ void Card::SetCardCost(int key, int cost)
 		return;
 	}
 	CardCost[key]=cost;
+}
+void Card::AddCardCost(int key, int cost){
+	if (key<Constants::ManaCosts::Colorless || key>=Constants::ManaCosts::END){
+		QMessageBox::critical(this,QObject::tr("Wrong Mana Type"),QObject::tr("Error: Unable to Set the Mana Cost.\nMake Sure the Mana Type Key is Valid"));
+		return;
+	}
+	CardCost[key]+=cost;
+}
+void Card::AddAvailableEditions(const int& a){
+	if (a>=0 && a<Constants::Editions::END){
+		AvailableEditions.append(a);
+		if (AvailableEditions.contains(Constants::Editions::NONE))
+			AvailableEditions.erase(AvailableEditions.begin()+AvailableEditions.indexOf(Constants::Editions::NONE));
+		if(AvailableEditions.size()==1)
+			CardEdition=AvailableEditions.at(0);
+	}
 }
