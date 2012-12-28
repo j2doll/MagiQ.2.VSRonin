@@ -1,20 +1,56 @@
 #ifndef STYLESHEETS_H
 #define STYLESHEETS_H
+#include "CostantsDefinition.h"
 namespace StyleSheets{
 	const QString GlobalCSS(
-			"Card[CardBackground=\"0\"] #Background{"
+	//PTLabel
+			"PowerToughnesLabel #MainLabel{"
+				"border-image: url(:/PTLabelBases/CBox.png);"
+			"}"
+			+QString("PowerToughnesLabel[SelectedBase=\"%1\"] #MainLabel{").arg(Constants::PTBoxTypes::WBox)+
+				"border-image: url(:/PTLabelBases/WBox.png);"
+			"}"
+			+QString("PowerToughnesLabel[SelectedBase=\"%1\"] #MainLabel{").arg(Constants::PTBoxTypes::UBox)+
+				"border-image: url(:/PTLabelBases/UBox.png);"
+			"}"
+			+QString("PowerToughnesLabel[SelectedBase=\"%1\"] #MainLabel{").arg(Constants::PTBoxTypes::BBox)+
+				"border-image: url(:/PTLabelBases/BBox.png);"
+			"}"
+			+QString("PowerToughnesLabel[SelectedBase=\"%1\"] #MainLabel{").arg(Constants::PTBoxTypes::RBox)+
+				"border-image: url(:/PTLabelBases/RBox.png);"
+			"}"
+			+QString("PowerToughnesLabel[SelectedBase=\"%1\"] #MainLabel{").arg(Constants::PTBoxTypes::GBox)+
+				"border-image: url(:/PTLabelBases/GBox.png);"
+			"}"
+			+QString("PowerToughnesLabel[SelectedBase=\"%1\"] #MainLabel{").arg(Constants::PTBoxTypes::GoldBox)+
+				"border-image: url(:/PTLabelBases/GoldBox.png);"
+			"}"
+	//Card
+		//Background
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Colorless)+
 				"border-image: url(:/CardImage/CBase.png);"
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Green)+
+				"border-image: url(:/CardImage/GBase.png);"
 			"}"
 			"Card #Rear{"
 				"border-image: url(:/CardImage/Rear.png);"
 			"}"
-			"Card[CardRarity=\"0\"] #EditionLabel{" //Common
+		//PT Box
+			+QString("Card[CardBackground=\"%1\"] #PTLabel{").arg(Constants::CardBacksrounds::Colorless)+
+				"background-color: rgb(222, 222, 222);"
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #PTLabel{").arg(Constants::CardBacksrounds::Green)+
+				"background-color: rgb(155, 211, 174);"
+			"}"
+		//Editions
+			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::Common)+ 
 				"border-image: url(:/Editions/CommonBackground.png);"
 			"}"
-			"Card[CardRarity=\"1\"] #EditionLabel{" //Uncommon
+			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::Uncommon)+ 
 				"border-image: url(:/Editions/UncommonBackground.png);"
 			"}"
-			"Card[CardRarity=\"2\"] #EditionLabel{" //Rare
+			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::Rare)+
 				"border-image: url(:/Editions/RareBackground.png);"
 			"}"
 		);

@@ -3,20 +3,21 @@
 #include "CostantsDefinition.h"
 #include <QWidget>
 #include <QList>
+#include <QPixmap>
+#include <QDataStream>
 class ManaCostLabel;
-class QPixmap;
 class QFrame;
 class QLabel;
 class QScrollArea;
 class QPushButton;
-class SizeSliders;
+class PowerToughnesLabel;
 class Card : public QWidget{
 	Q_OBJECT
-	Q_PROPERTY(int CardRarity READ GetCardRarity WRITE SetCardrarity)
-	Q_PROPERTY(int CardBackground READ GetCardBackground WRITE SetCardBackground)
+	Q_PROPERTY(int CardRarity READ GetCardRarity)
+	Q_PROPERTY(int CardBackground READ GetCardBackground)
 private:
 	enum {TextFontSize=20};
-	enum {Common,Uncommon,Rare,MythicRare};
+	enum {PTFontSize=12};
 	QFrame* Background;
 	QFrame* Rear;
 	QLabel* NameLabel;
@@ -24,31 +25,65 @@ private:
 	QLabel* ImageLabel;
 	QLabel* TypeLabel;
 	QLabel* EditionLabel;
-	QLabel* PTLabel;
+	PowerToughnesLabel* PTLabel;
 	QScrollArea* EffectsArea;
 	QList<QPushButton*> EffectButtons;
 	QLabel* FlavorTextLabel;
+	QPixmap PTBox;
+	QPixmap PTMask;
 
+	
 	QString CardName;
 	QList<int> CardColor;
-	QList<int> CardCost;
+	QList<QChar> CardCost;
+	QList<int> CardCostModifiers;
 	QList<int> CardType;
 	QList<int> CardSubType;
 	QList<int> AvailableEditions;
-	QList<QPixmap*> AvailableImages;
+	QList<QPixmap> AvailableImages;
 	QList<int> AvailableBackgrounds;
 	int CardEdition;
 	int CardBackground;
 	QString CardFlavorText;
+	bool HasPT;
 	int CardPower;
+	QList<int> CardPowerModifiers;
 	int CardToughness;
+	QList<int> CardToughnessModifiers;
+	enum {StarPowerToughness=-2147483648};
 	int CardRarity;
-	QPixmap* CardImage;
+	int CardImage;
+
+	bool Covered;
+	bool ManaSource;
+	bool Tapped;
+
+	QString CreateManaCostString() const;
 
 	void TestStuff();
 public:
+	const QList<int>& GetCardCostModifiers() const {return CardCostModifiers;}
+	void SetCardCostModifiers(int a){CardCostModifiers.clear(); CardCostModifiers.append(a);}
+	void SetCardCostModifiers(const QList<int>& a){CardCostModifiers.clear(); CardCostModifiers=a;}
+	void AddCardCostModifiers(int a){CardCostModifiers.append(a);}
+	int GetCardPower() const {return CardPower;}
+	int GetCardToughness() const {return CardToughness;}
+	void SetCardPower(int a) {CardPower=a;}
+	void SetCardToughness(int a) {CardToughness=a;}
+	const QList<int>& GetCardToughnessModifiers() const {return CardToughnessModifiers;}
+	const QList<int>& GetCardPowerModifiers() const {return CardPowerModifiers;}
+	void SetCardPowerModifiers(int a){CardPowerModifiers.clear(); CardPowerModifiers.append(a);}
+	void SetCardToughnessModifiers(int a){CardToughnessModifiers.clear(); CardToughnessModifiers.append(a);}
+	void SetCardPowerModifiers(const QList<int>& a){CardPowerModifiers.clear(); CardPowerModifiers=a;}
+	void SetCardToughnessModifiers(const QList<int>& a){CardToughnessModifiers.clear(); CardToughnessModifiers=a;}
+	void AddCardPowerModifier(int a){CardPowerModifiers.append(a);}
+	void AddCardToughnessModifier(int a){CardToughnessModifiers.append(a);}
+	enum {CardVersion=0};
+	bool IsManaSource() const {return ManaSource;}
+	bool IsTapped() const {return Tapped;}
+	void SetTapped(bool a){Tapped=a;}
+	void SetManaSource(bool a){ManaSource=a;}
 	Card(QWidget* parent=0);
-	~Card();
 	void SetCardType(const int& a){CardType.clear(); CardType.append(a);}
 	void SetCardType(const QList<int>& a){CardType.clear(); CardType=a;}
 	const QList<int>& GetCardType() const {return CardType;}
@@ -60,29 +95,38 @@ public:
 	void SetCardColor(const int& a){CardColor.clear(); CardColor.append(a);}
 	void SetCardColor(const QList<int>& a){CardColor.clear(); CardColor=a;}
 	const QList<int>& GetCardColor() const {return CardColor;}
-	void SetCardCost(const int& a){CardCost.clear(); CardCost.append(a);}
-	void SetCardCost(const QList<int>& a){CardCost.clear(); CardCost=a;}
-	const QList<int>& GetCardCost() const {return CardCost;}
+	void SetCardCost(const QChar& a){CardCost.clear(); CardCost.append(a);}
+	void SetCardCost(const QList<QChar>& a){CardCost.clear(); CardCost=a;}
+	const QList<QChar>& GetCardCost() const {return CardCost;}
 	void SetCardName(const QString& a){if(!a.isEmpty()) CardName=a;}
 	QString GetCardName() const {return CardName;}
 	QString GetCardFlavorText() const {return CardFlavorText;}
 	void SetCardFlavorText(const QString& a){if(!a.isEmpty()) CardFlavorText=a;}
 	int GetCardRarity() const {return CardRarity;}
-	void SetCardrarity(int a){if (a<Common || a>MythicRare) return; CardRarity=a;}
+	void SetCardrarity(int a){if (a<Constants::CardRarities::Common || a>Constants::CardRarities::MythicRare) return; CardRarity=a;}
 	const QList<int>& GetAvailableEditions() const {return AvailableEditions;}
 	const QList<int>& GetAvailableBackgrounds() const {return AvailableBackgrounds;}
 	int GetCardBackground() const {return CardBackground;}
-	const QList<QPixmap*>& GetAvailableImages() const {return AvailableImages;}
+	const QList<QPixmap>& GetAvailableImages() const {return AvailableImages;}
 	void SetCardBackground(int a){if(a<0 || a>=AvailableBackgrounds.size()) return; CardBackground=AvailableBackgrounds.at(a);}
-	void SetCardImage(int a){if(a<0 || a>=AvailableImages.size()) return; CardImage=AvailableImages.at(a);}
-	const QPixmap& GetCardImage() const {return *CardImage;}
+	void SetCardImage(int a){if(a<0 || a>=AvailableImages.size()) return; CardImage=a;}
+	int GetCardImage() const {return CardImage;}
 	void SetAvailableEditions(const int& a){AvailableEditions.clear(); AvailableEditions.append(a);}
 	void SetAvailableEditions(const QList<int>& a){AvailableEditions.clear(); AvailableEditions=a;}
 	void SetAvailableBackgrounds(const int& a){AvailableBackgrounds.clear(); AvailableBackgrounds.append(a);}
 	void SetAvailableBackgrounds(const QList<int>& a){AvailableBackgrounds.clear(); AvailableBackgrounds=a;}
 	void SetAvailableImages(const QPixmap& a);
-	void SetAvailableImages(const QList<QPixmap*>& a);
+	void SetAvailableImages(const QList<QPixmap>& a);
+	bool IsLand() const;
+	bool IsCovered() const {return Covered;}
+	bool GetHasPT() const {return HasPT;}
+	void SetCovered(bool a){Covered=a;}
+	void SetHasPT(bool a){HasPT=a;}
+public slots:
+	void UpdateAspect();
 protected:
 	void resizeEvent(QResizeEvent* event);
 };
+QDataStream &operator<<(QDataStream &out, const Card &card);
+QDataStream &operator>>(QDataStream &in, Card &card);
 #endif

@@ -3,6 +3,9 @@
         <file alias="DefaultImage.png">Resources/DefaultImage.png</file>
         <file alias="CBase.png">Resources/Card/CBase.png</file>
         <file alias="Rear.png">Resources/Card/Rear.png</file>
+        <file alias="GBase.png">Resources/Card/GBase.png</file>
+        <file alias="PTBox.png">Resources/Card/PTBox.png</file>
+        <file alias="PTBoxMask.png">Resources/Card/PTBoxMask.png</file>
     </qresource>
     <qresource prefix="/ManaSymbols">
         <file alias="BManaSha.png">Resources/BManaSha.png</file>
@@ -38,5 +41,14 @@
         <file alias="CommonBackground.png">Resources/Editions/CommonBackground.png</file>
         <file alias="RareBackground.png">Resources/Editions/RareBackground.png</file>
         <file alias="UncommonBackground.png">Resources/Editions/UncommonBackground.png</file>
+    </qresource>
+    <qresource prefix="/PTLabelBases">
+        <file alias="BBox.png">Resources/PTBoxes/BBox.png</file>
+        <file alias="CBox.png">Resources/PTBoxes/CBox.png</file>
+        <file alias="GBox.png">Resources/PTBoxes/GBox.png</file>
+        <file alias="GoldBox.png">Resources/PTBoxes/GoldBox.png</file>
+        <file alias="RBox.png">Resources/PTBoxes/RBox.png</file>
+        <file alias="UBox.png">Resources/PTBoxes/UBox.png</file>
+        <file alias="WBox.png">Resources/PTBoxes/WBox.png</file>
     </qresource>
 </RCC>

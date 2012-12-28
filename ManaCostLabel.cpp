@@ -87,8 +87,9 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			TextPainter.setFont(QFont ("Arial",ManaFontSize,QFont::Bold));
 			if (i->count('-')>i->count('+'))
 				TextPainter.setPen(QPen(QColor(Qt::darkGreen)));
-			if (i->count('-')<i->count('+'))
+			else if (i->count('-')<i->count('+'))
 				TextPainter.setPen(QPen(QColor(Qt::darkRed)));
+			else TextPainter.setPen(QPen(QColor(Qt::black)));
 			QString TextToPrint(*i);
 			TextToPrint.replace('-',"");
 			TextToPrint.replace('+',"");
@@ -306,7 +307,7 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			ConvertedManaCost++;
 		}
 		else{
-			QMessageBox::critical(this,"Wrong Mana Code","Error: Unable to Interpret Card Mana Cost");
+			QMessageBox::critical(this,tr("Wrong Mana Code"),tr("Error: Unable to Interpret Card Mana Cost"));
 			if(!SymbolsLabels.isEmpty()){
 				for(QList<QLabel*>::iterator i=SymbolsLabels.begin();i!=SymbolsLabels.end();i++)
 					(*i)->deleteLater();
