@@ -9,11 +9,72 @@ namespace Constants{
 	namespace CardColor {enum {
 		Colorless
 		,White
-		,Green
 		,Blue
-		,Red
 		,Black
+		,Red
+		,Green
 	};}
+	namespace ManaCosts{
+		enum{
+			Colorless
+			,W
+			,U
+			,B
+			,R
+			,G
+			,WU
+			,WB
+			,WR
+			,WG
+			,UB
+			,UR
+			,UG
+			,BR
+			,BG
+			,RG
+			,S
+			,X
+			,Y
+			,Z
+			,LW
+			,LU
+			,LB
+			,LR
+			,LG
+			,C2W
+			,C2U
+			,C2B
+			,C2R
+			,C2G
+			,END
+		};
+	}
+	const QString ManaCostsNames[]={
+		"W"
+		,"U"
+		,"B"
+		,"R"
+		,"G"
+		,"WU"
+		,"WB"
+		,"WR"
+		,"WG"
+		,"UB"
+		,"UR"
+		,"UG"
+		,"BR"
+		,"BG"
+		,"RG"
+		,"S"
+		,"X"
+		,"Y"
+		,"Z"
+		,"LW"
+		,"LU"
+		,"LB"
+		,"LR"
+		,"LG"
+	};
 	namespace PTBoxTypes{
 		enum {CBox, WBox, UBox, BBox, RBox, GBox, GoldBox};
 	}
@@ -228,5 +289,11 @@ namespace Constants{
 		,"Wurm"
 		,"Zombie"
 	};
+	namespace CounterTypes{
+		enum{
+			Plus1Plus1
+			,Minus1Minus1
+		};
+	}
 }
 #endif

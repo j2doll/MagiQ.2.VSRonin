@@ -3,6 +3,7 @@
 #include "CostantsDefinition.h"
 #include <QWidget>
 #include <QList>
+#include <QMap>
 #include <QPixmap>
 #include <QDataStream>
 class ManaCostLabel;
@@ -18,6 +19,7 @@ class Card : public QWidget{
 private:
 	enum {TextFontSize=20};
 	enum {PTFontSize=12};
+// Visual Elements
 	QFrame* Background;
 	QFrame* Rear;
 	QLabel* NameLabel;
@@ -31,11 +33,10 @@ private:
 	QLabel* FlavorTextLabel;
 	QPixmap PTBox;
 	QPixmap PTMask;
-
-	
+// Card Properties (this section is serialized)
 	QString CardName;
 	QList<int> CardColor;
-	QList<QChar> CardCost;
+	QMap<int,int> CardCost;
 	QList<int> CardCostModifiers;
 	QList<int> CardType;
 	QList<int> CardSubType;
@@ -53,19 +54,22 @@ private:
 	enum {StarPowerToughness=-2147483648};
 	int CardRarity;
 	int CardImage;
-
-	bool Covered;
 	bool ManaSource;
+// Game Properties
+	bool Covered;
 	bool Tapped;
+	QMap<int,int> Counters;
+
 
 	QString CreateManaCostString() const;
-
+	void ResetCardCost();
 	void TestStuff();
 public:
 	const QList<int>& GetCardCostModifiers() const {return CardCostModifiers;}
 	void SetCardCostModifiers(int a){CardCostModifiers.clear(); CardCostModifiers.append(a);}
 	void SetCardCostModifiers(const QList<int>& a){CardCostModifiers.clear(); CardCostModifiers=a;}
 	void AddCardCostModifiers(int a){CardCostModifiers.append(a);}
+	enum {ModifierReduce=-1,ModifierIncrement=1};
 	int GetCardPower() const {return CardPower;}
 	int GetCardToughness() const {return CardToughness;}
 	void SetCardPower(int a) {CardPower=a;}
@@ -95,9 +99,9 @@ public:
 	void SetCardColor(const int& a){CardColor.clear(); CardColor.append(a);}
 	void SetCardColor(const QList<int>& a){CardColor.clear(); CardColor=a;}
 	const QList<int>& GetCardColor() const {return CardColor;}
-	void SetCardCost(const QChar& a){CardCost.clear(); CardCost.append(a);}
-	void SetCardCost(const QList<QChar>& a){CardCost.clear(); CardCost=a;}
-	const QList<QChar>& GetCardCost() const {return CardCost;}
+	void SetCardCost(int key, int cost);
+	void SetCardCost(const QMap<int,int>& a){ResetCardCost(); CardCost=a;}
+	const QMap<int,int>& GetCardCost() const {return CardCost;}
 	void SetCardName(const QString& a){if(!a.isEmpty()) CardName=a;}
 	QString GetCardName() const {return CardName;}
 	QString GetCardFlavorText() const {return CardFlavorText;}

@@ -47,7 +47,7 @@ Card::Card(QWidget* parent/* =0 */)
 	EditionLabel->setScaledContents(true);
 	PTLabel=new PowerToughnesLabel(this);
 	PTLabel->setObjectName("PTLabel");
-
+	ResetCardCost();
 	setStyleSheet(StyleSheets::GlobalCSS);
 	TestStuff();
 }
@@ -55,8 +55,8 @@ void Card::TestStuff(){
 	CardBackground=Constants::CardBacksrounds::Green;
 	CardRarity=Constants::CardRarities::Common;
 	CardName="Gemhide Sliver";
-	CardCost.append('1');
-	CardCost.append('g');
+	CardCost[Constants::ManaCosts::Colorless]=1;
+	CardCost[Constants::ManaCosts::G]=1;
 	AvailableImages.append(QPixmap("D:\\Giochi\\Magic Workstation\\Pics\\TSP\\Gemhide Sliver.jpg"));
 	CardImage=0;
 	CardType.append(Constants::CardTypes::Creature);
@@ -190,10 +190,30 @@ void Card::UpdateAspect(){
 }
 QString Card::CreateManaCostString() const{
 	QString Result="";
-	for (QList<QChar>::const_iterator i=CardCost.begin();i!=CardCost.end();i++){
-		if (i!=CardCost.begin()) Result.append(',');
-		Result.append(*i);
+	if (CardCost[Constants::ManaCosts::Colorless]!=0 || !CardCostModifiers.isEmpty()){
+		int Temp=CardCost[Constants::ManaCosts::Colorless];
+		for (QList<int>::const_iterator i=CardCostModifiers.begin();i!=CardCostModifiers.end();i++){
+			if (*i<0) {Temp--; Result.append('-');}
+			else {Temp++; Result.append('+');}
+		}
+		if (Temp<0) Result.prepend('0');
+		else Result.prepend(QString("%1").arg(Temp));
 	}
+	for (int i=Constants::ManaCosts::Colorless+1;i<Constants::ManaCosts::C2W;i++){
+		if (CardCost[i]>0){
+			for (int j=0;j<CardCost[i];j++){
+				if (!Result.isEmpty()) Result.append(',');
+				Result.append(Constants::ManaCostsNames[i-1]);
+			}
+		}
+	}
+	for (int i=Constants::ManaCosts::C2W+1;i<Constants::ManaCosts::END;i++){
+		if (CardCost[i]>0){
+			if (!Result.isEmpty()) Result.append(',');
+			Result.append(QString("2%1").arg(Constants::ManaCostsNames[i-1-Constants::ManaCosts::C2W]));
+		}
+	}
+	if (Result.isEmpty()) Result="0";
 	return Result;
 }
 QDataStream &operator<<(QDataStream &out, const Card &card)
@@ -226,7 +246,7 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	qint32 Numbers;
 	QString Strings;
 	QList<int> IntLists;
-	QList<QChar> CharLists;
+	QMap<int,int> IntMap;
 	QList<QPixmap> ImageLists;
 	bool Booleans;
 	input >> Numbers;
@@ -238,8 +258,8 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	card.SetCardName(Strings);
 	input >> IntLists;
 	card.SetCardColor(IntLists);
-	input >> CharLists;
-	card.SetCardCost(CharLists);
+	input >> IntMap;
+	card.SetCardCost(IntMap);
 	IntLists.clear();
 	input >> IntLists;
 	card.SetCardCostModifiers(IntLists);
@@ -283,4 +303,19 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	card.SetManaSource(Booleans);
 	card.UpdateAspect();
 	return input;
+}
+void Card::ResetCardCost(){
+	if (!CardCost.isEmpty())
+		CardCost.clear();
+	for (int i=Constants::ManaCosts::Colorless;i<Constants::ManaCosts::END;i++)
+		CardCost.insert(i,0);
+}
+void Card::SetCardCost(int key, int cost)
+{
+	ResetCardCost(); 
+	if (key<Constants::ManaCosts::Colorless || key>=Constants::ManaCosts::END){
+		QMessageBox::critical(this,QObject::tr("Wrong Mana Type"),QObject::tr("Error: Unable to Set the Mana Cost.\nMake Sure the Mana Type Key is Valid"));
+		return;
+	}
+	CardCost[key]=cost;
 }
