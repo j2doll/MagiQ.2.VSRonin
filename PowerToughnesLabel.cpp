@@ -90,9 +90,7 @@ void PowerToughnesLabel::UpadateAspect(){
 		}
 		MainLabel->setText(LabelText);
 	}
-	else MainLabel->setText(QString("%1").arg(Loyalty));
-	style()->unpolish(this);
-	style()->polish(this);
+	else MainLabel->setText(QString("<b>%1</b>").arg(Loyalty));
 }
 void PowerToughnesLabel::resizeEvent(QResizeEvent* event){
 	MainLabel->setMask(LabelBase.scaled(width(),height()).mask());

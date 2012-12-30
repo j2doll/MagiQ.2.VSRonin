@@ -13,8 +13,8 @@
 Card::Card(QWidget* parent)
 	:QWidget(parent)
 	,CardEdition(0)
-	,CardPower(-1)
-	,CardToughness(-1)
+	,CardPower(0)
+	,CardToughness(0)
 	,CardImage(0)
 	,PTBox(":/CardImage/PTBox.png")
 	,PTMask(":/CardImage/PTBoxMask.png")
@@ -23,6 +23,9 @@ Card::Card(QWidget* parent)
 	,ManaSource(false)
 	,Certified(false)
 	,CardName("")
+	,HasFlipped(NoFlip)
+	,FlippedCard(NULL)
+	,HasManaCost(true)
 {
 	setObjectName("Card");
 	Background=new QFrame(this);
@@ -139,7 +142,7 @@ void Card::UpdateAspect(){
 	GhostWriter.setFont(QFont("Arial",TextFontSize,QFont::Bold));
 	GhostWriter.drawText(NamePixmap.rect(),Qt::AlignLeft,CardName);
 	NameLabel->setPixmap(NamePixmap);
-	if (IsLand()) CostLabel->hide();
+	if (!HasManaCost) CostLabel->hide();
 	CostLabel->SetCostString(CreateManaCostString());
 	CostLabel->setGeometry(
 		(181-(11*CostLabel->GetNumberOfSymbols()))*width()/200,
@@ -176,6 +179,7 @@ void Card::UpdateAspect(){
 			PTLabel->SetLoyalty(CardPower);
 		}
 		else{
+			PTLabel->SetCountPT();
 			switch(CardBackground){
 			case Constants::CardBacksrounds::White:
 				PTLabel->SetSelectedBase(Constants::PTBoxTypes::WBox); break;
@@ -271,7 +275,11 @@ QDataStream &operator<<(QDataStream &out, const Card &card)
 		<< qint32(card.GetCardImage())
 		<< card.IsManaSource()
 		<< card.GetCertified()
+		<< card.GetHasManaCost()
+		<< qint32(card.GetHasFlipped())
 	;
+	if (card.GetHasFlipped()==Card::HasFlip)
+		out << *(card.GetFlippedCard());
 	return out;
 }
 QDataStream &operator>>(QDataStream &input, Card &card){
@@ -335,6 +343,23 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	card.SetManaSource(Booleans);
 	input >> Booleans;
 	card.SetCertified(Booleans);
+	input >> Booleans;
+	card.SetHasManaCost(Booleans);
+	input >> Numbers;
+	card.SetHasFlipped(Numbers);
+	if (Numbers==Card::HasFlip){
+		Card* TempCard;
+		if (card.parent()){
+			if(card.parent()->isWidgetType())
+				TempCard=new Card(static_cast<QWidget*>(card.parent()));
+		}
+		else
+			TempCard=new Card;
+		input >> (*TempCard);
+		TempCard->SetFlippedCard(&card);
+		card.SetFlippedCard(TempCard);
+		TempCard->UpdateAspect();
+	}
 	card.UpdateAspect();
 	return input;
 }
@@ -368,4 +393,32 @@ void Card::AddAvailableEditions(const int& a){
 		if(AvailableEditions.size()==1)
 			CardEdition=AvailableEditions.at(0);
 	}
+}
+Card& Card::operator=(const Card& a){
+	CardName=a.CardName;
+	CardColor=a.CardColor;
+	CardCost=a.CardCost;
+	CardCostModifiers=a.CardCostModifiers;
+	CardType=a.CardType;
+	CardSubType=a.CardSubType;
+	AvailableEditions=a.AvailableEditions;
+	AvailableImages=a.AvailableImages;
+	AvailableBackgrounds=a.AvailableBackgrounds;
+	CardEdition=a.CardEdition;
+	CardBackground=a.CardBackground;
+	CardFlavorText=a.CardFlavorText;
+	HasPT=a.HasPT;
+	CardPower=a.CardPower;
+	CardPowerModifiers=a.CardPowerModifiers;
+	CardToughness=a.CardToughness;
+	CardToughnessModifiers=a.CardToughnessModifiers;
+	CardRarity=a.CardRarity;
+	CardImage=a.CardImage;
+	ManaSource=a.ManaSource;
+	Certified=a.Certified;
+	HasManaCost=a.HasManaCost;
+	HasFlipped=a.HasFlipped;
+	FlippedCard=a.FlippedCard;
+	UpdateAspect();
+	return *this;
 }

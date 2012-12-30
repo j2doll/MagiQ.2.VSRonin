@@ -22,7 +22,7 @@ public:
 	void SetSelectedBase(int a);
 	int GetSelectedBase() const {return SelectedBase;}
 	void SetPTString(const QString& a){PTString=a; UpadateAspect();}
-	void SetLoyalty(int a){if (a<0) a=0; Loyalty=a;}
+	void SetLoyalty(int a){if (a<0) a=0; Loyalty=a; UpadateAspect();}
 	const QString& GetPTString() const {return PTString;}
 protected:
 	void resizeEvent(QResizeEvent* event);

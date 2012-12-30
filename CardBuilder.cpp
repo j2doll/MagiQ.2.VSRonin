@@ -15,25 +15,57 @@
 #include <QPainter>
 #include <QSpacerItem>
 #include <QFileDialog>
+#include <QTextEdit>
+#include <QMessageBox>
+#include <QCloseEvent>
+#include "ConstantProportionLayout.h"
 CardBuilder::CardBuilder(QWidget* parent)
 	:QWidget(parent)
+	,EditingFlip(false)
 {
+	setMinimumHeight(720);
+	setWindowIcon(QIcon(QPixmap(":/CardImage/Rear.png")));
+	setWindowTitle(tr("Card Editor"));
 	Background=new QFrame(this);
 	Background->setObjectName("Background");
 
-	QVBoxLayout* CardLayout=new QVBoxLayout;
+	ConstantProportionLayout* CardLayout=new ConstantProportionLayout;
 	CardPreview=new Card(this);
 	CardPreview->setObjectName("CardPreview");
-	CardPreview->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-	QSpacerItem* PreviewSpacer=new QSpacerItem(20,20,QSizePolicy::Minimum,QSizePolicy::Expanding);
+	CardPreview->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	AddFlippedButton=new QPushButton(this);
+	AddFlippedButton->setObjectName("AddFlippedButton");
+	AddFlippedButton->setText("Add Split or Flip Card");
+	connect(AddFlippedButton,SIGNAL(clicked()),this,SLOT(AddFlippedCard()));
+	FlippedCard=new Card(this);
+	FlippedCard->setObjectName("FlippedCard");
+	FlippedCard->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	FlippedCard->SetCovered(true);
+	FlippedCard->UpdateAspect();
+	RemoveFlippedButton=new QPushButton(this);
+	RemoveFlippedButton->setObjectName("RemoveFlippedButton");
+	RemoveFlippedButton->setText("Remove Split or Flip Card");
+	RemoveFlippedButton->hide();
+	connect(RemoveFlippedButton,SIGNAL(clicked()),this,SLOT(RemoveFlippedCard()));
+	connect(RemoveFlippedButton,SIGNAL(clicked()),RemoveFlippedButton,SLOT(hide()));
 	CardLayout->addWidget(CardPreview);
-	CardLayout->addItem(PreviewSpacer);
+	CardLayout->addWidget(AddFlippedButton);
+	CardLayout->addWidget(FlippedCard);
+	CardLayout->addWidget(RemoveFlippedButton);
 
 	CertifiedCheck=new QCheckBox(this);
 	CertifiedCheck->setChecked(false);
 	CertifiedCheck->setObjectName("CertifiedCheck");
 	CertifiedCheck->setText(tr("Certified Card"));
 	connect(CertifiedCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCertified()));
+	ManaSourceCheck=new QCheckBox(this);
+	ManaSourceCheck->setChecked(false);
+	ManaSourceCheck->setObjectName("ManaSourceCheck");
+	ManaSourceCheck->setText(tr("Mana Source"));
+	connect(ManaSourceCheck,SIGNAL(stateChanged(int)),this,SLOT(SetManaSource()));
+	QHBoxLayout* BasicChecksLayout=new QHBoxLayout;
+	BasicChecksLayout->addWidget(ManaSourceCheck);
+	BasicChecksLayout->addWidget(CertifiedCheck);
 	CertifiedCheck->hide();
 
 	QLabel* NameLabel=new QLabel(this);
@@ -91,6 +123,11 @@ CardBuilder::CardBuilder(QWidget* parent)
 	QLabel* CardCostLabel=new QLabel(this);
 	CardCostLabel->setObjectName("CardCostLabel");
 	CardCostLabel->setText(tr("Add Mana Cost"));
+	HasManaCostCheck=new QCheckBox(this);
+	HasManaCostCheck->setObjectName("HasManaCostCheck");
+	HasManaCostCheck->setChecked(false);
+	HasManaCostCheck->setText("No Mana Cost");
+	connect(HasManaCostCheck,SIGNAL(stateChanged(int)),this,SLOT(SetNoManaCost()));
 	ManaCostSelector=new QComboBox(this);
 	ManaCostSelector->setObjectName("ManaCostSelector");
 	ManaCostSelector->addItem("",-1);
@@ -148,6 +185,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	QGridLayout* ManaCostLayout=new QGridLayout;
 	ManaCostLayout->addWidget(CardCostLabel,0,0);
 	ManaCostLayout->addWidget(ManaCostSelector,1,0);
+	ManaCostLayout->addWidget(HasManaCostCheck,0,1);
 	ManaCostLayout->addWidget(ManaCostResetButton,1,1);
 
 	QLabel* CardTypeLabel=new QLabel(this);
@@ -311,7 +349,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 
 	QLabel* CardBackgroundLabel=new QLabel(this);
 	CardBackgroundLabel->setObjectName("CardEditionLabel");
-	CardBackgroundLabel->setText(tr("Select Preferred Edition"));
+	CardBackgroundLabel->setText(tr("Select Preferred Background"));
 	CardBackgroundSelector=new QComboBox(this);
 	CardBackgroundSelector->setObjectName("CardBackgroundSelector");
 	CardBackgroundSelector->setEnabled(false);
@@ -320,10 +358,77 @@ CardBuilder::CardBuilder(QWidget* parent)
 	BackgroundSelectorLayout->addWidget(CardBackgroundLabel);
 	BackgroundSelectorLayout->addWidget(CardBackgroundSelector);
 
-	QHBoxLayout* MainLayout=new QHBoxLayout(this);
+	QLabel* FlavorTextLabel=new QLabel(this);
+	FlavorTextLabel->setObjectName("FlavorTextLabel");
+	FlavorTextLabel->setText(tr("Flavor Text"));
+	CardFlavorTextEdit=new QTextEdit(this);
+	CardFlavorTextEdit->setObjectName("CardFlavorTextEdit");
+	CardFlavorTextEdit->setHtml("");
+	CardFlavorTextEdit->setToolTip(tr("You can use HTML tags to customize the text"));
+	connect(CardFlavorTextEdit,SIGNAL(textChanged()),this,SLOT(SetFlavorText()));
+	QVBoxLayout* FlavorTextLayout=new QVBoxLayout;
+	FlavorTextLayout->addWidget(FlavorTextLabel);
+	FlavorTextLayout->addWidget(CardFlavorTextEdit);
+
+	HasPTGroup=new QGroupBox(this);
+	HasPTGroup->setObjectName("HasPTGroup");
+	HasPTGroup->setCheckable(true);
+	HasPTGroup->setChecked(false);
+	HasPTGroup->setTitle(tr("Has Power & Toughness"));
+	connect(HasPTGroup,SIGNAL(toggled(bool)),this,SLOT(SetHasPT(bool)));
+	QGridLayout* PTGroupLayout=new QGridLayout(HasPTGroup);
+	QRegExpValidator PTValidator(QRegExp("[*\\d+]"));
+	PowerLabel=new QLabel(this);
+	PowerLabel->setObjectName("PowerLabel");
+	PowerLabel->setText(tr("Power"));
+	PowerEdit=new QLineEdit(this);
+	PowerEdit->setEnabled(false);
+	PowerEdit->setObjectName("PowerEdit");
+	PowerEdit->setValidator(&PTValidator);
+	connect(PowerEdit,SIGNAL(textEdited(QString)),this,SLOT(SetPower()));
+	QLabel* ToughnessLabel=new QLabel(this);
+	ToughnessLabel->setObjectName("ToughnessLabel");
+	ToughnessLabel->setText(tr("Toughness"));
+	ToughnesEdit=new QLineEdit(this);
+	ToughnesEdit->setObjectName("ToughnesEdit");
+	ToughnesEdit->setValidator(&PTValidator);
+	ToughnesEdit->setEnabled(false);
+	connect(ToughnesEdit,SIGNAL(textEdited(QString)),this,SLOT(SetToughnes()));
+	PTGroupLayout->addWidget(PowerLabel,0,0);
+	PTGroupLayout->addWidget(PowerEdit,1,0);
+	PTGroupLayout->addWidget(ToughnessLabel,0,1);
+	PTGroupLayout->addWidget(ToughnesEdit,1,1);
+
+	ResetButton=new QPushButton(this);
+	ResetButton->setObjectName("ResetButton");
+	ResetButton->setText(tr("Reset"));
+	connect(ResetButton,SIGNAL(clicked()),this,SLOT(ResetAll()));
+	OpenButton=new QPushButton(this);
+	OpenButton->setObjectName("OpenButton");
+	OpenButton->setText(tr("Open Card File"));
+	connect(OpenButton,SIGNAL(clicked()),this,SLOT(OpenCard()));
+	SaveButton=new QPushButton(this);
+	SaveButton->setObjectName("SaveButton");
+	SaveButton->setText(tr("Save"));
+	connect(SaveButton,SIGNAL(clicked()),this,SLOT(SaveCard()));
+	ExitButton=new QPushButton(this);
+	ExitButton->setObjectName("ExitButton");
+	ExitButton->setText(tr("Exit"));
+	connect(ExitButton,SIGNAL(clicked()),this,SLOT(close()));
+	QHBoxLayout* WidgetButtonsLayout=new QHBoxLayout;
+	QSpacerItem* RightButtonSpacer=new QSpacerItem(20,20,QSizePolicy::Expanding,QSizePolicy::Minimum);
+	QSpacerItem* LeftButtonSpacer=new QSpacerItem(20,20,QSizePolicy::Expanding,QSizePolicy::Minimum);
+	WidgetButtonsLayout->addItem(LeftButtonSpacer);
+	WidgetButtonsLayout->addWidget(OpenButton);
+	WidgetButtonsLayout->addWidget(SaveButton);
+	WidgetButtonsLayout->addWidget(ResetButton);
+	WidgetButtonsLayout->addWidget(ExitButton);
+	WidgetButtonsLayout->addItem(RightButtonSpacer);
+
+	QHBoxLayout* MainLayout=new QHBoxLayout;
 	MainLayout->addLayout(CardLayout);
 	QVBoxLayout* RightLayout=new QVBoxLayout;
-	RightLayout->addWidget(CertifiedCheck);
+	RightLayout->addLayout(BasicChecksLayout);
 	RightLayout->addLayout(NameLayout);
 	RightLayout->addWidget(CardColorGroup);
 	RightLayout->addLayout(ManaCostLayout);
@@ -332,14 +437,21 @@ CardBuilder::CardBuilder(QWidget* parent)
 	RightLayout->addLayout(CardEditionLayout);
 	RightLayout->addLayout(EditionSelectorLayout);
 	RightLayout->addLayout(RaritySelectorLayout);
-	RightLayout->addLayout(ImageLayout);
-	RightLayout->addLayout(ImageSelectorLayout);
-	RightLayout->addLayout(CardBackgroundLayout);
-	RightLayout->addLayout(BackgroundSelectorLayout);
-	QSpacerItem* RightSpacer=new QSpacerItem(20,20,QSizePolicy::Minimum,QSizePolicy::Expanding);
-	RightLayout->addItem(RightSpacer);
+	QVBoxLayout* RightLayout2=new QVBoxLayout;
+	RightLayout2->addLayout(ImageLayout);
+	RightLayout2->addLayout(ImageSelectorLayout);
+	RightLayout2->addLayout(CardBackgroundLayout);
+	RightLayout2->addLayout(BackgroundSelectorLayout);
+	RightLayout2->addLayout(FlavorTextLayout);
+	RightLayout2->addWidget(HasPTGroup);
+		//RightLayout->addLayout(RightLayout2);
 	MainLayout->addLayout(RightLayout);
+	MainLayout->addLayout(RightLayout2);
+	QVBoxLayout* WidgetLayout=new QVBoxLayout(this);
+	WidgetLayout->addLayout(MainLayout);
+	WidgetLayout->addLayout(WidgetButtonsLayout);
 }
+
 void CardBuilder::resizeEvent(QResizeEvent* event){
 	Background->setGeometry(0,0,width(),height());
 }
@@ -410,11 +522,18 @@ void CardBuilder::ResetCardType(){
 	CardPreview->SetCardType();
 	CardTypeSelector->setCurrentIndex(0);
 	CardPreview->UpdateAspect();
+	HasPTGroup->setChecked(false);
+	HasManaCostCheck->setChecked(false);
 }
 void CardBuilder::AddCardType(int index){
 	if (index==0) return;
 	if (CardPreview->GetCardType().contains(CardTypeSelector->itemData(index).toInt())) return;
 	CardPreview->AddCardType(CardTypeSelector->itemData(index).toInt());
+	QList<int> Temp(CardPreview->GetCardType());
+	if (Temp.contains(Constants::CardTypes::Creature))
+		HasPTGroup->setChecked(true);
+	if (Temp.contains(Constants::CardTypes::Planeswalker)) HasPTGroup->setChecked(true);
+	if (Temp.contains(Constants::CardTypes::Land)) HasManaCostCheck->setChecked(true);
 	CardTypeSelector->setCurrentIndex(0);
 	CardPreview->UpdateAspect();
 }
@@ -510,4 +629,215 @@ void CardBuilder::SelectBackground(int index){
 void CardBuilder::SelectRarity(int index){
 	CardPreview->SetCardrarity(CardRaritySelector->itemData(index).toInt());
 	CardPreview->UpdateAspect();
+}
+void CardBuilder::SetFlavorText(){
+	CardPreview->SetCardFlavorText(CardFlavorTextEdit->toHtml());
+	CardPreview->UpdateAspect();
+}
+void CardBuilder::SetHasPT(bool a){
+	if (!a){
+		PowerEdit->setText("");
+		ToughnesEdit->setText("");
+	}
+	bool Temp=CardPreview->GetCardType().contains(Constants::CardTypes::Planeswalker);
+	PowerEdit->setEnabled(a);
+	ToughnesEdit->setEnabled(a && !Temp);
+	if (Temp){PowerLabel->setText(tr("Loyalty"));}
+	else {PowerLabel->setText(tr("Power"));}
+	CardPreview->SetHasPT(a);
+	CardPreview->UpdateAspect();
+}
+void CardBuilder::SetPower(){
+	if (PowerEdit->text()=="*") CardPreview->SetCardPower(Card::StarPowerToughness);
+	else CardPreview->SetCardPower(PowerEdit->text().toInt());
+	CardPreview->UpdateAspect();
+}
+void CardBuilder::SetToughnes(){
+	if (ToughnesEdit->text()=="*") CardPreview->SetCardToughness(Card::StarPowerToughness);
+	else CardPreview->SetCardToughness(ToughnesEdit->text().toInt());
+	CardPreview->UpdateAspect();
+}
+void CardBuilder::SetManaSource(){
+	CardPreview->SetManaSource(ManaSourceCheck->isChecked());
+}
+void CardBuilder::SetNoManaCost(){
+	CardPreview->SetHasManaCost(!HasManaCostCheck->isChecked());
+	ManaCostSelector->setEnabled(!HasManaCostCheck->isChecked());
+	ManaCostResetButton->setEnabled(!HasManaCostCheck->isChecked());
+	CardPreview->UpdateAspect();
+}
+void CardBuilder::RemoveFlippedCard(){
+	CardPreview->SetFlippedCard(NULL);
+	CardPreview->SetHasFlipped(Card::NoFlip);
+	FlippedCard->operator=(Card());
+	FlippedCard->SetCovered(true);
+	FlippedCard->UpdateAspect();
+	AddFlippedButton->setText(tr("Add Split or Flip Card"));
+}
+void CardBuilder::AddFlippedCard(){
+	FlippedCard->SetCovered(false);
+	CardBuilder* FlippedBuilder=new CardBuilder;
+	FlippedBuilder->setWindowModality(Qt::ApplicationModal);
+	FlippedBuilder->SetCard(FlippedCard);
+	FlippedBuilder->EditingFlipCard(CardPreview);
+	connect(FlippedBuilder,SIGNAL(FlippedAccepted(Card*)),this,SLOT(SetFlippedCard(Card*)));
+	connect(FlippedBuilder,SIGNAL(FlippedAccepted(Card*)),FlippedBuilder,SLOT(deleteLater()));
+	connect(FlippedBuilder,SIGNAL(FlippedRejected()),FlippedBuilder,SLOT(deleteLater()));
+	FlippedBuilder->show();
+}
+void CardBuilder::ResetAll(){
+	QMessageBox SureToReset(QMessageBox::Question,tr("Are you Sure?"),tr("Are you sure you want to reset the card?\nAny unsaved change will be lost"),QMessageBox::Yes | QMessageBox::No,this);
+	SureToReset.setDefaultButton(QMessageBox::Yes);
+	if (SureToReset.exec()==QMessageBox::No) return;
+	CertifiedCheck->setChecked(false);
+	NameEditor->setText("");
+	CardPreview->SetCardName("");
+	CardFlavorTextEdit->setHtml("");
+	CardPreview->SetCardFlavorText("");
+	ColorlessCheck->setEnabled(true);
+	ColorlessCheck->setChecked(true);
+	ResetCardCost();
+	ResetCardType();
+	ResetCardSubType();
+	ResetCardEdition();
+	ResetCardImages();
+	ResetCardBackground();
+	HasManaCostCheck->setChecked(false);
+	ManaSourceCheck->setChecked(false);
+	RemoveFlippedCard();
+	CardPreview->UpdateAspect();
+}
+void CardBuilder::closeEvent(QCloseEvent *event){
+	QMessageBox SureToExit(QMessageBox::Question,tr("Are you Sure?"),tr("Are you sure you want to Exit?\nAny unsaved change will be lost"),QMessageBox::Yes | QMessageBox::No,this);
+	SureToExit.setDefaultButton(QMessageBox::Yes);
+	if (SureToExit.exec()==QMessageBox::No) return event->ignore();
+	if (EditingFlip) emit FlippedRejected();
+	event->accept();
+}
+void CardBuilder::OpenCard(){
+	QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),
+		"/Cards",
+		tr("MagiQ Card (*.mqc)"));
+	if (fileName.isEmpty()) return;
+	QFile file(fileName);
+	if (!file.open(QIODevice::ReadOnly)) {
+		QMessageBox::critical(this,tr("Error"),tr("Cannot open file for reading: ") + file.errorString());
+		return;
+	}
+	QDataStream input(&file);
+	input.setVersion(QDataStream::Qt_4_7);
+	input >> *CardPreview;
+	file.close();
+	if (CardPreview->GetHasFlipped()==Card::HasFlip){
+		SetFlippedCard(CardPreview->GetFlippedCard());
+	}
+	SetCard(CardPreview);
+}
+void CardBuilder::SaveCard(){
+	if (EditingFlip){
+		emit FlippedAccepted(CardPreview);
+		hide();
+		return;
+	}
+	QString fileName = QFileDialog::getSaveFileName(0, tr("Save File"),
+		"/Cards/"+CardPreview->GetCardName()+".mqc",
+		tr("MagiQ Card (*.mqc)"));
+	if (fileName.isEmpty()) return;
+	QFile file(fileName);
+	if (!file.open(QIODevice::WriteOnly)) {
+		QMessageBox::critical(this,tr("Error"),tr("Cannot open file for writing: ") + file.errorString());
+		return;
+	}
+	QDataStream out(&file);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << *CardPreview;
+	file.close();
+}
+void CardBuilder::EditingFlipCard(Card* ParentCard){
+	EditingFlip=true;
+	FlippedCard->operator=(*ParentCard);
+	FlippedCard->SetCovered(false);
+	AddFlippedButton->hide();
+	CardPreview->SetHasFlipped(Card::AllreadyFlipped);
+	CardPreview->SetFlippedCard(ParentCard);
+	FlippedCard->UpdateAspect();
+}
+void CardBuilder::SetCard(Card* a){
+	CardPreview->operator=(*a);
+	CardPreview->UpdateAspect();
+	ManaSourceCheck->setChecked(CardPreview->GetManaSource());
+	NameEditor->setText(CardPreview->GetCardName());
+	QList<int> TempList=CardPreview->GetCardColor();
+	if (TempList.contains(Constants::CardColor::White)){
+		ColorlessCheck->setChecked(false);
+		WhiteCheck->setChecked(true);
+	}
+	if (TempList.contains(Constants::CardColor::Blue)){
+		ColorlessCheck->setChecked(false);
+		BlueCheck->setChecked(true);
+	}
+	if (TempList.contains(Constants::CardColor::Black)){
+		ColorlessCheck->setChecked(false);
+		BlackCheck->setChecked(true);
+	}
+	if (TempList.contains(Constants::CardColor::Red)){
+		ColorlessCheck->setChecked(false);
+		RedCheck->setChecked(true);
+	}
+	if (TempList.contains(Constants::CardColor::Black)){
+		ColorlessCheck->setChecked(false);
+		BlackCheck->setChecked(true);
+	}
+	HasManaCostCheck->setChecked(!CardPreview->GetHasManaCost());
+	TempList=CardPreview->GetAvailableEditions();
+	if (!TempList.contains(Constants::Editions::NONE)){
+		CardEditionSelector->setEnabled(true);
+		CardRaritySelector->setEnabled(true);
+		for (QList<int>::const_iterator i=TempList.begin();i!=TempList.end();i++){
+			CardEditionSelector->addItem(
+				QIcon(QPixmap(Constants::EditionSymbolsIcons[*i])),
+				Constants::EditionNames[*i],
+				*i);
+		}
+	}
+	QList<QPixmap> ImageList=CardPreview->GetAvailableImages();
+	CardImageSelector->setEnabled(!ImageList.isEmpty());
+	for (int i=0;i<ImageList.size();i++){
+		CardImageSelector->addItem(
+			QIcon(ImageList.at(i)),
+			tr("Image %1").arg(i+1)
+			,i
+			);
+	}
+	TempList=CardPreview->GetAvailableBackgrounds();
+	CardBackgroundSelector->setEnabled(!TempList.isEmpty());
+	for (QList<int>::const_iterator i=TempList.begin();i!=TempList.end();i++){
+		CardBackgroundSelector->addItem(
+			//QIcon(QPixmap(Constants::BackgroundImages[*i])),
+			Constants::BackgroundNames[*i],
+			*i);
+	}
+	CardFlavorTextEdit->setHtml(CardPreview->GetCardFlavorText());
+	if (CardPreview->GetHasPT()){
+		HasPTGroup->setChecked(true);
+		if (CardPreview->GetCardPower()==Card::StarPowerToughness)
+			PowerEdit->setText(QString("*"));
+		else
+			PowerEdit->setText(QString("%1").arg(CardPreview->GetCardPower()));
+		if (CardPreview->GetCardToughness()==Card::StarPowerToughness)
+			PowerEdit->setText(QString("*"));
+		else
+			PowerEdit->setText(QString("%1").arg(CardPreview->GetCardToughness()));
+	}
+}
+void CardBuilder::SetFlippedCard(Card* a){
+	if (!a) return RemoveFlippedCard();
+	FlippedCard->operator=(*a);
+	FlippedCard->UpdateAspect();
+	CardPreview->SetHasFlipped(Card::HasFlip);
+	CardPreview->SetFlippedCard(FlippedCard);
+	RemoveFlippedButton->show();
+	AddFlippedButton->setText(tr("Edit Split or Flip Card"));
+	FlippedCard->SetCovered(false);
+	FlippedCard->UpdateAspect();
 }

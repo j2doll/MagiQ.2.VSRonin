@@ -110,6 +110,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_CardBuilder.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="ConstantProportionLayout.cpp">
+      <Filter>Source Files\Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -119,6 +122,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StyleSheets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantProportionLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

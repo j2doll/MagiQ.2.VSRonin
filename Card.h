@@ -51,11 +51,13 @@ private:
 	QList<int> CardPowerModifiers;
 	int CardToughness;
 	QList<int> CardToughnessModifiers;
-	enum {StarPowerToughness=-2147483648};
 	int CardRarity;
 	int CardImage;
 	bool ManaSource;
 	bool Certified;
+	bool HasManaCost;
+	int HasFlipped;
+	Card* FlippedCard;
 // Game Properties
 	bool Covered;
 	bool Tapped;
@@ -66,6 +68,15 @@ private:
 	void ResetCardCost();
 	void TestStuff();
 public:
+	Card& operator=(const Card& a);
+	enum {StarPowerToughness=-2147483648};
+	enum{AllreadyFlipped=-1,NoFlip=0,HasFlip=1};
+	void SetHasFlipped(int a){if (a>=AllreadyFlipped && a<=HasFlip) HasFlipped=a;};
+	int GetHasFlipped() const {return HasFlipped;}
+	void SetFlippedCard(Card* a){FlippedCard=a;}
+	Card* GetFlippedCard() const {return FlippedCard;}
+	void SetHasManaCost(bool a){HasManaCost=a;}
+	bool GetHasManaCost() const {return HasManaCost;}
 	const QList<int>& GetCardCostModifiers() const {return CardCostModifiers;}
 	void SetCardCostModifiers(int a){CardCostModifiers.clear(); CardCostModifiers.append(a);}
 	void SetCardCostModifiers(const QList<int>& a){CardCostModifiers.clear(); CardCostModifiers=a;}
@@ -88,6 +99,7 @@ public:
 	bool IsTapped() const {return Tapped;}
 	void SetTapped(bool a){Tapped=a;}
 	void SetManaSource(bool a){ManaSource=a;}
+	bool GetManaSource() const{return ManaSource;}
 	Card(QWidget* parent=0);
 	void SetCardType(){CardType.clear();}
 	void SetCardType(const int& a){CardType.clear(); CardType.append(a);}
@@ -113,7 +125,7 @@ public:
 	void SetCardName(const QString& a){CardName=a;}
 	QString GetCardName() const {return CardName;}
 	QString GetCardFlavorText() const {return CardFlavorText;}
-	void SetCardFlavorText(const QString& a){if(!a.isEmpty()) CardFlavorText=a;}
+	void SetCardFlavorText(const QString& a){CardFlavorText=a;}
 	int GetCardRarity() const {return CardRarity;}
 	void SetCardrarity(int a){if (a<Constants::CardRarities::Common || a>Constants::CardRarities::MythicRare) return; CardRarity=a;}
 	const QList<int>& GetAvailableEditions() const {return AvailableEditions;}
@@ -127,7 +139,7 @@ public:
 	void AddAvailableEditions(const int& a);
 	void SetAvailableEditions(const int& a){AvailableEditions.clear(); AvailableEditions.append(a);}
 	void SetAvailableEditions(const QList<int>& a){AvailableEditions.clear(); AvailableEditions=a;}
-	void SetAvailableBackgrounds(){AvailableBackgrounds.clear();}
+	void SetAvailableBackgrounds(){AvailableBackgrounds.clear(); CardBackground=Constants::CardBacksrounds::Colorless;}
 	void AddAvailableBackground(const int& a){if (a>=0 && a<Constants::CardBacksrounds::END) AvailableBackgrounds.append(a);}
 	void SetAvailableBackgrounds(const int& a){AvailableBackgrounds.clear(); AvailableBackgrounds.append(a);}
 	void SetAvailableBackgrounds(const QList<int>& a){AvailableBackgrounds.clear(); AvailableBackgrounds=a;}

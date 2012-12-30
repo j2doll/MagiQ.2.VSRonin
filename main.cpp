@@ -1,5 +1,5 @@
 #include "CardBuilder.h"
-#include <QtGui/QApplication>
+#include <QtGui>
 
 int main(int argc, char *argv[])
 {
