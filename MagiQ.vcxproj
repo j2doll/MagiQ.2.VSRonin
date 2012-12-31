@@ -242,8 +242,8 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="License.html" />
-    <None Include="README.htm">
+    <None Include="LICENSE" />
+    <None Include="README">
       <DeploymentContent>true</DeploymentContent>
     </None>
   </ItemGroup>
