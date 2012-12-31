@@ -113,6 +113,15 @@
     <ClCompile Include="ConstantProportionLayout.cpp">
       <Filter>Source Files\Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="SelettoreImmagini.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SelettoreImmagini.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SelettoreImmagini.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -151,6 +160,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="CardBuilder.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SelettoreImmagini.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

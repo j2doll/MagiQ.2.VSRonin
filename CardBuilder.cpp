@@ -194,7 +194,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardTypeSelector=new QComboBox(this);
 	CardTypeSelector->addItem("",-1);
 	CardTypeSelector->setObjectName("CardTypeSelector");
-	for (int i=Constants::CardTypes::Artifact;i<Constants::CardTypes::END;i++){
+	for (int i=0;i<Constants::CardTypes::END;i++){
 		CardTypeSelector->addItem(Constants::CardTypeNames[i],i);
 	}
 	CardTypeSelector->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
@@ -236,7 +236,10 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardAvailableEditionsSelector->addItem("",-1);
 	CardAvailableEditionsSelector->setObjectName("CardAvailableEditionsSelector");
 	for (int i=0;i<Constants::Editions::END;i++){
-		CardAvailableEditionsSelector->addItem(Constants::EditionNames[i],i);
+		CardAvailableEditionsSelector->addItem(
+			QIcon(QPixmap(Constants::EditionSymbolsIcons[i])),
+			Constants::EditionNames[i],
+			i);
 	}
 	CardAvailableEditionsSelector->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 	connect(CardAvailableEditionsSelector,SIGNAL(currentIndexChanged (int)),this,SLOT(AddCardEdition(int)));
@@ -430,8 +433,8 @@ CardBuilder::CardBuilder(QWidget* parent)
 	QVBoxLayout* RightLayout=new QVBoxLayout;
 	RightLayout->addLayout(BasicChecksLayout);
 	RightLayout->addLayout(NameLayout);
-	RightLayout->addWidget(CardColorGroup);
 	RightLayout->addLayout(ManaCostLayout);
+	RightLayout->addWidget(CardColorGroup);
 	RightLayout->addLayout(CardTypeLayout);
 	RightLayout->addLayout(CardSubTypeLayout);
 	RightLayout->addLayout(CardEditionLayout);
@@ -509,12 +512,84 @@ void CardBuilder::SetCardName(){
 }
 void CardBuilder::ResetCardCost(){
 	CardPreview->SetCardCost();
-	ManaCostSelector->setCurrentIndex(0);
+	ColorlessCheck->setEnabled(true);
+	ColorlessCheck->setChecked(true);
 	CardPreview->UpdateAspect();
 }
 void CardBuilder::AddCardCost(int index){
 	if (index==0) return;
 	CardPreview->AddCardCost(ManaCostSelector->itemData(index).toInt(),1);
+	QMap<int,int> TempMap(CardPreview->GetCardCost());
+	if (TempMap[Constants::ManaCosts::W]>0 || TempMap[Constants::ManaCosts::LW]>0 || TempMap[Constants::ManaCosts::C2W]>0){
+		ColorlessCheck->setChecked(false);
+		WhiteCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::U]>0 || TempMap[Constants::ManaCosts::LU]>0 || TempMap[Constants::ManaCosts::C2U]>0){
+		ColorlessCheck->setChecked(false);
+		BlueCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::B]>0 || TempMap[Constants::ManaCosts::LB]>0 || TempMap[Constants::ManaCosts::C2B]>0){
+		ColorlessCheck->setChecked(false);
+		BlackCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::R]>0 || TempMap[Constants::ManaCosts::LR]>0 || TempMap[Constants::ManaCosts::C2R]>0){
+		ColorlessCheck->setChecked(false);;
+		RedCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::G]>0 || TempMap[Constants::ManaCosts::LG]>0 || TempMap[Constants::ManaCosts::C2G]>0){
+		ColorlessCheck->setChecked(false);
+		GreenCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::WU]>0){
+		ColorlessCheck->setChecked(false);
+		WhiteCheck->setChecked(true);
+		BlueCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::WB]>0){
+		ColorlessCheck->setChecked(false);
+		WhiteCheck->setChecked(true);
+		BlackCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::WR]>0){
+		ColorlessCheck->setChecked(false);
+		WhiteCheck->setChecked(true);
+		RedCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::WG]>0){
+		ColorlessCheck->setChecked(false);
+		WhiteCheck->setChecked(true);
+		GreenCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::UB]>0){
+		ColorlessCheck->setChecked(false);
+		BlackCheck->setChecked(true);
+		BlueCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::UR]>0){
+		ColorlessCheck->setChecked(false);
+		RedCheck->setChecked(true);
+		BlueCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::UG]>0){
+		ColorlessCheck->setChecked(false);
+		GreenCheck->setChecked(true);
+		BlueCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::BR]>0){
+		ColorlessCheck->setChecked(false);
+		RedCheck->setChecked(true);
+		BlackCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::BG]>0){
+		ColorlessCheck->setChecked(false);
+		GreenCheck->setChecked(true);
+		BlackCheck->setChecked(true);
+	}
+	if (TempMap[Constants::ManaCosts::RG]>0){
+		ColorlessCheck->setChecked(false);
+		GreenCheck->setChecked(true);
+		RedCheck->setChecked(true);
+	}
 	ManaCostSelector->setCurrentIndex(0);
 	CardPreview->UpdateAspect();
 }

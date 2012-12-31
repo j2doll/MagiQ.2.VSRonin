@@ -37,7 +37,6 @@ private:
 	QList<QLabel*> SymbolsLabels;
 	QString CostString;
 	int NumberOfSymbols;
-	int ConvertedManaCost;
 	QStringList SortedManaList(const QStringList& Base);
 public:
 	ManaCostLabel(QWidget* parent=0);

@@ -7,7 +7,6 @@ ManaCostLabel::ManaCostLabel(QWidget* parent,const QString& Cost)
 	:QWidget(parent)
 	,CostString(Cost)
 	,NumberOfSymbols(0)
-	,ConvertedManaCost(0)
 	,WSymbol(":/ManaSymbols/WMana.png")
 	,USymbol(":/ManaSymbols/UMana.png")
 	,BSymbol(":/ManaSymbols/BMana.png")
@@ -38,7 +37,6 @@ ManaCostLabel::ManaCostLabel(QWidget* parent,const QString& Cost)
 ManaCostLabel::ManaCostLabel(QWidget* parent/* =0 */)
 	:QWidget(parent)
 	,NumberOfSymbols(0)
-	,ConvertedManaCost(0)
 	,WSymbol(":/ManaSymbols/WMana.png")
 	,USymbol(":/ManaSymbols/UMana.png")
 	,BSymbol(":/ManaSymbols/BMana.png")
@@ -67,7 +65,6 @@ ManaCostLabel::ManaCostLabel(QWidget* parent/* =0 */)
 }
 void ManaCostLabel::SetCostString(const QString& Cost){
 	NumberOfSymbols=0;
-	ConvertedManaCost=0;
 	if(!SymbolsLabels.isEmpty()){
 		for(QList<QLabel*>::iterator i=SymbolsLabels.begin();i!=SymbolsLabels.end();i++)
 			(*i)->deleteLater();
@@ -79,8 +76,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 	Components=SortedManaList(Components);
 	for (QStringList::const_iterator i=Components.begin();i!=Components.end();i++){
 		if (QRegExp("\\d+[\\+-]*").exactMatch(*i)){
-			ConvertedManaCost+=i->count('-');
-			ConvertedManaCost-=i->count('+');
 			QPixmap TextPixmap(CSymbol);
 			QPainter TextPainter(&TextPixmap);
 			SymbolsLabels.append(new QLabel(this));
@@ -98,7 +93,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost+=TextToPrint.toInt();
 		}
 		else if (QRegExp("[XYZ]").exactMatch(*i)){
 			SymbolsLabels.append(new QLabel(this));
@@ -124,7 +118,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost+=TextToPrint.toInt();
 		}
 		else if(QRegExp("\\d+U").exactMatch(*i)){
 			QString TextToPrint(*i);
@@ -139,7 +132,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost+=TextToPrint.toInt();
 		}
 		else if(QRegExp("\\d+B").exactMatch(*i)){
 			QString TextToPrint(*i);
@@ -154,7 +146,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost+=TextToPrint.toInt();
 		}
 		else if(QRegExp("\\d+R").exactMatch(*i)){
 			QString TextToPrint(*i);
@@ -169,7 +160,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost+=TextToPrint.toInt();
 		}
 		else if(QRegExp("\\d+G").exactMatch(*i)){
 			QString TextToPrint(*i);
@@ -184,7 +174,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost+=TextToPrint.toInt();
 		}
 		else if(*i=="WU" || *i=="UW"){
 			SymbolsLabels.append(new QLabel(this));
@@ -192,7 +181,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="WB" || *i=="BW"){
 			SymbolsLabels.append(new QLabel(this));
@@ -200,7 +188,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="WR" || *i=="RW"){
 			SymbolsLabels.append(new QLabel(this));
@@ -208,7 +195,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="WG" || *i=="GW"){
 			SymbolsLabels.append(new QLabel(this));
@@ -216,7 +202,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="UB" || *i=="BU"){
 			SymbolsLabels.append(new QLabel(this));
@@ -224,7 +209,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="UR" || *i=="RU"){
 			SymbolsLabels.append(new QLabel(this));
@@ -232,7 +216,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="UG" || *i=="GU"){
 			SymbolsLabels.append(new QLabel(this));
@@ -240,7 +223,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="BR" || *i=="RB"){
 			SymbolsLabels.append(new QLabel(this));
@@ -248,7 +230,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="BG" || *i=="GB"){
 			SymbolsLabels.append(new QLabel(this));
@@ -256,7 +237,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="RG" || *i=="GR"){
 			SymbolsLabels.append(new QLabel(this));
@@ -264,7 +244,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="W"){
 			SymbolsLabels.append(new QLabel(this));
@@ -272,7 +251,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="U"){
 			SymbolsLabels.append(new QLabel(this));
@@ -280,7 +258,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="B"){
 			SymbolsLabels.append(new QLabel(this));
@@ -288,7 +265,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="R"){
 			SymbolsLabels.append(new QLabel(this));
@@ -296,7 +272,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else if(*i=="G"){
 			SymbolsLabels.append(new QLabel(this));
@@ -304,7 +279,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 			SymbolsLabels.last()->setScaledContents(true);
 			MainLayout->addWidget(SymbolsLabels.last());
 			NumberOfSymbols++;
-			ConvertedManaCost++;
 		}
 		else{
 			QMessageBox::critical(this,tr("Wrong Mana Code"),tr("Error: Unable to Interpret Card Mana Cost"));
@@ -313,7 +287,6 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 					(*i)->deleteLater();
 			}
 			SymbolsLabels.clear();
-			ConvertedManaCost=0;
 			NumberOfSymbols=0;
 		}
 	}
@@ -325,7 +298,6 @@ void ManaCostLabel::ClearCost(){
 			(*i)->deleteLater();
 	}
 	SymbolsLabels.clear();
-	ConvertedManaCost=0;
 	NumberOfSymbols=0;
 }
 QStringList ManaCostLabel::SortedManaList(const QStringList& Base){

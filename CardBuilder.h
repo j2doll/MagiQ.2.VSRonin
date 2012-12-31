@@ -11,6 +11,7 @@ class QPushButton;
 class QGroupBox;
 class QFrame;
 class QLabel;
+class SelettoreImmagini;
 class CardBuilder : public QWidget{
 	Q_OBJECT
 public:

@@ -81,16 +81,16 @@ namespace Constants{
 	}
 	namespace CardTypes{enum {
 		NONE=-1
-		,Artifact
 		,Basic
-		,Creature
-		,Enchantment
-		,Instant
 		,Land
-		,Legendary
+		,Creature
 		,Planeswalker
-		,Snow
 		,Sorcery
+		,Instant
+		,Artifact
+		,Enchantment
+		,Legendary
+		,Snow
 		,Tribal
 		,World
 		,END

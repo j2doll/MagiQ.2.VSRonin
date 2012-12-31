@@ -422,3 +422,12 @@ Card& Card::operator=(const Card& a){
 	UpdateAspect();
 	return *this;
 }
+int Card::GetConvertedManaCost() const{
+	int Result=0;
+	for (int i=0;i<Constants::ManaCosts::END;i++){
+		if (i>=Constants::ManaCosts::C2W && i<=Constants::ManaCosts::C2G)
+			Result+=2*CardCost[i];
+		else Result+=CardCost[i];
+	}
+	return Result;
+}
