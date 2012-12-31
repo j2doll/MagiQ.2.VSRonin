@@ -166,4 +166,8 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.htm" />
+    <None Include="License.html" />
+  </ItemGroup>
 </Project>

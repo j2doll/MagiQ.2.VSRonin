@@ -20,7 +20,6 @@ Card::Card(QWidget* parent)
 	,PTMask(":/CardImage/PTBoxMask.png")
 	,Covered(false)
 	,HasPT(false)
-	,ManaSource(false)
 	,Certified(false)
 	,CardName("")
 	,HasFlipped(NoFlip)
@@ -273,7 +272,6 @@ QDataStream &operator<<(QDataStream &out, const Card &card)
 		<< card.GetCardToughnessModifiers()
 		<< qint32(card.GetCardRarity())
 		<< qint32(card.GetCardImage())
-		<< card.IsManaSource()
 		<< card.GetCertified()
 		<< card.GetHasManaCost()
 		<< qint32(card.GetHasFlipped())
@@ -339,8 +337,6 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	card.SetCardrarity(Numbers);
 	input >> Numbers;
 	card.SetCardImage(Numbers);
-	input >> Booleans;
-	card.SetManaSource(Booleans);
 	input >> Booleans;
 	card.SetCertified(Booleans);
 	input >> Booleans;
@@ -414,7 +410,6 @@ Card& Card::operator=(const Card& a){
 	CardToughnessModifiers=a.CardToughnessModifiers;
 	CardRarity=a.CardRarity;
 	CardImage=a.CardImage;
-	ManaSource=a.ManaSource;
 	Certified=a.Certified;
 	HasManaCost=a.HasManaCost;
 	HasFlipped=a.HasFlipped;

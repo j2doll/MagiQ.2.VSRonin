@@ -266,6 +266,16 @@ void SelettoreImmagini::AggiungiImmagine(const QPixmap& fonte, const QString& Di
 	}
 	AggiornaAttivazionePulsanti();
 }
+void SelettoreImmagini::CancellaTutte(){
+	Immagini.clear();
+	Didascalie.clear();
+	DidascaliaSopra->setText("");
+	DidascaliaSotto->setText("");
+	IconaCorrente->setPixmap(VoidImage);
+	IconaSuccessiva->setPixmap(VoidImage);
+	IndiceCorrente=-1;
+	AggiornaAttivazionePulsanti();
+}
 void SelettoreImmagini::SetIndex(int a){
 	if (a==IndiceCorrente){
 		emit IndexChanged(IndiceCorrente);

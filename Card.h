@@ -53,7 +53,6 @@ private:
 	QList<int> CardToughnessModifiers;
 	int CardRarity;
 	int CardImage;
-	bool ManaSource;
 	bool Certified;
 	bool HasManaCost;
 	int HasFlipped;
@@ -96,11 +95,8 @@ public:
 	void AddCardPowerModifier(int a){CardPowerModifiers.append(a);}
 	void AddCardToughnessModifier(int a){CardToughnessModifiers.append(a);}
 	enum {CardVersion=0};
-	bool IsManaSource() const {return ManaSource;}
 	bool IsTapped() const {return Tapped;}
 	void SetTapped(bool a){Tapped=a;}
-	void SetManaSource(bool a){ManaSource=a;}
-	bool GetManaSource() const{return ManaSource;}
 	Card(QWidget* parent=0);
 	void SetCardType(){CardType.clear();}
 	void SetCardType(const int& a){CardType.clear(); CardType.append(a);}

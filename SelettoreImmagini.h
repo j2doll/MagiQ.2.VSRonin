@@ -36,6 +36,7 @@ public:
 	SelettoreImmagini(QWidget* parent=0, int Orient=Orizzontale);
 	int GetOrientamento() const {return Orientamento;}
 	void AggiungiImmagine(const QPixmap& fonte, const QString& Didas="");
+	void CancellaTutte();
 	int GetIndex() const {return IndiceCorrente;}
 	int GetNumeroImmagini() const {return Immagini.size();}
 protected:

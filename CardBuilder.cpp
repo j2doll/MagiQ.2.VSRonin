@@ -19,6 +19,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include "ConstantProportionLayout.h"
+#include "SelettoreImmagini.h"
 CardBuilder::CardBuilder(QWidget* parent)
 	:QWidget(parent)
 	,EditingFlip(false)
@@ -58,13 +59,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CertifiedCheck->setObjectName("CertifiedCheck");
 	CertifiedCheck->setText(tr("Certified Card"));
 	connect(CertifiedCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCertified()));
-	ManaSourceCheck=new QCheckBox(this);
-	ManaSourceCheck->setChecked(false);
-	ManaSourceCheck->setObjectName("ManaSourceCheck");
-	ManaSourceCheck->setText(tr("Mana Source"));
-	connect(ManaSourceCheck,SIGNAL(stateChanged(int)),this,SLOT(SetManaSource()));
 	QHBoxLayout* BasicChecksLayout=new QHBoxLayout;
-	BasicChecksLayout->addWidget(ManaSourceCheck);
 	BasicChecksLayout->addWidget(CertifiedCheck);
 	CertifiedCheck->hide();
 
@@ -319,10 +314,10 @@ CardBuilder::CardBuilder(QWidget* parent)
 	QLabel* CardImgLabel=new QLabel(this);
 	CardImgLabel->setObjectName("CardImgLabel");
 	CardImgLabel->setText(tr("Select Preferred Image"));
-	CardImageSelector=new QComboBox(this);
+	CardImageSelector=new SelettoreImmagini(this);
 	CardImageSelector->setObjectName("CardImageSelector");
 	CardImageSelector->setEnabled(false);
-	connect(CardImageSelector,SIGNAL(currentIndexChanged (int)),this,SLOT(SelectImage(int)));
+	connect(CardImageSelector,SIGNAL(IndexChanged(int)),this,SLOT(SelectImage(int)));
 	QVBoxLayout* ImageSelectorLayout=new QVBoxLayout;
 	ImageSelectorLayout->addWidget(CardImgLabel);
 	ImageSelectorLayout->addWidget(CardImageSelector);
@@ -656,10 +651,9 @@ void CardBuilder::AddCardImage(){
 	QPixmap TempPix(fileName);
 	CardPreview->AddAvailableImages(TempPix);
 	int TempNum = CardPreview->GetAvailableImages().size();
-	CardImageSelector->addItem(
-		QIcon(TempPix),
+	CardImageSelector->AggiungiImmagine(
+		TempPix,
 		tr("Image %1").arg(TempNum)
-		,TempNum-1
 		);
 	CardImageSelector->setEnabled(true);
 	if (TempNum==1){
@@ -669,13 +663,13 @@ void CardBuilder::AddCardImage(){
 }
 void CardBuilder::ResetCardImages(){
 	CardPreview->SetAvailableImages();
-	CardImageSelector->clear();
-	CardImageSelector->setEnabled(true);
+	CardImageSelector->CancellaTutte();
+	CardImageSelector->setEnabled(false);
 	CardPreview->SetCardImage(-1);
 	CardPreview->UpdateAspect();
 }
 void CardBuilder::SelectImage(int index){
-	CardPreview->SetCardImage(CardImageSelector->itemData(index).toInt());
+	CardPreview->SetCardImage(index);
 	CardPreview->UpdateAspect();
 }
 void CardBuilder::AddCardBackground(int index){
@@ -732,9 +726,6 @@ void CardBuilder::SetToughnes(){
 	else CardPreview->SetCardToughness(ToughnesEdit->text().toInt());
 	CardPreview->UpdateAspect();
 }
-void CardBuilder::SetManaSource(){
-	CardPreview->SetManaSource(ManaSourceCheck->isChecked());
-}
 void CardBuilder::SetNoManaCost(){
 	CardPreview->SetHasManaCost(!HasManaCostCheck->isChecked());
 	ManaCostSelector->setEnabled(!HasManaCostCheck->isChecked());
@@ -778,7 +769,6 @@ void CardBuilder::ResetAll(){
 	ResetCardImages();
 	ResetCardBackground();
 	HasManaCostCheck->setChecked(false);
-	ManaSourceCheck->setChecked(false);
 	RemoveFlippedCard();
 	CardPreview->UpdateAspect();
 }
@@ -840,7 +830,6 @@ void CardBuilder::EditingFlipCard(Card* ParentCard){
 void CardBuilder::SetCard(Card* a){
 	CardPreview->operator=(*a);
 	CardPreview->UpdateAspect();
-	ManaSourceCheck->setChecked(CardPreview->GetManaSource());
 	NameEditor->setText(CardPreview->GetCardName());
 	QList<int> TempList=CardPreview->GetCardColor();
 	if (TempList.contains(Constants::CardColor::White)){
@@ -878,10 +867,9 @@ void CardBuilder::SetCard(Card* a){
 	QList<QPixmap> ImageList=CardPreview->GetAvailableImages();
 	CardImageSelector->setEnabled(!ImageList.isEmpty());
 	for (int i=0;i<ImageList.size();i++){
-		CardImageSelector->addItem(
-			QIcon(ImageList.at(i)),
+		CardImageSelector->AggiungiImmagine(
+			ImageList.at(i),
 			tr("Image %1").arg(i+1)
-			,i
 			);
 	}
 	TempList=CardPreview->GetAvailableBackgrounds();

@@ -44,7 +44,7 @@ private:
 	QComboBox* CardRaritySelector;
 	QPushButton* BrowseForImageButton;
 	QPushButton* ResetImagesButton;
-	QComboBox* CardImageSelector;
+	SelettoreImmagini* CardImageSelector;
 	QComboBox* CardAvailableBackgroundsSelector;
 	QPushButton* CardAvailableBackgroundsResetButton;
 	QComboBox* CardBackgroundSelector;
@@ -53,7 +53,6 @@ private:
 	QGroupBox* HasPTGroup;
 	QLineEdit* PowerEdit;
 	QLineEdit* ToughnesEdit;
-	QCheckBox* ManaSourceCheck;
 	QCheckBox* HasManaCostCheck;
 	QPushButton* AddFlippedButton;
 	QPushButton* RemoveFlippedButton;
@@ -91,7 +90,6 @@ private slots:
 	void SetPower();
 	void SetToughnes();
 	void SetHasPT(bool a);
-	void SetManaSource();
 	void SetNoManaCost();
 	void AddFlippedCard();
 	void RemoveFlippedCard();
