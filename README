@@ -1,6 +1,10 @@
-<h1>MagiQ Source Readme</h1>
-<p>This project aims to recreate a digital and rule-aware enviroment to play <strong>Magic: The Gathering</strong>&reg;</p>
-<p>No copyright or patent law is intended. Any submission that will violate the law will be immediately removed.</p>
+MagiQ Source Readme
+===================
+
+This project aims to recreate a digital and rule-aware enviroment to play **Magic: The Gathering**&reg;  
+
+No copyright or patent law is intended. Any submission that will violate the law will be immediately removed.
+
 <table border="1" width="100%">
 	<tr>
 		<th colspan="3">Source Files Decription</th>
@@ -13,12 +17,14 @@
     <tr>
         <td>FrmEnumToString.h<br />FrmEnumToString.cpp</td>
         <td>Test Utility</td>
-        <td>Little utility that transforms enum lists to string lists.<br />Used just during development, will be removed from release.</td>
+        <td>Little utility that transforms enum lists to string lists.  
+        Used just during development, will be removed from release.</td>
     </tr>
     <tr>
         <td>SizeSliders.h<br />SizeSliders.cpp</td>
         <td>Test Utility</td>
-        <td>Little utility that helps with the positioning of the widgets.<br />Used just during development, will be removed from release.</td>
+        <td>Little utility that helps with the positioning of the widgets.  
+        Used just during development, will be removed from release.</td>
     </tr>
     <tr>
         <td>CostantsDefinition.h</td>
@@ -33,22 +39,25 @@
     <tr>
         <td>SelettoreImmagini.h<br />SelettoreImmagini.cpp</td>
         <td>Widget</td>
-        <td>Widget that lets you select an image.<br />
-        Usage: construct the widget specifying as Orient argument the widget layout (orizontal, the default, or vertical).<br />
-        Use the public function AggiungiImmagine to add images specifying, as arguments, the pixmap and the title of the image.<br />
-        The function CancellaTutte will reset the widget to empty.<br />
-        The function ImpostaPosDidascalia can be used to specify whether or not and where to display the image title.<br />
+        <td>Widget that lets you select an image.  
+        Usage: construct the widget specifying as Orient argument the widget layout (orizontal, the default, or vertical).  
+        Use the public function AggiungiImmagine to add images specifying, as arguments, the pixmap and the title of the image.  
+        The function CancellaTutte will reset the widget to empty.  
+        The function ImpostaPosDidascalia can be used to specify whether or not and where to display the image title.  
         The signal IndexChanged is emitted each time an image is selected.
         <br />
         Sorry for the names being in italian but I just recycled this widget from a previous project.</td>
     </tr>
 </table>
-<p>This program is free software: you can redistribute it and/or modify<br />
-    it under the terms of the GNU General Public License as published by<br />
-    the Free Software Foundation, either version 3 of the License, or<br />
-    (at your option) any later version.</p><p>
-    This program is distributed in the hope that it will be useful,<br />
-    but WITHOUT ANY WARRANTY; without even the implied warranty of<br />
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br />
-    GNU General Public License for more details.</p><p>
-    a copy of the GNU General Public License is included in this program.</p>
+
+This program is free software: you can redistribute it and/or modify  
+it under the terms of the GNU General Public License as published by  
+the Free Software Foundation, either version 3 of the License, or  
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,  
+but WITHOUT ANY WARRANTY; without even the implied warranty of  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+GNU General Public License for more details.
+
+a copy of the GNU General Public License is included in this program.
