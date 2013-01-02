@@ -179,7 +179,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="README" />
     <None Include="LICENSE" />
+    <None Include="README.markdown" />
   </ItemGroup>
 </Project>

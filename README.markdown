@@ -7,23 +7,23 @@ No copyright or patent law is intended. Any submission that will violate the law
 
 <table border="1" width="100%">
 	<tr>
-		<th colspan="3">Source Files Decription</th>
+		<th colspan="3" align="left">Source Files Decription</th>
 	</tr>
     <tr>
-        <th>Source File</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th align="left">Source File</th>
+        <th align="left">Type</th>
+        <th align="left">Description</th>
     </tr>
     <tr>
         <td>FrmEnumToString.h<br />FrmEnumToString.cpp</td>
         <td>Test Utility</td>
-        <td>Little utility that transforms enum lists to string lists.  
+        <td>Little utility that transforms enum lists to string lists.
         Used just during development, will be removed from release.</td>
     </tr>
     <tr>
         <td>SizeSliders.h<br />SizeSliders.cpp</td>
         <td>Test Utility</td>
-        <td>Little utility that helps with the positioning of the widgets.  
+        <td>Little utility that helps with the positioning of the widgets.
         Used just during development, will be removed from release.</td>
     </tr>
     <tr>
@@ -50,14 +50,14 @@ No copyright or patent law is intended. Any submission that will violate the law
     </tr>
 </table>
 
-This program is free software: you can redistribute it and/or modify  
-it under the terms of the GNU General Public License as published by  
-the Free Software Foundation, either version 3 of the License, or  
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,  
-but WITHOUT ANY WARRANTY; without even the implied warranty of  
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 a copy of the GNU General Public License is included in this program.

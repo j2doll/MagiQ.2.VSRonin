@@ -260,7 +260,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE" />
-    <None Include="README">
+    <None Include="README.markdown">
       <DeploymentContent>true</DeploymentContent>
     </None>
   </ItemGroup>
