@@ -122,6 +122,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_SelettoreImmagini.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="Deck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Deck.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Deck.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -163,6 +172,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="SelettoreImmagini.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Deck.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -45,6 +45,7 @@ private:
 	QPushButton* BrowseForImageButton;
 	QPushButton* ResetImagesButton;
 	SelettoreImmagini* CardImageSelector;
+	QComboBox* CardImageJump;
 	QComboBox* CardAvailableBackgroundsSelector;
 	QPushButton* CardAvailableBackgroundsResetButton;
 	QComboBox* CardBackgroundSelector;
@@ -98,5 +99,6 @@ private slots:
 	void SetCard(Card* a);
 	void SetFlippedCard(Card* a);
 	void OpenCard();
+	void ImageJump(int index);
 };
 #endif

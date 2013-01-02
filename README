@@ -1,12 +1,7 @@
-<HTML>
-<HEAD>
-<TITLE>MagiQ Source Readme</TITLE>
-</HEAD>
-<BODY>
-<h1>MagiQ</h1>
+<h1>MagiQ Source Readme</h1>
 <p>This project aims to recreate a digital and rule-aware enviroment to play <strong>Magic: The Gathering</strong>&reg;</p>
 <p>No copyright or patent law is intended. Any submission that will violate the law will be immediately removed.</p>
-<table border="1" cellspacing="0" cellpadding="0" width="100%">
+<table border="1" width="100%">
 	<tr>
 		<th colspan="3">Source Files Decription</th>
 	</tr>
@@ -57,5 +52,3 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br />
     GNU General Public License for more details.</p><p>
     a copy of the GNU General Public License is included in this program.</p>
-</BODY>
-</HTML>

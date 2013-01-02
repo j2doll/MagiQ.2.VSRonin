@@ -30,6 +30,57 @@ namespace StyleSheets{
 			"Card #Background{"
 				+QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Colorless])+
 			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandColorless)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandColorless])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandWhite)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandWhite])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandBlue)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandBlue])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandBlack)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandBlack])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandRed)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandRed])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandGreen])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandGold)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandGold])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandWhiteBlue)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandWhiteBlue])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandWhiteBlack)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandWhiteBlack])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandWhiteRed)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandWhiteRed])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandWhiteGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandWhiteGreen])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandBlueBlack)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandBlueBlack])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandBlueRed)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandBlueRed])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandBlueGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandBlueGreen])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandBlackRed)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandBlackRed])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandBlackGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandBlackGreen])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::LandRedGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::LandRedGreen])+
+			"}"
 			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::White)+
 				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::White])+
 			"}"
@@ -44,6 +95,36 @@ namespace StyleSheets{
 			"}"
 			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Green)+
 				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Green])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::WhiteBlue)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::WhiteBlue])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::WhiteBlack)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::WhiteBlack])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::WhiteRed)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::WhiteRed])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::WhiteGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::WhiteGreen])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::BlueBlack)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::BlueBlack])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::BlueRed)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::BlueRed])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::BlueGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::BlueGreen])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::BlackRed)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::BlackRed])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::BlackGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::BlackGreen])+
+			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::RedGreen)+
+				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::RedGreen])+
 			"}"
 			"Card #Rear{"
 				"border-image: url(:/CardImage/Rear.png);"

@@ -63,16 +63,18 @@ CardBuilder::CardBuilder(QWidget* parent)
 	BasicChecksLayout->addWidget(CertifiedCheck);
 	CertifiedCheck->hide();
 
-	QLabel* NameLabel=new QLabel(this);
-	NameLabel->setObjectName("NameLabel");
-	NameLabel->setText(tr("Card Name"));
+	QGroupBox* NameGroup=new QGroupBox(this);
+	NameGroup->setObjectName("NameGroup");
+	NameGroup->setTitle(tr("Card Name"));
 	NameEditor=new QLineEdit(this);
 	NameEditor->setObjectName("NameEditor");
 	connect(NameEditor,SIGNAL(textEdited(QString)),this,SLOT(SetCardName()));
-	QVBoxLayout* NameLayout=new QVBoxLayout;
-	NameLayout->addWidget(NameLabel);
+	QVBoxLayout* NameLayout=new QVBoxLayout(NameGroup);
 	NameLayout->addWidget(NameEditor);
 
+	QGroupBox* ColorCostGroup=new QGroupBox(this);
+	ColorCostGroup->setObjectName("ColorCostGroup");
+	ColorCostGroup->setTitle(tr("Mana Cost & Card Color"));
 	CardColorGroup=new QGroupBox(this);
 	CardColorGroup->setTitle(tr("Card Color"));
 	CardColorGroup->setObjectName("CardColorGroup");
@@ -177,12 +179,16 @@ CardBuilder::CardBuilder(QWidget* parent)
 	ManaCostResetButton->setObjectName("ManaCostResetButton");
 	ManaCostResetButton->setText(tr("Reset Mana Cost"));
 	connect(ManaCostResetButton,SIGNAL(clicked()),this,SLOT(ResetCardCost()));
-	QGridLayout* ManaCostLayout=new QGridLayout;
+	QGridLayout* ManaCostLayout=new QGridLayout(ColorCostGroup);
 	ManaCostLayout->addWidget(CardCostLabel,0,0);
 	ManaCostLayout->addWidget(ManaCostSelector,1,0);
 	ManaCostLayout->addWidget(HasManaCostCheck,0,1);
 	ManaCostLayout->addWidget(ManaCostResetButton,1,1);
+	ManaCostLayout->addWidget(CardColorGroup,2,0,1,2);
 
+	QGroupBox* CardTypeGroup=new QGroupBox(this);
+	CardTypeGroup->setObjectName("CardTypeGroup");
+	CardTypeGroup->setTitle(tr("Card Type"));
 	QLabel* CardTypeLabel=new QLabel(this);
 	CardTypeLabel->setObjectName("CardTypeLabel");
 	CardTypeLabel->setText(tr("Add Type"));
@@ -198,7 +204,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardTypeResetButton->setObjectName("CardTypeResetButton");
 	CardTypeResetButton->setText(tr("Reset Card Type"));
 	connect(CardTypeResetButton,SIGNAL(clicked()),this,SLOT(ResetCardType()));
-	QGridLayout* CardTypeLayout=new QGridLayout;
+	QGridLayout* CardTypeLayout=new QGridLayout(CardTypeGroup);
 	CardTypeLayout->addWidget(CardTypeLabel,0,0);
 	CardTypeLayout->addWidget(CardTypeSelector,1,0);
 	CardTypeLayout->addWidget(CardTypeResetButton,1,1);
@@ -219,10 +225,9 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardSubTypeResetButton->setObjectName("CardSubTypeResetButton");
 	CardSubTypeResetButton->setText(tr("Reset Card Sub-Type"));
 	connect(CardSubTypeResetButton,SIGNAL(clicked()),this,SLOT(ResetCardSubType()));
-	QGridLayout* CardSubTypeLayout=new QGridLayout;
-	CardSubTypeLayout->addWidget(CardSubTypeLabel,0,0);
-	CardSubTypeLayout->addWidget(CardSubTypeSelector,1,0);
-	CardSubTypeLayout->addWidget(CardSubTypeResetButton,1,1);
+	CardTypeLayout->addWidget(CardSubTypeLabel,2,0);
+	CardTypeLayout->addWidget(CardSubTypeSelector,3,0);
+	CardTypeLayout->addWidget(CardSubTypeResetButton,3,1);
 
 	QLabel* CardAvailableEditionsLabel=new QLabel(this);
 	CardAvailableEditionsLabel->setObjectName("CardAvailableEditionsLabel");
@@ -242,11 +247,11 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardAvailableEditionsResetButton->setObjectName("CardAvailableEditionsResetButton");
 	CardAvailableEditionsResetButton->setText(tr("Reset Editions"));
 	connect(CardAvailableEditionsResetButton,SIGNAL(clicked()),this,SLOT(ResetCardEdition()));
-	QGridLayout* CardEditionLayout=new QGridLayout;
-	CardEditionLayout->addWidget(CardAvailableEditionsLabel,0,0);
-	CardEditionLayout->addWidget(CardAvailableEditionsSelector,1,0);
-	CardEditionLayout->addWidget(CardAvailableEditionsResetButton,1,1);
+	
 
+	QGroupBox* EditionRarityGroup=new QGroupBox(this);
+	EditionRarityGroup->setObjectName("EditionRarityGroup");
+	EditionRarityGroup->setTitle(tr("Edition and Rarity"));
 	QLabel* CardEditionLabel=new QLabel(this);
 	CardEditionLabel->setObjectName("CardEditionLabel");
 	CardEditionLabel->setText(tr("Select Preferred Edition"));
@@ -254,9 +259,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardEditionSelector->setObjectName("CardEditionSelector");
 	CardEditionSelector->setEnabled(false);
 	connect(CardEditionSelector,SIGNAL(currentIndexChanged (int)),this,SLOT(SelectEdition(int)));
-	QVBoxLayout* EditionSelectorLayout=new QVBoxLayout;
-	EditionSelectorLayout->addWidget(CardEditionLabel);
-	EditionSelectorLayout->addWidget(CardEditionSelector);
+	
 
 	QLabel* CardRarityLabel=new QLabel(this);
 	CardRarityLabel->setObjectName("CardRarityLabel");
@@ -290,10 +293,18 @@ CardBuilder::CardBuilder(QWidget* parent)
 		Constants::CardRarities::MythicRare
 		);
 	connect(CardRaritySelector,SIGNAL(currentIndexChanged (int)),this,SLOT(SelectRarity(int)));
-	QVBoxLayout* RaritySelectorLayout=new QVBoxLayout;
-	RaritySelectorLayout->addWidget(CardRarityLabel);
-	RaritySelectorLayout->addWidget(CardRaritySelector);
+	QGridLayout* CardEditionLayout=new QGridLayout(EditionRarityGroup);
+	CardEditionLayout->addWidget(CardAvailableEditionsLabel,0,0);
+	CardEditionLayout->addWidget(CardAvailableEditionsSelector,1,0);
+	CardEditionLayout->addWidget(CardAvailableEditionsResetButton,1,1);
+	CardEditionLayout->addWidget(CardEditionLabel,2,0,1,2);
+	CardEditionLayout->addWidget(CardEditionSelector,3,0,1,2);
+	CardEditionLayout->addWidget(CardRarityLabel,4,0,1,2);
+	CardEditionLayout->addWidget(CardRaritySelector,5,0,1,2);
 
+	QGroupBox* ImageGroup=new QGroupBox(this);
+	ImageGroup->setObjectName("ImageGroup");
+	ImageGroup->setTitle(tr("Card Image"));
 	QLabel* CardImageLabel=new QLabel(this);
 	CardImageLabel->setObjectName("CardImageLabel");
 	CardImageLabel->setText(tr("Add Image"));
@@ -306,22 +317,30 @@ CardBuilder::CardBuilder(QWidget* parent)
 	ResetImagesButton->setObjectName("ResetImagesButton");
 	ResetImagesButton->setText(tr("Reset Images"));
 	connect(ResetImagesButton,SIGNAL(clicked()),this,SLOT(ResetCardImages()));
-	QGridLayout* ImageLayout=new QGridLayout;
-	ImageLayout->addWidget(CardImageLabel,0,0);
-	ImageLayout->addWidget(BrowseForImageButton,1,0);
-	ImageLayout->addWidget(ResetImagesButton,1,1);
 
 	QLabel* CardImgLabel=new QLabel(this);
 	CardImgLabel->setObjectName("CardImgLabel");
 	CardImgLabel->setText(tr("Select Preferred Image"));
 	CardImageSelector=new SelettoreImmagini(this);
 	CardImageSelector->setObjectName("CardImageSelector");
+	CardImageSelector->ImpostaPosDidascalia(SelettoreImmagini::Sopra);
 	CardImageSelector->setEnabled(false);
 	connect(CardImageSelector,SIGNAL(IndexChanged(int)),this,SLOT(SelectImage(int)));
-	QVBoxLayout* ImageSelectorLayout=new QVBoxLayout;
-	ImageSelectorLayout->addWidget(CardImgLabel);
-	ImageSelectorLayout->addWidget(CardImageSelector);
-
+	CardImageJump=new QComboBox(this);
+	CardImageJump->setObjectName("CardImageJump");
+	CardImageJump->hide();
+	connect(CardImageJump,SIGNAL(currentIndexChanged(int)),this,SLOT(ImageJump(int)));
+	QGridLayout* ImageLayout=new QGridLayout(ImageGroup);
+	ImageLayout->addWidget(CardImageLabel,0,0);
+	ImageLayout->addWidget(BrowseForImageButton,1,0);
+	ImageLayout->addWidget(ResetImagesButton,1,1);
+	ImageLayout->addWidget(CardImgLabel,2,0,1,2);
+	ImageLayout->addWidget(CardImageJump,3,0,1,2);
+	ImageLayout->addWidget(CardImageSelector,4,0,1,2);
+	
+	QGroupBox* CardBackgroundGroup=new QGroupBox(this);
+	CardBackgroundGroup->setObjectName("CardBackgroundGroup");
+	CardBackgroundGroup->setTitle(tr("Background"));
 	QLabel* CardAvailableBackgroundLabel=new QLabel(this);
 	CardAvailableBackgroundLabel->setObjectName("CardAvailableBackgroundLabel");
 	CardAvailableBackgroundLabel->setText(tr("Add Background"));
@@ -330,7 +349,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardAvailableBackgroundsSelector->setObjectName("CardAvailableBackgroundsSelector");
 	for (int i=0;i<Constants::CardBacksrounds::END;i++){
 		CardAvailableBackgroundsSelector->addItem(
-			//QIcon(QPixmap(Constants::BackgroundImages[i])),
+			QIcon(QPixmap(Constants::BackgroundImages[i])),
 			Constants::BackgroundNames[i],
 			i);
 	}
@@ -340,7 +359,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardAvailableBackgroundsResetButton->setObjectName("CardAvailableBackgroundsResetButton");
 	CardAvailableBackgroundsResetButton->setText(tr("Reset Backgrounds"));
 	connect(CardAvailableBackgroundsResetButton,SIGNAL(clicked()),this,SLOT(ResetCardBackground()));
-	QGridLayout* CardBackgroundLayout=new QGridLayout;
+	QGridLayout* CardBackgroundLayout=new QGridLayout(CardBackgroundGroup);
 	CardBackgroundLayout->addWidget(CardAvailableBackgroundLabel,0,0);
 	CardBackgroundLayout->addWidget(CardAvailableBackgroundsSelector,1,0);
 	CardBackgroundLayout->addWidget(CardAvailableBackgroundsResetButton,1,1);
@@ -352,9 +371,8 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardBackgroundSelector->setObjectName("CardBackgroundSelector");
 	CardBackgroundSelector->setEnabled(false);
 	connect(CardBackgroundSelector,SIGNAL(currentIndexChanged (int)),this,SLOT(SelectBackground(int)));
-	QVBoxLayout* BackgroundSelectorLayout=new QVBoxLayout;
-	BackgroundSelectorLayout->addWidget(CardBackgroundLabel);
-	BackgroundSelectorLayout->addWidget(CardBackgroundSelector);
+	CardBackgroundLayout->addWidget(CardBackgroundLabel,2,0,1,2);
+	CardBackgroundLayout->addWidget(CardBackgroundSelector,3,0,1,2);
 
 	QLabel* FlavorTextLabel=new QLabel(this);
 	FlavorTextLabel->setObjectName("FlavorTextLabel");
@@ -427,22 +445,15 @@ CardBuilder::CardBuilder(QWidget* parent)
 	MainLayout->addLayout(CardLayout);
 	QVBoxLayout* RightLayout=new QVBoxLayout;
 	RightLayout->addLayout(BasicChecksLayout);
-	RightLayout->addLayout(NameLayout);
-	RightLayout->addLayout(ManaCostLayout);
-	RightLayout->addWidget(CardColorGroup);
-	RightLayout->addLayout(CardTypeLayout);
-	RightLayout->addLayout(CardSubTypeLayout);
-	RightLayout->addLayout(CardEditionLayout);
-	RightLayout->addLayout(EditionSelectorLayout);
-	RightLayout->addLayout(RaritySelectorLayout);
+	RightLayout->addWidget(NameGroup);
+	RightLayout->addWidget(ColorCostGroup);
+	RightLayout->addWidget(CardTypeGroup);
+	RightLayout->addWidget(EditionRarityGroup);
 	QVBoxLayout* RightLayout2=new QVBoxLayout;
-	RightLayout2->addLayout(ImageLayout);
-	RightLayout2->addLayout(ImageSelectorLayout);
-	RightLayout2->addLayout(CardBackgroundLayout);
-	RightLayout2->addLayout(BackgroundSelectorLayout);
+	RightLayout2->addWidget(ImageGroup);
+	RightLayout2->addWidget(CardBackgroundGroup);
 	RightLayout2->addLayout(FlavorTextLayout);
 	RightLayout2->addWidget(HasPTGroup);
-		//RightLayout->addLayout(RightLayout2);
 	MainLayout->addLayout(RightLayout);
 	MainLayout->addLayout(RightLayout2);
 	QVBoxLayout* WidgetLayout=new QVBoxLayout(this);
@@ -645,19 +656,26 @@ void CardBuilder::SelectEdition(int index){
 	CardPreview->UpdateAspect();
 }
 void CardBuilder::AddCardImage(){
-	QString fileName = QFileDialog::getOpenFileName(this,
-		tr("Open Image"), "/Pics", tr("Image Files (*.png *.jpg *.bmp)"));
-	if(fileName.isNull()) return;
-	QPixmap TempPix(fileName);
-	CardPreview->AddAvailableImages(TempPix);
-	int TempNum = CardPreview->GetAvailableImages().size();
-	CardImageSelector->AggiungiImmagine(
-		TempPix,
-		tr("Image %1").arg(TempNum)
-		);
-	CardImageSelector->setEnabled(true);
-	if (TempNum==1){
-		CardPreview->SetCardImage(0);
+	QStringList fileNames = QFileDialog::getOpenFileNames(this,
+		tr("Open Image"), "/Pics/", tr("Image Files (*.png *.jpg *.bmp)"));
+	if (fileNames.isEmpty()) return;
+	foreach(QString fileName,fileNames){
+		if(fileName.isNull()) continue;
+		QPixmap TempPix(fileName);
+		CardPreview->AddAvailableImages(TempPix);
+		int TempNum = CardPreview->GetAvailableImages().size();
+		QString TempString(fileName.right(fileName.size()-fileName.lastIndexOf(QRegExp("[\\\\/]"))-1));
+		TempString=TempString.left(TempString.lastIndexOf('.'));
+		CardImageSelector->AggiungiImmagine(
+			TempPix,
+			TempString
+			);
+		CardImageSelector->setEnabled(true);
+		CardImageJump->addItem(TempPix,TempString,TempNum-1);
+		if(TempNum>5) CardImageJump->show();
+		if (TempNum==1){
+			CardPreview->SetCardImage(0);
+		}
 	}
 	CardPreview->UpdateAspect();
 }
@@ -665,12 +683,19 @@ void CardBuilder::ResetCardImages(){
 	CardPreview->SetAvailableImages();
 	CardImageSelector->CancellaTutte();
 	CardImageSelector->setEnabled(false);
+	CardImageJump->clear();
+	CardImageJump->hide();
 	CardPreview->SetCardImage(-1);
 	CardPreview->UpdateAspect();
 }
 void CardBuilder::SelectImage(int index){
+	CardImageJump->setCurrentIndex(index);
+	//CardImageJump->setCurrentIndex(CardImageJump->findData(index)); //Safer but Slower
 	CardPreview->SetCardImage(index);
 	CardPreview->UpdateAspect();
+}
+void CardBuilder::ImageJump(int index){
+	CardImageSelector->SetIndex(CardImageJump->itemData(index).toInt());
 }
 void CardBuilder::AddCardBackground(int index){
 	if (index==0) return;
@@ -678,7 +703,7 @@ void CardBuilder::AddCardBackground(int index){
 	CardPreview->AddAvailableBackground(CardAvailableBackgroundsSelector->itemData(index).toInt());
 	CardAvailableBackgroundsSelector->setCurrentIndex(0);
 	CardBackgroundSelector->addItem(
-		//QIcon(QPixmap(Constants::BackgroundImages[CardAvailableEditionsSelector->itemData(index).toInt()])),
+		QIcon(QPixmap(Constants::BackgroundImages[CardAvailableBackgroundsSelector->itemData(index).toInt()])),
 		Constants::BackgroundNames[CardAvailableBackgroundsSelector->itemData(index).toInt()],
 		CardAvailableBackgroundsSelector->itemData(index).toInt());
 	CardBackgroundSelector->setEnabled(true);
@@ -781,7 +806,7 @@ void CardBuilder::closeEvent(QCloseEvent *event){
 }
 void CardBuilder::OpenCard(){
 	QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),
-		"/Cards",
+		"/Cards/",
 		tr("MagiQ Card (*.mqc)"));
 	if (fileName.isEmpty()) return;
 	QFile file(fileName);
@@ -876,7 +901,7 @@ void CardBuilder::SetCard(Card* a){
 	CardBackgroundSelector->setEnabled(!TempList.isEmpty());
 	for (QList<int>::const_iterator i=TempList.begin();i!=TempList.end();i++){
 		CardBackgroundSelector->addItem(
-			//QIcon(QPixmap(Constants::BackgroundImages[*i])),
+			QIcon(QPixmap(Constants::BackgroundImages[*i])),
 			Constants::BackgroundNames[*i],
 			*i);
 	}

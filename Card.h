@@ -68,6 +68,7 @@ private:
 	void TestStuff();
 public:
 	int GetConvertedManaCost() const;
+	Card(const Card& a,QWidget* parent=0);
 	Card& operator=(const Card& a);
 	enum {StarPowerToughness=-2147483648};
 	enum{AllreadyFlipped=-1,NoFlip=0,HasFlip=1};

@@ -417,6 +417,46 @@ Card& Card::operator=(const Card& a){
 	UpdateAspect();
 	return *this;
 }
+Card::Card(const Card& a,QWidget* parent):QWidget(parent)
+	,CardEdition(0)
+	,CardPower(0)
+	,CardToughness(0)
+	,CardImage(0)
+	,PTBox(":/CardImage/PTBox.png")
+	,PTMask(":/CardImage/PTBoxMask.png")
+	,Covered(false)
+	,HasPT(false)
+	,Certified(false)
+	,CardName("")
+	,HasFlipped(NoFlip)
+	,FlippedCard(NULL)
+	,HasManaCost(true)
+{
+	CardName=a.CardName;
+	CardColor=a.CardColor;
+	CardCost=a.CardCost;
+	CardCostModifiers=a.CardCostModifiers;
+	CardType=a.CardType;
+	CardSubType=a.CardSubType;
+	AvailableEditions=a.AvailableEditions;
+	AvailableImages=a.AvailableImages;
+	AvailableBackgrounds=a.AvailableBackgrounds;
+	CardEdition=a.CardEdition;
+	CardBackground=a.CardBackground;
+	CardFlavorText=a.CardFlavorText;
+	HasPT=a.HasPT;
+	CardPower=a.CardPower;
+	CardPowerModifiers=a.CardPowerModifiers;
+	CardToughness=a.CardToughness;
+	CardToughnessModifiers=a.CardToughnessModifiers;
+	CardRarity=a.CardRarity;
+	CardImage=a.CardImage;
+	Certified=a.Certified;
+	HasManaCost=a.HasManaCost;
+	HasFlipped=a.HasFlipped;
+	FlippedCard=a.FlippedCard;
+	UpdateAspect();
+}
 int Card::GetConvertedManaCost() const{
 	int Result=0;
 	for (int i=0;i<Constants::ManaCosts::END;i++){
