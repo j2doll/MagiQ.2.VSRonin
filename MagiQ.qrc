@@ -90,7 +90,6 @@
         <file alias="BRMana.png">Resources/Effects/BRMana.png</file>
         <file alias="CBMana.png">Resources/Effects/CBMana.png</file>
         <file alias="CGMana.png">Resources/Effects/CGMana.png</file>
-        <file alias="CMana.png">Resources/Effects/CMana.png</file>
         <file alias="CRMana.png">Resources/Effects/CRMana.png</file>
         <file alias="CUMana.png">Resources/Effects/CUMana.png</file>
         <file alias="CWMana.png">Resources/Effects/CWMana.png</file>
@@ -107,5 +106,15 @@
         <file alias="WMana.png">Resources/Effects/WMana.png</file>
         <file alias="WRMana.png">Resources/Effects/WRMana.png</file>
         <file alias="WUMana.png">Resources/Effects/WUMana.png</file>
+        <file alias="TapBig.png">Resources/Effects/TapBig.png</file>
+        <file alias="CMana0.png">Resources/Effects/CMana0.png</file>
+        <file alias="CMana1.png">Resources/Effects/CMana1.png</file>
+        <file alias="CMana2.png">Resources/Effects/CMana2.png</file>
+        <file alias="CMana3.png">Resources/Effects/CMana3.png</file>
+        <file alias="CMana4.png">Resources/Effects/CMana4.png</file>
+        <file alias="CMana5.png">Resources/Effects/CMana5.png</file>
+        <file alias="CMana6.png">Resources/Effects/CMana6.png</file>
+        <file alias="CMana7.png">Resources/Effects/CMana7.png</file>
+        <file alias="CMana8.png">Resources/Effects/CMana8.png</file>
     </qresource>
 </RCC>

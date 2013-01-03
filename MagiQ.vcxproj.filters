@@ -39,15 +39,24 @@
     <Filter Include="Source Files\Test Files">
       <UniqueIdentifier>{9c2f5f21-5346-40b7-b1ef-2a94e3df0782}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Card">
+      <UniqueIdentifier>{93e4d24e-81fe-4e23-bc3c-44cca6416655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Card">
+      <UniqueIdentifier>{fd2925fc-4f6b-4bc2-8191-5d287980ca55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility Widgets">
+      <UniqueIdentifier>{88f0666c-b0f9-43ea-aef9-4b870560323e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility Widgets">
+      <UniqueIdentifier>{07a19705-7ba8-4ea5-a6b5-2eee320ac14b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CampoDiGioco.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Card.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_Card.cpp">
@@ -64,9 +73,6 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_MagiQ.cpp">
       <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ManaCostLabel.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_ManaCostLabel.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -92,26 +98,17 @@
     <ClCompile Include="GeneratedFiles\Release\moc_FromEnumToString.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="PowerToughnesLabel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_PowerToughnesLabel.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_PowerToughnesLabel.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="CardBuilder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_CardBuilder.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_CardBuilder.cpp">
       <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="SelettoreImmagini.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_SelettoreImmagini.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -143,20 +140,53 @@
     <ClCompile Include="MagiQPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Effect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstantProportionLayout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EffectsBuilder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_EffectsBuilder.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_EffectsBuilder.cpp">
       <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Card.cpp">
+      <Filter>Source Files\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="CardBuilder.cpp">
+      <Filter>Source Files\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantProportionLayout.cpp">
+      <Filter>Source Files\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Source Files\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectsBuilder.cpp">
+      <Filter>Source Files\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="ManaCostLabel.cpp">
+      <Filter>Source Files\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerToughnesLabel.cpp">
+      <Filter>Source Files\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="SelettoreImmagini.cpp">
+      <Filter>Source Files\Utility Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SmileButton.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SmileButton.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Smiles Selector.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Smiles Selector.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Smiles Selector.cpp">
+      <Filter>Source Files\Utility Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="SmileButton.cpp">
+      <Filter>Source Files\Utility Widgets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,24 +197,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConstantProportionLayout.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Card</Filter>
     </ClInclude>
     <ClInclude Include="EffectsConstants.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Card</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Card.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="CampoDiGioco.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="MagiQ.qrc">
       <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="ManaCostLabel.h">
-      <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="SizeSliders.h">
       <Filter>Header Files\Test Files</Filter>
@@ -192,26 +216,38 @@
     <CustomBuild Include="FromEnumToString.h">
       <Filter>Header Files\Test Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="PowerToughnesLabel.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="CardBuilder.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="SelettoreImmagini.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="Deck.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Effect.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="MagiQPlayer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="Card.h">
+      <Filter>Header Files\Card</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CardBuilder.h">
+      <Filter>Header Files\Card</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Effect.h">
+      <Filter>Header Files\Card</Filter>
+    </CustomBuild>
     <CustomBuild Include="EffectsBuilder.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Card</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ManaCostLabel.h">
+      <Filter>Header Files\Card</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PowerToughnesLabel.h">
+      <Filter>Header Files\Card</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SelettoreImmagini.h">
+      <Filter>Header Files\Utility Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SmileButton.h">
+      <Filter>Header Files\Utility Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Smiles Selector.h">
+      <Filter>Header Files\Utility Widgets</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

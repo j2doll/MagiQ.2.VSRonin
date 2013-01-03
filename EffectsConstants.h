@@ -107,4 +107,40 @@ namespace EffectsConstants{
 		,QObject::tr("Add %1 to your mana pool").arg("<img src=\":/Effects/GMana.png\" >")
 	};
 }
+namespace Symbols{
+	const int Num_Symbols= 31; 
+	const QString symbols_paths[Num_Symbols]={
+		":/Effects/TapSymbol.png",
+		":/Effects/CMana0.png",
+		":/Effects/CMana1.png",
+		":/Effects/CMana2.png",
+		":/Effects/CMana3.png",
+		":/Effects/CMana4.png",
+		":/Effects/CMana5.png",
+		":/Effects/CMana6.png",
+		":/Effects/CMana7.png",
+		":/Effects/CMana8.png",
+		":/Effects/WMana.png",
+		":/Effects/UMana.png",
+		":/Effects/BMana.png",
+		":/Effects/RMana.png",
+		":/Effects/GMana.png",
+		":/Effects/WUMana.png",
+		":/Effects/WBMana.png",
+		":/Effects/WRMana.png",
+		":/Effects/WGMana.png",
+		":/Effects/UBMana.png",
+		":/Effects/URMana.png",
+		":/Effects/UGMana.png",
+		":/Effects/BRMana.png",
+		":/Effects/BGMana.png",
+		":/Effects/RGMana.png",
+		":/Effects/SnowMana.png",
+		":/Effects/CWMana.png",
+		":/Effects/CUMana.png",
+		":/Effects/CBMana.png",
+		":/Effects/CRMana.png",
+		":/Effects/CGMana.png",
+	};
+}
 #endif

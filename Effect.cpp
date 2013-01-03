@@ -37,12 +37,14 @@ void Effect::TestStuff(){
 }
 void Effect::UpdateAspect(){
 	if (HiddenEffect) hide();
+	else show();
 	if (EffectType!=EffectsConstants::EffectTypes::ActivatedEffect) EffectButton->setFlat(true);
-	QString EffectString(FromCostToString());
+	/*QString EffectString(FromCostToString());
 	if (!EffectString.isEmpty()) EffectString.append(": ");
 	if (EffectBody>=0 && EffectBody<EffectsConstants::Effects::END)
 		EffectString.append(EffectsConstants::EffectStrings[EffectBody]);
-	EffectLabel->setText(EffectString);
+	EffectLabel->setText(EffectString);*/
+	EffectLabel->setText(EffectText);
 	setStyleSheet(StyleSheets::EffectCSS);
 }
 void Effect::SetEffectCost(){

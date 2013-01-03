@@ -18,16 +18,21 @@ private:
 	bool ManaEffect;
 	bool DoesntStack;
 	bool HiddenEffect;
+	QString EffectName;
 	QMap<int,int> EffectCost;
 	QMap<int,int> Targets;
 	QList<int> Triggers;
 	int EffectBody;
+	QString EffectText;
 // Game Properties
 	Card* AttachedCard;
 // Functions
 	QString FromCostToString();
 	void TestStuff();
 public:
+	void SetEffectText(const QString& a){EffectText=a;}
+	const QString& GetEffectText() const {return EffectText;}
+	const QString& GetEffectName() const {return EffectName;}
 	const QList<int>& GetTriggers() const {return Triggers;}
 	void SetTriggers(const QList<int>& a){Triggers.clear(); Triggers=a;}
 	void SetTriggers(){Triggers.clear();}
@@ -45,7 +50,6 @@ public:
 	bool GetDoesntStack() const {return DoesntStack;}
 	void SetHiddenEffect(bool a){HiddenEffect=a;}
 	bool GetHiddenEffect() const {return HiddenEffect;}
-	void UpdateAspect();
 	Effect(QWidget* parent=0);
 	void SetEffectType(int a){if (a>=EffectsConstants::EffectTypes::PassiveEffect && a<=EffectsConstants::EffectTypes::OnResolutionEffect) EffectType=a;}
 	const QMap<int,int>& GetEffectCost() const {return EffectCost;}
@@ -57,6 +61,8 @@ public:
 	void SetAttachedCard(Card* a){AttachedCard=a;}
 	const Card* GetAttachedCard() const {return AttachedCard;}
 public slots:
+	void SetEffectName(const QString& a){EffectName=a;}
+	void UpdateAspect();
 	void Activate();
 	void Resolve();
 	void ManaPayed();

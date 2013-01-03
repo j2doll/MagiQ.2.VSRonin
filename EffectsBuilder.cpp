@@ -9,6 +9,9 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include "Effect.h"
+#include "Smiles Selector.h"
+#include <QLineEdit>
+#include <QTextEdit>
 EffectsBuilder::EffectsBuilder(QWidget* parent)
 	:QWidget(parent)
 {
@@ -22,6 +25,36 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	EffectPreview=new Effect(this);
 	EffectPreview->setObjectName("EffectPreview");
 	EffectPreviewlayout->addWidget(EffectPreview);
+
+	QGroupBox* NameTextGroup=new QGroupBox(this);
+	NameTextGroup->setObjectName("NameTextGroup");
+	NameTextGroup->setTitle(tr("Name and Text"));
+	QGridLayout* NameTextLayout=new QGridLayout(NameTextGroup);
+	QLabel* EffectNameLabel=new QLabel(this);
+	EffectNameLabel->setObjectName("EffectNameLabel");
+	EffectNameLabel->setText(tr("Effect Name"));
+	NameTextLayout->addWidget(EffectNameLabel,0,0,1,2);
+	EffectNameEdit=new QLineEdit(this);
+	EffectNameEdit->setObjectName("EffectNameEdit");
+	connect(EffectNameEdit,SIGNAL(textEdited(QString)),EffectPreview,SLOT(SetEffectName(QString)));
+	NameTextLayout->addWidget(EffectNameEdit,1,0,1,2);
+	QLabel* EffectTextLabel=new QLabel(this);
+	EffectTextLabel->setObjectName("EffectTextLabel");
+	EffectTextLabel->setText(tr("Effect Text"));
+	NameTextLayout->addWidget(EffectTextLabel,2,0);
+	SymbolsMenuButton=new QPushButton(this);
+	SymbolsMenuButton->setObjectName("SymbolsMenuButton");
+	SymbolsMenuButton->setIcon(QIcon(QPixmap(":/Effects/TapBig.png")));
+	SymbolsMenuButton->setToolTip(tr("Insert Symbol"));
+	NameTextLayout->addWidget(SymbolsMenuButton,2,1);
+	SymbolsSelector=new SmilesSelector(this);
+	SymbolsSelector->setObjectName("SymbolsSelector");
+	connect(SymbolsMenuButton,SIGNAL(clicked()),SymbolsSelector,SLOT(show_toggle()));
+	connect(SymbolsSelector,SIGNAL(selected(int)),this,SLOT(AddSymbol(int)));
+	EffectTextEditor=new QTextEdit(this);
+	EffectTextEditor->setObjectName("EffectTextEditor");
+	connect(EffectTextEditor,SIGNAL(textChanged()),this,SLOT(SetEffectText()));
+	NameTextLayout->addWidget(EffectTextEditor,3,0,1,2);
 
 	QGroupBox* EffectTypeGroup=new QGroupBox(this);
 	QGridLayout* EffectTypelayout=new QGridLayout(EffectTypeGroup);
@@ -114,12 +147,14 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 
 	QVBoxLayout* MainLayout=new QVBoxLayout(this);
 	MainLayout->addWidget(EffectPreviewGroup);
+	MainLayout->addWidget(NameTextGroup);
 	MainLayout->addWidget(EffectTypeGroup);
 	MainLayout->addWidget(CostTragetBox);
 	MainLayout->addWidget(CheckBoxesGroup);
 }
 void EffectsBuilder::resizeEvent(QResizeEvent* event){
 	Background->setGeometry(0,0,width(),height());
+	SymbolsSelector->setGeometry(51*width()/333,18*height()/513,250,130); //FIXME
 }
 void EffectsBuilder::SetEffectType(int index){
 	if (EffectTypeCombo->itemData(index).toInt()==EffectsConstants::EffectTypes::TriggeredEffect){
@@ -165,4 +200,12 @@ void EffectsBuilder::AddCost(int index){
 	EffectPreview->AddEffectCost(AddCostCombo->itemData(index).toInt(),1);
 	EffectPreview->UpdateAspect();
 	AddCostCombo->setCurrentIndex(0);
+}
+void EffectsBuilder::SetEffectText(){
+	EffectPreview->SetEffectText(EffectTextEditor->toHtml());
+	EffectPreview->UpdateAspect();
+}
+void EffectsBuilder::AddSymbol(int index){
+	if (index<0 || index>=Symbols::Num_Symbols) return;
+	EffectTextEditor->insertHtml(QString("<img src=\"%1\" height=\"13\" />").arg(Symbols::symbols_paths[index]));
 }

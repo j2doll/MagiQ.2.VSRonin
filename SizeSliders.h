@@ -18,13 +18,16 @@ private:
 	QLabel* HeightLabel;
 	QLabel* HorPosLabel;
 	QLabel* VerPosLabel;
+	QWidget* AttachedWidget;
 	void UpdateSliders() const;
 private slots:
 	void WidChange(int a){wid=a; emit SizeChanged(QSize(wid,hei)); emit GeometryChanged(posx,posy,wid,hei);}
 	void HeiChange(int a){hei=a; emit SizeChanged(QSize(wid,hei)); emit GeometryChanged(posx,posy,wid,hei);}
 	void PosXChange(int a){posx=a; emit PositionChanged(QPoint(posx,posy)); emit GeometryChanged(posx,posy,wid,hei);}
 	void PosYChange(int a){posy=a; emit PositionChanged(QPoint(posx,posy)); emit GeometryChanged(posx,posy,wid,hei);}
+	void EditAttachedWidget();
 public:
+	void AttachToWidget(QWidget* a);
 	SizeSliders(QWidget* parent=0);
 	void SetOSize(const QSize& a){wid=a.width(); hei=a.height(); UpdateSliders();}
 	void SetOSize(int w, int h){wid=w; hei=h; UpdateSliders();}

@@ -4,6 +4,7 @@
 #include <QGridLayout>
 SizeSliders::SizeSliders(QWidget* parent)
 	:QWidget(parent)
+	,AttachedWidget(NULL)
 {
 	QGridLayout* MainLayout=new QGridLayout(this);
 	WidthLabel=new QLabel(this);
@@ -45,10 +46,21 @@ SizeSliders::SizeSliders(QWidget* parent)
 	VerPosSlider->setObjectName("HorPosSlider");
 	connect(VerPosSlider,SIGNAL(valueChanged(int)),this,SLOT(PosYChange(int)));
 	MainLayout->addWidget(VerPosSlider,3,1);
+	connect(this,SIGNAL(GeometryChanged(int,int,int,int)),this,SLOT(EditAttachedWidget()));
 }
 void SizeSliders::UpdateSliders() const{
 	WidthSlider->setValue(wid);
 	HeightSlider->setValue(hei);
 	HorPosSlider->setValue(posx);
 	VerPosSlider->setValue(posy);
+}
+void SizeSliders::AttachToWidget(QWidget* a){
+	AttachedWidget=a;
+	HorPosSlider->setValue(a->pos().x());
+	VerPosSlider->setValue(a->pos().y());
+	WidthSlider->setValue(a->width());
+	HeightSlider->setValue(a->height());
+}
+void SizeSliders::EditAttachedWidget(){
+	if (AttachedWidget) AttachedWidget->setGeometry(posx,posy,wid,hei);
 }
