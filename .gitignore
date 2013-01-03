@@ -1,5 +1,6 @@
 #ignore thumbnails created by windows
 Thumbs.db
+photothumb.db
 [Dd]esktop.ini
 #Ignore files build by Visual Studio
 *.obj

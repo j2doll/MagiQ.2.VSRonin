@@ -1,6 +1,7 @@
 #ifndef STYLESHEETS_H
 #define STYLESHEETS_H
 #include "CostantsDefinition.h"
+#include "EffectsConstants.h"
 namespace StyleSheets{
 	const QString CardCSS(
 	//PTLabel
@@ -96,6 +97,9 @@ namespace StyleSheets{
 			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Green)+
 				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Green])+
 			"}"
+			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::Gold)+
+			QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::Gold])+
+			"}"
 			+QString("Card[CardBackground=\"%1\"] #Background{").arg(Constants::CardBacksrounds::WhiteBlue)+
 				QString("border-image: url(%1);").arg(Constants::BackgroundImages[Constants::CardBacksrounds::WhiteBlue])+
 			"}"
@@ -129,13 +133,6 @@ namespace StyleSheets{
 			"Card #Rear{"
 				"border-image: url(:/CardImage/Rear.png);"
 			"}"
-		//PT Box
-			+QString("Card[CardBackground=\"%1\"] #PTLabel{").arg(Constants::CardBacksrounds::Colorless)+
-				"background-color: rgb(222, 222, 222);"
-			"}"
-			+QString("Card[CardBackground=\"%1\"] #PTLabel{").arg(Constants::CardBacksrounds::Green)+
-				"background-color: rgb(155, 211, 174);"
-			"}"
 		//Editions
 			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::Common)+ 
 				"border-image: url(:/Editions/CommonBackground.png);"
@@ -146,6 +143,33 @@ namespace StyleSheets{
 			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::Rare)+
 				"border-image: url(:/Editions/RareBackground.png);"
 			"}"
+			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::MythicRare)+
+				"border-image: url(:/Editions/MythicRareBackground.png);"
+			"}"
+			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::Timeshifted)+
+				"border-image: url(:/Editions/TimeshiftedBackground.png);"
+			"}"
 		);
+		const QString EffectCSS(
+			"Effect #EffectButton{"
+				"background-color: rgba(0,0,0,0);"
+				"border: none;"
+			"}"
+			"Effect #EffectButton:pressed{"
+				"background-color: rgba(0,0,0,0);"
+				"border: none;"
+			"}"
+			+QString("Effect[EffectType=\"%1\"] #EffectButton{").arg(EffectsConstants::EffectTypes::ActivatedEffect)+
+				"border: 1px solid #444;"
+				"border-radius: 6px;"
+				"background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+					"stop: 0 rgba(180,180,180,170), stop: 1 rgba(230,230,230,170));"
+			"}"
+			+QString("Effect[EffectType=\"%1\"] #EffectButton:pressed{").arg(EffectsConstants::EffectTypes::ActivatedEffect)+
+				"background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+					"stop: 0 rgba(61,115,136,170), stop: 1 rgba(109,207,246,170));"	
+				"background-color: rgba(109,207,246,170);"
+			"}"
+			);
 }
 #endif

@@ -43,10 +43,10 @@ public:
 	void SetCanPlayMana(bool a){CanPlayMana=a;}
 	bool GetCanPlayMana() const {return CanPlayMana;}
 
-	bool RandomOrder(const Card*& a,const Card*& b) const;
-	bool NameOrder(const Card*& a,const Card*& b) const;
-	bool ManaCostOrder(const Card*& a,const Card*& b) const;
-	bool TypeOrder(const Card*& a,const Card*& b) const;
-	bool ColorOrder(const Card*& a,const Card*& b) const;
-}
+	static bool RandomOrder(Card* a, Card* b);
+	static bool NameOrder( Card* a,Card* b);
+	static bool ManaCostOrder( Card* a, Card* b);
+	static bool TypeOrder( Card* a, Card* b);
+	static bool ColorOrder( Card* a, Card* b);
+};
 #endif

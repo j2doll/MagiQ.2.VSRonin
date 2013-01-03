@@ -2,8 +2,6 @@
     <qresource prefix="/CardImage">
         <file alias="DefaultImage.png">Resources/DefaultImage.png</file>
         <file alias="Rear.png">Resources/Card/Rear.png</file>
-        <file alias="PTBox.png">Resources/Card/PTBox.png</file>
-        <file alias="PTBoxMask.png">Resources/Card/PTBoxMask.png</file>
         <file alias="BBase.png">Resources/Card/BBase.png</file>
         <file alias="BGBase.png">Resources/Card/BGBase.png</file>
         <file alias="BRBase.png">Resources/Card/BRBase.png</file>
@@ -84,5 +82,30 @@
         <file alias="RBox.png">Resources/PTBoxes/RBox.png</file>
         <file alias="UBox.png">Resources/PTBoxes/UBox.png</file>
         <file alias="WBox.png">Resources/PTBoxes/WBox.png</file>
+    </qresource>
+    <qresource prefix="/Effects">
+        <file alias="TapSymbol.png">Resources/Effects/TapSymbol.png</file>
+        <file alias="BGMana.png">Resources/Effects/BGMana.png</file>
+        <file alias="BMana.png">Resources/Effects/BMana.png</file>
+        <file alias="BRMana.png">Resources/Effects/BRMana.png</file>
+        <file alias="CBMana.png">Resources/Effects/CBMana.png</file>
+        <file alias="CGMana.png">Resources/Effects/CGMana.png</file>
+        <file alias="CMana.png">Resources/Effects/CMana.png</file>
+        <file alias="CRMana.png">Resources/Effects/CRMana.png</file>
+        <file alias="CUMana.png">Resources/Effects/CUMana.png</file>
+        <file alias="CWMana.png">Resources/Effects/CWMana.png</file>
+        <file alias="GMana.png">Resources/Effects/GMana.png</file>
+        <file alias="RGMana.png">Resources/Effects/RGMana.png</file>
+        <file alias="RMana.png">Resources/Effects/RMana.png</file>
+        <file alias="SnowMana.png">Resources/Effects/SnowMana.png</file>
+        <file alias="UBMana.png">Resources/Effects/UBMana.png</file>
+        <file alias="UGMana.png">Resources/Effects/UGMana.png</file>
+        <file alias="UMana.png">Resources/Effects/UMana.png</file>
+        <file alias="URMana.png">Resources/Effects/URMana.png</file>
+        <file alias="WBMana.png">Resources/Effects/WBMana.png</file>
+        <file alias="WGMana.png">Resources/Effects/WGMana.png</file>
+        <file alias="WMana.png">Resources/Effects/WMana.png</file>
+        <file alias="WRMana.png">Resources/Effects/WRMana.png</file>
+        <file alias="WUMana.png">Resources/Effects/WUMana.png</file>
     </qresource>
 </RCC>

@@ -12,6 +12,7 @@ class QLabel;
 class QScrollArea;
 class QPushButton;
 class PowerToughnesLabel;
+class MagiQPlayer;
 class Card : public QWidget{
 	Q_OBJECT
 	Q_PROPERTY(int CardRarity READ GetCardRarity)
@@ -58,15 +59,20 @@ private:
 	int HasFlipped;
 	Card* FlippedCard;
 // Game Properties
+	MagiQPlayer* Owner;
+	MagiQPlayer* Controller;
 	bool Covered;
 	bool Tapped;
 	QMap<int,int> Counters;
 
-
+// Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
-	void TestStuff();
 public:
+	MagiQPlayer* GetOwner() const{return Owner;}
+	MagiQPlayer* GetController() const{return Controller;}
+	void SetOwner(MagiQPlayer* a){Owner=a;}
+	void SetController(MagiQPlayer* a){Controller=a;}
 	int GetConvertedManaCost() const;
 	Card(const Card& a,QWidget* parent=0);
 	Card& operator=(const Card& a);

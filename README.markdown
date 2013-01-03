@@ -17,14 +17,12 @@ No copyright or patent law is intended. Any submission that will violate the law
     <tr>
         <td>FrmEnumToString.h<br />FrmEnumToString.cpp</td>
         <td>Test Utility</td>
-        <td>Little utility that transforms enum lists to string lists.
-        Used just during development, will be removed from release.</td>
+        <td>Little utility that transforms enum lists to string lists.<br />Used just during development, will be removed from release.</td>
     </tr>
     <tr>
         <td>SizeSliders.h<br />SizeSliders.cpp</td>
         <td>Test Utility</td>
-        <td>Little utility that helps with the positioning of the widgets.
-        Used just during development, will be removed from release.</td>
+        <td>Little utility that helps with the positioning of the widgets.<br />Used just during development, will be removed from release.</td>
     </tr>
     <tr>
         <td>CostantsDefinition.h</td>
@@ -40,12 +38,11 @@ No copyright or patent law is intended. Any submission that will violate the law
         <td>SelettoreImmagini.h<br />SelettoreImmagini.cpp</td>
         <td>Widget</td>
         <td>Widget that lets you select an image.  
-        Usage: construct the widget specifying as Orient argument the widget layout (orizontal, the default, or vertical).  
-        Use the public function AggiungiImmagine to add images specifying, as arguments, the pixmap and the title of the image.  
-        The function CancellaTutte will reset the widget to empty.  
-        The function ImpostaPosDidascalia can be used to specify whether or not and where to display the image title.  
-        The signal IndexChanged is emitted each time an image is selected.
-        <br />
+        Usage: construct the widget specifying as Orient argument the widget layout (orizontal, the default, or vertical).<br />
+        Use the public function AggiungiImmagine to add images specifying, as arguments, the pixmap and the title of the image.<br />
+        The function CancellaTutte will reset the widget to empty.<br />
+        The function ImpostaPosDidascalia can be used to specify whether or not and where to display the image title.<br />
+        The signal IndexChanged is emitted each time an image is selected.<br />
         Sorry for the names being in italian but I just recycled this widget from a previous project.</td>
     </tr>
 </table>

@@ -72,120 +72,6 @@ CardBuilder::CardBuilder(QWidget* parent)
 	QVBoxLayout* NameLayout=new QVBoxLayout(NameGroup);
 	NameLayout->addWidget(NameEditor);
 
-	QGroupBox* ColorCostGroup=new QGroupBox(this);
-	ColorCostGroup->setObjectName("ColorCostGroup");
-	ColorCostGroup->setTitle(tr("Mana Cost & Card Color"));
-	CardColorGroup=new QGroupBox(this);
-	CardColorGroup->setTitle(tr("Card Color"));
-	CardColorGroup->setObjectName("CardColorGroup");
-	QGridLayout* CardColorLayout=new QGridLayout(CardColorGroup);
-	ColorlessCheck=new QCheckBox(this);
-	ColorlessCheck->setChecked(true);
-	ColorlessCheck->setObjectName("ColorlessCheck");
-	ColorlessCheck->setText(tr("Colorless"));
-	connect(ColorlessCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
-	CardColorLayout->addWidget(ColorlessCheck,0,0);
-	WhiteCheck=new QCheckBox(this);
-	WhiteCheck->setChecked(false);
-	WhiteCheck->setObjectName("WhiteCheck");
-	WhiteCheck->setText(tr("White"));
-	connect(WhiteCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
-	CardColorLayout->addWidget(WhiteCheck,1,0);
-	BlueCheck=new QCheckBox(this);
-	BlueCheck->setChecked(false);
-	BlueCheck->setObjectName("BlueCheck");
-	BlueCheck->setText(tr("Blue"));
-	connect(BlueCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
-	CardColorLayout->addWidget(BlueCheck,2,0);
-	BlackCheck=new QCheckBox(this);
-	BlackCheck->setChecked(false);
-	BlackCheck->setObjectName("BlackCheck");
-	BlackCheck->setText(tr("Black"));
-	connect(BlackCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
-	CardColorLayout->addWidget(BlackCheck,0,1);
-	RedCheck=new QCheckBox(this);
-	RedCheck->setChecked(false);
-	RedCheck->setObjectName("RedCheck");
-	RedCheck->setText(tr("Red"));
-	connect(RedCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
-	CardColorLayout->addWidget(RedCheck,1,1);
-	GreenCheck=new QCheckBox(this);
-	GreenCheck->setChecked(false);
-	GreenCheck->setObjectName("GreenCheck");
-	GreenCheck->setText(tr("Green"));
-	connect(GreenCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
-	CardColorLayout->addWidget(GreenCheck,2,1);
-	SetCardColor();
-
-	QLabel* CardCostLabel=new QLabel(this);
-	CardCostLabel->setObjectName("CardCostLabel");
-	CardCostLabel->setText(tr("Add Mana Cost"));
-	HasManaCostCheck=new QCheckBox(this);
-	HasManaCostCheck->setObjectName("HasManaCostCheck");
-	HasManaCostCheck->setChecked(false);
-	HasManaCostCheck->setText("No Mana Cost");
-	connect(HasManaCostCheck,SIGNAL(stateChanged(int)),this,SLOT(SetNoManaCost()));
-	ManaCostSelector=new QComboBox(this);
-	ManaCostSelector->setObjectName("ManaCostSelector");
-	ManaCostSelector->addItem("",-1);
-	{
-		QPixmap Temp(QPixmap(":/ManaSymbols/CMana.png"));
-		QPainter TextPainter(&Temp);
-		TextPainter.setFont(QFont ("Arial",60,QFont::Bold));
-		TextPainter.drawText(Temp.rect(),Qt::AlignCenter,"1");
-		ManaCostSelector->addItem(QIcon(Temp),tr("Colorless"),Constants::ManaCosts::Colorless);
-	}	
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WMana.png")),tr("Plain"),Constants::ManaCosts::W);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/UMana.png")),tr("Island"),Constants::ManaCosts::U);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/BMana.png")),tr("Swamp"),Constants::ManaCosts::B);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/RMana.png")),tr("Mountain"),Constants::ManaCosts::R);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/GMana.png")),tr("Forest"),Constants::ManaCosts::G);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WUMana.png")),tr("Azorius"),Constants::ManaCosts::WU);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WBMana.png")),tr("Orzhov"),Constants::ManaCosts::WB);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WRMana.png")),tr("Boros"),Constants::ManaCosts::WR);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WGMana.png")),tr("Selesnya"),Constants::ManaCosts::WG);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/UBMana.png")),tr("Dimir"),Constants::ManaCosts::UB);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/URMana.png")),tr("Izzet"),Constants::ManaCosts::UR);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/UGMana.png")),tr("Simic"),Constants::ManaCosts::UG);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/BRMana.png")),tr("Rakdos"),Constants::ManaCosts::BR);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/BGMana.png")),tr("Golgari"),Constants::ManaCosts::BG);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/RGMana.png")),tr("Gruul"),Constants::ManaCosts::RG);
-	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/SnowMana.png")),tr("Snow"),Constants::ManaCosts::S);
-	{
-		QPixmap Temp(QPixmap(":/ManaSymbols/CMana.png"));
-		QPainter TextPainter(&Temp);
-		TextPainter.setFont(QFont ("Arial",60,QFont::Bold));
-		TextPainter.drawText(Temp.rect(),Qt::AlignCenter,"X");
-		ManaCostSelector->addItem(QIcon(Temp),"X",Constants::ManaCosts::X);
-	}
-	{
-		QPixmap Temp(QPixmap(":/ManaSymbols/CMana.png"));
-		QPainter TextPainter(&Temp);
-		TextPainter.setFont(QFont ("Arial",60,QFont::Bold));
-		TextPainter.drawText(Temp.rect(),Qt::AlignCenter,"Y");
-		ManaCostSelector->addItem(QIcon(Temp),"Y",Constants::ManaCosts::Y);
-	}
-	{
-		QPixmap Temp(QPixmap(":/ManaSymbols/CMana.png"));
-		QPainter TextPainter(&Temp);
-		TextPainter.setFont(QFont ("Arial",60,QFont::Bold));
-		TextPainter.drawText(Temp.rect(),Qt::AlignCenter,"Z");
-		ManaCostSelector->addItem(QIcon(Temp),"Z",Constants::ManaCosts::Z);
-	}	
-	//TODO Aggiungi Le Altre
-	ManaCostSelector->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
-	connect(ManaCostSelector,SIGNAL(currentIndexChanged (int)),this,SLOT(AddCardCost(int)));
-	ManaCostResetButton=new QPushButton(this);
-	ManaCostResetButton->setObjectName("ManaCostResetButton");
-	ManaCostResetButton->setText(tr("Reset Mana Cost"));
-	connect(ManaCostResetButton,SIGNAL(clicked()),this,SLOT(ResetCardCost()));
-	QGridLayout* ManaCostLayout=new QGridLayout(ColorCostGroup);
-	ManaCostLayout->addWidget(CardCostLabel,0,0);
-	ManaCostLayout->addWidget(ManaCostSelector,1,0);
-	ManaCostLayout->addWidget(HasManaCostCheck,0,1);
-	ManaCostLayout->addWidget(ManaCostResetButton,1,1);
-	ManaCostLayout->addWidget(CardColorGroup,2,0,1,2);
-
 	QGroupBox* CardTypeGroup=new QGroupBox(this);
 	CardTypeGroup->setObjectName("CardTypeGroup");
 	CardTypeGroup->setTitle(tr("Card Type"));
@@ -283,12 +169,12 @@ CardBuilder::CardBuilder(QWidget* parent)
 		Constants::CardRarities::Rare
 		);
 	CardRaritySelector->addItem(
-		//QIcon(QPixmap(":/Editions/TimeshiftedBackground.png")),
+		QIcon(QPixmap(":/Editions/TimeshiftedBackground.png")),
 		tr("Timeshifted"),
 		Constants::CardRarities::Timeshifted
 		);
 	CardRaritySelector->addItem(
-		//QIcon(QPixmap(":/Editions/MythicRareBackground.png")),
+		QIcon(QPixmap(":/Editions/MythicRareBackground.png")),
 		tr("Mythic Rare"),
 		Constants::CardRarities::MythicRare
 		);
@@ -310,7 +196,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardImageLabel->setText(tr("Add Image"));
 	BrowseForImageButton=new QPushButton(this);
 	BrowseForImageButton->setObjectName("BrowseForImageButton");
-	BrowseForImageButton->setText(tr("Browse for Image..."));
+	BrowseForImageButton->setText(tr("Browse for Images..."));
 	BrowseForImageButton->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 	connect(BrowseForImageButton,SIGNAL(clicked()),this,SLOT(AddCardImage()));
 	ResetImagesButton=new QPushButton(this);
@@ -441,6 +327,120 @@ CardBuilder::CardBuilder(QWidget* parent)
 	WidgetButtonsLayout->addWidget(ExitButton);
 	WidgetButtonsLayout->addItem(RightButtonSpacer);
 
+	QGroupBox* ColorCostGroup=new QGroupBox(this);
+	ColorCostGroup->setObjectName("ColorCostGroup");
+	ColorCostGroup->setTitle(tr("Mana Cost & Card Color"));
+	CardColorGroup=new QGroupBox(this);
+	CardColorGroup->setTitle(tr("Card Color"));
+	CardColorGroup->setObjectName("CardColorGroup");
+	QGridLayout* CardColorLayout=new QGridLayout(CardColorGroup);
+	ColorlessCheck=new QCheckBox(this);
+	ColorlessCheck->setChecked(true);
+	ColorlessCheck->setObjectName("ColorlessCheck");
+	ColorlessCheck->setText(tr("Colorless"));
+	connect(ColorlessCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
+	CardColorLayout->addWidget(ColorlessCheck,0,0);
+	WhiteCheck=new QCheckBox(this);
+	WhiteCheck->setChecked(false);
+	WhiteCheck->setObjectName("WhiteCheck");
+	WhiteCheck->setText(tr("White"));
+	connect(WhiteCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
+	CardColorLayout->addWidget(WhiteCheck,1,0);
+	BlueCheck=new QCheckBox(this);
+	BlueCheck->setChecked(false);
+	BlueCheck->setObjectName("BlueCheck");
+	BlueCheck->setText(tr("Blue"));
+	connect(BlueCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
+	CardColorLayout->addWidget(BlueCheck,2,0);
+	BlackCheck=new QCheckBox(this);
+	BlackCheck->setChecked(false);
+	BlackCheck->setObjectName("BlackCheck");
+	BlackCheck->setText(tr("Black"));
+	connect(BlackCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
+	CardColorLayout->addWidget(BlackCheck,0,1);
+	RedCheck=new QCheckBox(this);
+	RedCheck->setChecked(false);
+	RedCheck->setObjectName("RedCheck");
+	RedCheck->setText(tr("Red"));
+	connect(RedCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
+	CardColorLayout->addWidget(RedCheck,1,1);
+	GreenCheck=new QCheckBox(this);
+	GreenCheck->setChecked(false);
+	GreenCheck->setObjectName("GreenCheck");
+	GreenCheck->setText(tr("Green"));
+	connect(GreenCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCardColor()));
+	CardColorLayout->addWidget(GreenCheck,2,1);
+	SetCardColor();
+
+	QLabel* CardCostLabel=new QLabel(this);
+	CardCostLabel->setObjectName("CardCostLabel");
+	CardCostLabel->setText(tr("Add Mana Cost"));
+	HasManaCostCheck=new QCheckBox(this);
+	HasManaCostCheck->setObjectName("HasManaCostCheck");
+	HasManaCostCheck->setChecked(false);
+	HasManaCostCheck->setText("No Mana Cost");
+	connect(HasManaCostCheck,SIGNAL(stateChanged(int)),this,SLOT(SetNoManaCost()));
+	ManaCostSelector=new QComboBox(this);
+	ManaCostSelector->setObjectName("ManaCostSelector");
+	ManaCostSelector->addItem("",-1);
+	{
+		QPixmap Temp(QPixmap(":/ManaSymbols/CMana.png"));
+		QPainter TextPainter(&Temp);
+		TextPainter.setFont(QFont ("Arial",60,QFont::Bold));
+		TextPainter.drawText(Temp.rect(),Qt::AlignCenter,"1");
+		ManaCostSelector->addItem(QIcon(Temp),tr("Colorless"),Constants::ManaCosts::Colorless);
+	}	
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WMana.png")),tr("Plain"),Constants::ManaCosts::W);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/UMana.png")),tr("Island"),Constants::ManaCosts::U);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/BMana.png")),tr("Swamp"),Constants::ManaCosts::B);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/RMana.png")),tr("Mountain"),Constants::ManaCosts::R);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/GMana.png")),tr("Forest"),Constants::ManaCosts::G);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WUMana.png")),tr("Azorius"),Constants::ManaCosts::WU);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WBMana.png")),tr("Orzhov"),Constants::ManaCosts::WB);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WRMana.png")),tr("Boros"),Constants::ManaCosts::WR);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/WGMana.png")),tr("Selesnya"),Constants::ManaCosts::WG);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/UBMana.png")),tr("Dimir"),Constants::ManaCosts::UB);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/URMana.png")),tr("Izzet"),Constants::ManaCosts::UR);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/UGMana.png")),tr("Simic"),Constants::ManaCosts::UG);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/BRMana.png")),tr("Rakdos"),Constants::ManaCosts::BR);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/BGMana.png")),tr("Golgari"),Constants::ManaCosts::BG);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/RGMana.png")),tr("Gruul"),Constants::ManaCosts::RG);
+	ManaCostSelector->addItem(QIcon(QPixmap(":/ManaSymbols/SnowMana.png")),tr("Snow"),Constants::ManaCosts::S);
+	{
+		QPixmap Temp(QPixmap(":/ManaSymbols/CMana.png"));
+		QPainter TextPainter(&Temp);
+		TextPainter.setFont(QFont ("Arial",60,QFont::Bold));
+		TextPainter.drawText(Temp.rect(),Qt::AlignCenter,"X");
+		ManaCostSelector->addItem(QIcon(Temp),"X",Constants::ManaCosts::X);
+	}
+	{
+		QPixmap Temp(QPixmap(":/ManaSymbols/CMana.png"));
+		QPainter TextPainter(&Temp);
+		TextPainter.setFont(QFont ("Arial",60,QFont::Bold));
+		TextPainter.drawText(Temp.rect(),Qt::AlignCenter,"Y");
+		ManaCostSelector->addItem(QIcon(Temp),"Y",Constants::ManaCosts::Y);
+	}
+	{
+		QPixmap Temp(QPixmap(":/ManaSymbols/CMana.png"));
+		QPainter TextPainter(&Temp);
+		TextPainter.setFont(QFont ("Arial",60,QFont::Bold));
+		TextPainter.drawText(Temp.rect(),Qt::AlignCenter,"Z");
+		ManaCostSelector->addItem(QIcon(Temp),"Z",Constants::ManaCosts::Z);
+	}	
+	//TODO Aggiungi Le Altre
+	ManaCostSelector->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
+	connect(ManaCostSelector,SIGNAL(currentIndexChanged (int)),this,SLOT(AddCardCost(int)));
+	ManaCostResetButton=new QPushButton(this);
+	ManaCostResetButton->setObjectName("ManaCostResetButton");
+	ManaCostResetButton->setText(tr("Reset Mana Cost"));
+	connect(ManaCostResetButton,SIGNAL(clicked()),this,SLOT(ResetCardCost()));
+	QGridLayout* ManaCostLayout=new QGridLayout(ColorCostGroup);
+	ManaCostLayout->addWidget(CardCostLabel,0,0);
+	ManaCostLayout->addWidget(ManaCostSelector,1,0);
+	ManaCostLayout->addWidget(HasManaCostCheck,0,1);
+	ManaCostLayout->addWidget(ManaCostResetButton,1,1);
+	ManaCostLayout->addWidget(CardColorGroup,2,0,1,2);
+
 	QHBoxLayout* MainLayout=new QHBoxLayout;
 	MainLayout->addLayout(CardLayout);
 	QVBoxLayout* RightLayout=new QVBoxLayout;
@@ -469,6 +469,7 @@ void CardBuilder::SetCertified(){
 }
 void CardBuilder::SetCardColor(){
 	CardPreview->SetCardColor(-1);
+	ResetCardBackground();
 	if (ColorlessCheck->isChecked()){
 		WhiteCheck->setChecked(false);
 		BlueCheck->setChecked(false);
@@ -480,6 +481,7 @@ void CardBuilder::SetCardColor(){
 		BlackCheck->setEnabled(false);
 		RedCheck->setEnabled(false);
 		GreenCheck->setEnabled(false);
+		AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::Colorless));
 		return CardPreview->AddCardColor(Constants::CardColor::Colorless);
 	}
 	else {
@@ -492,25 +494,66 @@ void CardBuilder::SetCardColor(){
 	if (WhiteCheck->isChecked()){
 		CardPreview->AddCardColor(Constants::CardColor::White);
 		ColorlessCheck->setEnabled(false);
+		AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::White));
 	}
 	if (BlueCheck->isChecked()){
 		CardPreview->AddCardColor(Constants::CardColor::Blue);
 		ColorlessCheck->setEnabled(false);
+		AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::Blue));
 	}
 	if (BlackCheck->isChecked()){
 		CardPreview->AddCardColor(Constants::CardColor::Black);
 		ColorlessCheck->setEnabled(false);
+		AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::Black));
 	}
 	if (RedCheck->isChecked()){
 		CardPreview->AddCardColor(Constants::CardColor::Red);
 		ColorlessCheck->setEnabled(false);
+		AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::Red));
 	}
 	if (GreenCheck->isChecked()){
 		CardPreview->AddCardColor(Constants::CardColor::Green);
 		ColorlessCheck->setEnabled(false);
+		AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::Green));
 	}
-	if (!(WhiteCheck->isChecked() || BlueCheck->isChecked() || BlackCheck->isChecked() || RedCheck->isChecked() || GreenCheck->isChecked()))
+	if (!(WhiteCheck->isChecked() || BlueCheck->isChecked() || BlackCheck->isChecked() || RedCheck->isChecked() || GreenCheck->isChecked())){
 		ColorlessCheck->setEnabled(true);
+	}
+	const QList<int>& CardColors(CardPreview->GetCardColor());
+	if (CardColors.size()==2){
+		AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::Gold));
+		if (CardColors.contains(Constants::CardColor::White)){
+			if (CardColors.contains(Constants::CardColor::Blue))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::WhiteBlue));
+			if (CardColors.contains(Constants::CardColor::Black))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::WhiteBlack));
+			if (CardColors.contains(Constants::CardColor::Red))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::WhiteRed));
+			if (CardColors.contains(Constants::CardColor::Green))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::WhiteGreen));
+		}
+		else if (CardColors.contains(Constants::CardColor::Blue)){
+			if (CardColors.contains(Constants::CardColor::Black))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::BlueBlack));
+			if (CardColors.contains(Constants::CardColor::Red))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::BlueRed));
+			if (CardColors.contains(Constants::CardColor::Green))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::BlueGreen));
+		}
+		else if (CardColors.contains(Constants::CardColor::Black)){
+			if (CardColors.contains(Constants::CardColor::Red))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::BlackRed));
+			if (CardColors.contains(Constants::CardColor::Green))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::BlackGreen));
+		}
+		else if (CardColors.contains(Constants::CardColor::Red) 
+			&& CardColors.contains(Constants::CardColor::Green)){
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::RedGreen));
+		}
+	}
+	if(CardColors.size()>2){
+		AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::Gold));
+	}
 }
 void CardBuilder::SetCardName(){
 	CardPreview->SetCardName(NameEditor->text().trimmed());
@@ -611,9 +654,8 @@ void CardBuilder::AddCardType(int index){
 	if (CardPreview->GetCardType().contains(CardTypeSelector->itemData(index).toInt())) return;
 	CardPreview->AddCardType(CardTypeSelector->itemData(index).toInt());
 	QList<int> Temp(CardPreview->GetCardType());
-	if (Temp.contains(Constants::CardTypes::Creature))
+	if (Temp.contains(Constants::CardTypes::Creature) || Temp.contains(Constants::CardTypes::Planeswalker))
 		HasPTGroup->setChecked(true);
-	if (Temp.contains(Constants::CardTypes::Planeswalker)) HasPTGroup->setChecked(true);
 	if (Temp.contains(Constants::CardTypes::Land)) HasManaCostCheck->setChecked(true);
 	CardTypeSelector->setCurrentIndex(0);
 	CardPreview->UpdateAspect();

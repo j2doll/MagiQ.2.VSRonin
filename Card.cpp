@@ -60,24 +60,6 @@ Card::Card(QWidget* parent)
 	setMinimumSize(200,279);
 	setStyleSheet(StyleSheets::CardCSS); //Test
 	UpdateAspect();
-	//TestStuff(); //Test
-}
-void Card::TestStuff(){
-	CardBackground=Constants::CardBacksrounds::Green;
-	CardRarity=Constants::CardRarities::Common;
-	CardName="Gemhide Sliver";
-	CardCost[Constants::ManaCosts::Colorless]=1;
-	CardCost[Constants::ManaCosts::G]=1;
-	AvailableImages.append(QPixmap("D:\\Giochi\\Magic Workstation\\Pics\\TSP\\Gemhide Sliver.jpg"));
-	CardImage=0;
-	CardType.append(Constants::CardTypes::Creature);
-	CardSubType.append(Constants::CardSubTypes::Sliver);
-	CardEdition=0;
-	HasPT=true;
-	CardPower=1;
-	CardToughness=1;
-	setMinimumSize(200,279);
-	UpdateAspect();
 }
 void Card::resizeEvent(QResizeEvent* event){
 	NameLabel->setGeometry(19*width()/200,16*height()/279,241*width()/200,22*height()/279);
@@ -181,16 +163,22 @@ void Card::UpdateAspect(){
 			PTLabel->SetCountPT();
 			switch(CardBackground){
 			case Constants::CardBacksrounds::White:
+			case Constants::CardBacksrounds::LandWhite:
 				PTLabel->SetSelectedBase(Constants::PTBoxTypes::WBox); break;
+			case Constants::CardBacksrounds::LandBlue:
 			case Constants::CardBacksrounds::Blue:
 				PTLabel->SetSelectedBase(Constants::PTBoxTypes::UBox); break;
 			case Constants::CardBacksrounds::Black:
+			case Constants::CardBacksrounds::LandBlack:
 				PTLabel->SetSelectedBase(Constants::PTBoxTypes::BBox); break;
 			case Constants::CardBacksrounds::Red:
+			case Constants::CardBacksrounds::LandRed:
 				PTLabel->SetSelectedBase(Constants::PTBoxTypes::RBox); break;
 			case Constants::CardBacksrounds::Green:
+			case Constants::CardBacksrounds::LandGreen:
 				PTLabel->SetSelectedBase(Constants::PTBoxTypes::GBox); break;
 			case Constants::CardBacksrounds::Gold:
+			case Constants::CardBacksrounds::LandGold:
 				PTLabel->SetSelectedBase(Constants::PTBoxTypes::GoldBox); break;
 			default:
 				PTLabel->SetSelectedBase(Constants::PTBoxTypes::CBox);

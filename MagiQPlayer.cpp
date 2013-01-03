@@ -1,4 +1,4 @@
-#include "Player.h"
+#include "MagiQPlayer.h"
 #include "CostantsDefinition.h"
 #include <QtAlgorithms>
 #include "Card.h"
@@ -21,10 +21,10 @@ void MagiQPlayer::ResetManaPool(){
 	ManaPool.insert(Constants::ManaCosts::G,0);
 	emit RequireUpdateAspect();
 }
-bool MagiQPlayer::RandomOrder(const Card*& a,const Card*& b) const {return qrand()%2==0;}
-bool MagiQPlayer::ManaCostOrder(const Card*& a,const Card*& b) const {return a->GetConvertedManaCost()<b->GetConvertedManaCost();}
-bool MagiQPlayer::NameOrder(const Card*& a,const Card*& b) const {return a->GetCardName()<b->GetCardName();}
-bool MagiQPlayer::TypeOrder(const Card*& a,const Card*& b) const {
+bool MagiQPlayer::RandomOrder(Card* a,Card* b) {return qrand()%2==0;}
+bool MagiQPlayer::ManaCostOrder(Card* a,Card* b) {return a->GetConvertedManaCost()<b->GetConvertedManaCost();}
+bool MagiQPlayer::NameOrder(Card* a,Card* b) {return a->GetCardName()<b->GetCardName();}
+bool MagiQPlayer::TypeOrder(Card* a,Card* b) {
 	QList<int> TypeA=a->GetCardType();
 	QList<int> TypeB=b->GetCardType();
 	for (int i=0;i<Constants::CardTypes::END;i++){
@@ -33,7 +33,7 @@ bool MagiQPlayer::TypeOrder(const Card*& a,const Card*& b) const {
 	}
 	return false;
 }
-bool MagiQPlayer::ColorOrder(const Card*& a,const Card*& b) const {
+bool MagiQPlayer::ColorOrder(Card* a,Card* b)  {
 	QList<int> TypeA=a->GetCardColor();
 	QList<int> TypeB=b->GetCardColor();
 	for (int i=0;i<=Constants::CardColor::Green;i++){
@@ -43,7 +43,7 @@ bool MagiQPlayer::ColorOrder(const Card*& a,const Card*& b) const {
 	return false;
 }
 void MagiQPlayer::ShuffleLibrary(){
-	qSort(Library.begin(),Library.end(),&MagiQPlayer::RandomOrder);
+	qSort(Library.begin(),Library.end(),RandomOrder);
 }
 void MagiQPlayer::DrawCard(){
 	if (Library.isEmpty()){
@@ -58,25 +58,25 @@ void MagiQPlayer::DrawCard(){
 void MagiQPlayer::SortHand(){
 	switch (SecondaryOrdering){
 	case ByName:
-		qSort(Hand.begin(),Hand.end(),&MagiQPlayer::NameOrder); break;
+		qSort(Hand.begin(),Hand.end(),NameOrder); break;
 	case ByManaCost:
-		qSort(Hand.begin(),Hand.end(),&MagiQPlayer::ManaCostOrder);
+		qSort(Hand.begin(),Hand.end(),ManaCostOrder);
 	case ByColor:
-		qSort(Hand.begin(),Hand.end(),&MagiQPlayer::ColorOrder); break;
+		qSort(Hand.begin(),Hand.end(),ColorOrder); break;
 	case ByType:
 	default:
-		qSort(Hand.begin(),Hand.end(),&MagiQPlayer::TypeOrder); break;
+		qSort(Hand.begin(),Hand.end(),TypeOrder); break;
 	}
 	switch (PrimaryOrdering){
 		case ByName:
-			qStableSort(Hand.begin(),Hand.end(),&MagiQPlayer::NameOrder); break;
+			qStableSort(Hand.begin(),Hand.end(),NameOrder); break;
 		case ByType:
-			qStableSort(Hand.begin(),Hand.end(),&MagiQPlayer::TypeOrder); break;
+			qStableSort(Hand.begin(),Hand.end(),TypeOrder); break;
 		case ByColor:
-			qStableSort(Hand.begin(),Hand.end(),&MagiQPlayer::ColorOrder); break;
+			qStableSort(Hand.begin(),Hand.end(),ColorOrder); break;
 		case ByManaCost:
 		default:
-			qStableSort(Hand.begin(),Hand.end(),&MagiQPlayer::ManaCostOrder);
+			qStableSort(Hand.begin(),Hand.end(),ManaCostOrder);
 	}
 	emit RequireUpdateAspect();
 }

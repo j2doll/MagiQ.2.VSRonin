@@ -95,6 +95,20 @@ namespace Constants{
 		,World
 		,END
 	};}
+	const QString CardTypeNames[]={
+		QObject::tr("Basic")
+		,QObject::tr("Land")
+		,QObject::tr("Creature")
+		,QObject::tr("Planeswalker")
+		,QObject::tr("Sorcery")
+		,QObject::tr("Instant")
+		,QObject::tr("Artifact")
+		,QObject::tr("Enchantment")
+		,QObject::tr("Legendary")
+		,QObject::tr("Snow")
+		,QObject::tr("Tribal")
+		,QObject::tr("World")
+	};
 	namespace CardSubTypes{enum {
 		NONE=-1
 		,Ally
@@ -297,20 +311,6 @@ namespace Constants{
 		QSize(89,101) //TSP
 		,QSize(92,93) //AVR
 	};
-	const QString CardTypeNames[]={
-		QObject::tr("Artifact")
-		,"Basic"
-		,"Creature"
-		,"Enchantment"
-		,"Instant"
-		,"Land"
-		,"Legendary"
-		,"Planeswalker"
-		,"Snow"
-		,"Sorcery"
-		,"Tribal"
-		,"World"
-	};
 	const QString CardSubTypesNames[]={
 		"Ally"
 		,"Angel"
@@ -385,7 +385,6 @@ namespace Constants{
 	namespace CounterTypes{
 		enum{
 			Plus1Plus1
-			,Minus1Minus1
 			,Age
 		};
 	}
