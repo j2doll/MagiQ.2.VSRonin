@@ -10,9 +10,12 @@ class Effect;
 class SmilesSelector;
 class QLineEdit;
 class QTextEdit;
+class QSpinBox;
+class QTableWidget;
 class EffectsBuilder: public QWidget{
 	Q_OBJECT
 private:
+	enum {TableRowHeight=14};
 	Effect* EffectPreview;
 	QFrame* Background;
 	QComboBox* EffectTypeCombo;
@@ -24,10 +27,16 @@ private:
 	QPushButton* ResetTriggersButton;
 	QComboBox* AddCostCombo;
 	QPushButton* ResetCostButton;
-	QLineEdit* EffectNameEdit;
+	//TODO Add cost preview
 	QTextEdit* EffectTextEditor;
 	QPushButton* SymbolsMenuButton;
 	SmilesSelector* SymbolsSelector;
+	QComboBox* TargetTypeSelector;
+	QSpinBox* TargetNumberSpin;
+	QPushButton* AddTargetButton;
+	QPushButton* ResetTargetButton;
+	QTableWidget* TargetsTable;
+	QLabel* CostViewer;
 public:
 	EffectsBuilder(QWidget* parent=0);
 protected:
@@ -43,5 +52,8 @@ private slots:
 	void SetManaEffect();
 	void SetDoesntStack();
 	void SetHiddenEffect();
+	void TargetTypeSelected(int index);
+	void AddTarget();
+	void ResetTarget();
 };
 #endif

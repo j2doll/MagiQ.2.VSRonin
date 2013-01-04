@@ -18,7 +18,6 @@ private:
 	bool ManaEffect;
 	bool DoesntStack;
 	bool HiddenEffect;
-	QString EffectName;
 	QMap<int,int> EffectCost;
 	QMap<int,int> Targets;
 	QList<int> Triggers;
@@ -32,8 +31,11 @@ private:
 public:
 	void SetEffectText(const QString& a){EffectText=a;}
 	const QString& GetEffectText() const {return EffectText;}
-	const QString& GetEffectName() const {return EffectName;}
 	const QList<int>& GetTriggers() const {return Triggers;}
+	void SetTargets();
+	void SetTargets(const QMap<int,int>& a){Targets.clear(); Targets=a;}
+	void SetTargets(int key, int val){SetTargets(); AddTarget(key,val);}
+	void AddTarget(int key,int val){if (key>=0 && key<=EffectsConstants::Targets::Planeswalker) Targets[key]+=val;}
 	void SetTriggers(const QList<int>& a){Triggers.clear(); Triggers=a;}
 	void SetTriggers(){Triggers.clear();}
 	void SetTriggers(int a){Triggers.clear(); if (
@@ -61,7 +63,6 @@ public:
 	void SetAttachedCard(Card* a){AttachedCard=a;}
 	const Card* GetAttachedCard() const {return AttachedCard;}
 public slots:
-	void SetEffectName(const QString& a){EffectName=a;}
 	void UpdateAspect();
 	void Activate();
 	void Resolve();

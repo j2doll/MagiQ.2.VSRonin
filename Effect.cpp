@@ -27,6 +27,7 @@ Effect::Effect(QWidget* parent/* =0 */)
 	QVBoxLayout* MainLayout=new QVBoxLayout(this);
 	MainLayout->addWidget(EffectButton);
 	SetEffectCost();
+	setMinimumSize(100,100); //FIXME
 	//TestStuff();
 	UpdateAspect();
 }
@@ -39,11 +40,6 @@ void Effect::UpdateAspect(){
 	if (HiddenEffect) hide();
 	else show();
 	if (EffectType!=EffectsConstants::EffectTypes::ActivatedEffect) EffectButton->setFlat(true);
-	/*QString EffectString(FromCostToString());
-	if (!EffectString.isEmpty()) EffectString.append(": ");
-	if (EffectBody>=0 && EffectBody<EffectsConstants::Effects::END)
-		EffectString.append(EffectsConstants::EffectStrings[EffectBody]);
-	EffectLabel->setText(EffectString);*/
 	EffectLabel->setText(EffectText);
 	setStyleSheet(StyleSheets::EffectCSS);
 }
@@ -162,5 +158,11 @@ void Effect::Resolve(){
 		AttachedCard->GetController()->AddManaPool(Constants::ManaCosts::R,1); break;
 	case EffectsConstants::Effects::AddGToManaPool:
 		AttachedCard->GetController()->AddManaPool(Constants::ManaCosts::G,1); break;
+	}
+}
+void Effect::SetTargets(){
+	Targets.clear();
+	for (int i=0;i<=EffectsConstants::Targets::Planeswalker;i++){
+		Targets.insert(i,0);
 	}
 }

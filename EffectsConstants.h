@@ -30,13 +30,20 @@ namespace EffectsConstants{
 	};
 	namespace Targets{
 		enum{
-			Creature
+			NoTargets=-1
+			,Creature
 			,Player
 			,CreatureOrPlayer
 			//Other Targets Here
 			,Planeswalker
 		};
 	}
+	const QString TargetNames[]={
+		QObject::tr("Creature")
+		,QObject::tr("Player")
+		,QObject::tr("CreatureOrPlayer")
+		,QObject::tr("Planeswalker")
+	};
 	namespace EffectCosts{
 		enum{
 			ColorlessMana
@@ -67,13 +74,13 @@ namespace EffectsConstants{
 		};
 	}
 	const QString EffectCostStrings[]={
-		"<img src=\":/Effects/CMana.png\" >" //Temporaneo
+		"<img src=\":/Effects/CMana1.png\" >" //Temporaneo
 		,"<img src=\":/Effects/WMana.png\" >"
 		,"<img src=\":/Effects/UMana.png\" >"
 		,"<img src=\":/Effects/BMana.png\" >"
 		,"<img src=\":/Effects/RMana.png\" >"
 		,"<img src=\":/Effects/GMana.png\" >"
-		,"<img src=\":/Effects/WUMana.png\">"
+		,"<img src=\":/Effects/WUMana.png\" >"
 		,"<img src=\":/Effects/WBMana.png\" >"
 		,"<img src=\":/Effects/WRMana.png\" >"
 		,"<img src=\":/Effects/WGMana.png\" >"
@@ -83,7 +90,7 @@ namespace EffectsConstants{
 		,"<img src=\":/Effects/BRMana.png\" >"
 		,"<img src=\":/Effects/BGMana.png\" >"
 		,"<img src=\":/Effects/RGMana.png\" >"
-		,"<img src=\":/Effects/TapSymbol.png\">"
+		,"<img src=\":/Effects/TapSymbol.png\" >"
 		,QObject::tr("Tap %1 other creature(s)")
 		,QObject::tr("Tap %1 vampire(s) you control")
 		,QObject::tr("Sacrifice %1 other creature(s)")

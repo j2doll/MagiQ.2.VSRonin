@@ -12,6 +12,9 @@
 #include "Smiles Selector.h"
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QSpinBox>
+#include <QTableWidget>
+#include <QHeaderView>
 EffectsBuilder::EffectsBuilder(QWidget* parent)
 	:QWidget(parent)
 {
@@ -30,23 +33,15 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	NameTextGroup->setObjectName("NameTextGroup");
 	NameTextGroup->setTitle(tr("Name and Text"));
 	QGridLayout* NameTextLayout=new QGridLayout(NameTextGroup);
-	QLabel* EffectNameLabel=new QLabel(this);
-	EffectNameLabel->setObjectName("EffectNameLabel");
-	EffectNameLabel->setText(tr("Effect Name"));
-	NameTextLayout->addWidget(EffectNameLabel,0,0,1,2);
-	EffectNameEdit=new QLineEdit(this);
-	EffectNameEdit->setObjectName("EffectNameEdit");
-	connect(EffectNameEdit,SIGNAL(textEdited(QString)),EffectPreview,SLOT(SetEffectName(QString)));
-	NameTextLayout->addWidget(EffectNameEdit,1,0,1,2);
 	QLabel* EffectTextLabel=new QLabel(this);
 	EffectTextLabel->setObjectName("EffectTextLabel");
 	EffectTextLabel->setText(tr("Effect Text"));
-	NameTextLayout->addWidget(EffectTextLabel,2,0);
+	NameTextLayout->addWidget(EffectTextLabel,0,0);
 	SymbolsMenuButton=new QPushButton(this);
 	SymbolsMenuButton->setObjectName("SymbolsMenuButton");
 	SymbolsMenuButton->setIcon(QIcon(QPixmap(":/Effects/TapBig.png")));
 	SymbolsMenuButton->setToolTip(tr("Insert Symbol"));
-	NameTextLayout->addWidget(SymbolsMenuButton,2,1);
+	NameTextLayout->addWidget(SymbolsMenuButton,0,1);
 	SymbolsSelector=new SmilesSelector(this);
 	SymbolsSelector->setObjectName("SymbolsSelector");
 	connect(SymbolsMenuButton,SIGNAL(clicked()),SymbolsSelector,SLOT(show_toggle()));
@@ -54,7 +49,7 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	EffectTextEditor=new QTextEdit(this);
 	EffectTextEditor->setObjectName("EffectTextEditor");
 	connect(EffectTextEditor,SIGNAL(textChanged()),this,SLOT(SetEffectText()));
-	NameTextLayout->addWidget(EffectTextEditor,3,0,1,2);
+	NameTextLayout->addWidget(EffectTextEditor,1,0,1,2);
 
 	QGroupBox* EffectTypeGroup=new QGroupBox(this);
 	QGridLayout* EffectTypelayout=new QGridLayout(EffectTypeGroup);
@@ -107,13 +102,21 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	CostTragetlayout->addWidget(CostLabel,0,0);
 	ResetCostButton=new QPushButton(this);
 	ResetCostButton->setObjectName("ResetCostButton");
+	ResetCostButton->setEnabled(false);
 	ResetCostButton->setText("Reset Cost");
 	connect(ResetCostButton,SIGNAL(clicked()),this,SLOT(ResetCost()));
 	CostTragetlayout->addWidget(ResetCostButton,1,1);
 	AddCostCombo=new QComboBox(this);
 	AddCostCombo->setObjectName("AddCostCombo");
 	AddCostCombo->addItem("",-1);
-	for (int i=0;i<EffectsConstants::EffectCosts::END;i++){
+	for (int i=EffectsConstants::EffectCosts::ColorlessMana;i<=EffectsConstants::EffectCosts::Tap;i++){
+		QString IconPath(EffectsConstants::EffectCostStrings[i]);
+		AddCostCombo->addItem(
+			QIcon(QPixmap(IconPath.replace(QRegExp("<img src=\"(.+)\" >"),"\\1")))
+			,""
+			,i);
+	}
+	for (int i=EffectsConstants::EffectCosts::Tap+1;i<EffectsConstants::EffectCosts::END;i++){
 		QString TextToPrint(EffectsConstants::EffectCostStrings[i]);
 		if (TextToPrint.contains("%1")){
 			TextToPrint=TextToPrint.arg(1);
@@ -124,7 +127,56 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	}
 	connect(AddCostCombo,SIGNAL(currentIndexChanged (int)),this,SLOT(AddCost(int)));
 	CostTragetlayout->addWidget(AddCostCombo,1,0);
-
+	CostViewer=new QLabel(this);
+	CostViewer->setObjectName("CostViewer");
+	CostViewer->setText(tr("Cost: "));
+	CostViewer->setAlignment(Qt::AlignCenter);
+	CostTragetlayout->addWidget(CostViewer,2,0,1,2);
+	QLabel* TargetTypeLabel=new QLabel(this);
+	TargetTypeLabel->setObjectName("TargetTypeLabel");
+	TargetTypeLabel->setText(tr("Select Target Type"));
+	CostTragetlayout->addWidget(TargetTypeLabel,3,0);
+	QLabel* TargetNumberLabel=new QLabel(this);
+	TargetNumberLabel->setObjectName("TargetNumberLabel");
+	TargetNumberLabel->setText(tr("Select Target Type"));
+	CostTragetlayout->addWidget(TargetNumberLabel,3,1);
+	TargetTypeSelector=new QComboBox(this);
+	TargetTypeSelector->setObjectName("TargetTypeSelector");
+	TargetTypeSelector->addItem("No Targets",EffectsConstants::Targets::NoTargets);
+	for (int i=0;i<=EffectsConstants::Targets::Planeswalker;i++){
+		TargetTypeSelector->addItem(
+			EffectsConstants::TargetNames[i]
+			,i);
+	}
+	connect(TargetTypeSelector,SIGNAL(currentIndexChanged (int)),this,SLOT(TargetTypeSelected(int)));
+	CostTragetlayout->addWidget(TargetTypeSelector,4,0);
+	TargetNumberSpin=new QSpinBox(this);
+	TargetNumberSpin->setObjectName("TargetNumberSpin");
+	TargetNumberSpin->setRange(1,100);
+	TargetNumberSpin->setEnabled(false);
+	CostTragetlayout->addWidget(TargetNumberSpin,4,1);
+	TargetsTable=new QTableWidget(this);
+	TargetsTable->setObjectName("TargetsTable");
+	TargetsTable->setColumnCount(2);
+	QStringList TempHeaders;
+	TempHeaders.append(tr("Target Type"));
+	TempHeaders.append(tr("Number of Targets"));
+	TargetsTable->setHorizontalHeaderLabels(TempHeaders);
+	TargetsTable->verticalHeader()->setVisible(false);
+	TargetsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	CostTragetlayout->addWidget(TargetsTable,6,0,1,2);
+	AddTargetButton=new QPushButton(this);
+	AddTargetButton->setObjectName("AddTargetButton");
+	AddTargetButton->setText(tr("Add Target"));
+	AddTargetButton->setEnabled(false);
+	connect(AddTargetButton,SIGNAL(clicked()),this,SLOT(AddTarget()));
+	CostTragetlayout->addWidget(AddTargetButton,5,0);
+	ResetTargetButton=new QPushButton(this);
+	ResetTargetButton->setObjectName("ResetTargetButton");
+	ResetTargetButton->setText(tr("Reset Targets"));
+	ResetTargetButton->setEnabled(false);
+	connect(ResetTargetButton,SIGNAL(clicked()),this,SLOT(ResetTarget()));
+	CostTragetlayout->addWidget(ResetTargetButton,5,1);
 	QGroupBox* CheckBoxesGroup=new QGroupBox(this);
 	CheckBoxesGroup->setObjectName("CheckBoxesGroup");
 	CheckBoxesGroup->setTitle(tr("Effect Properties"));
@@ -155,6 +207,8 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 void EffectsBuilder::resizeEvent(QResizeEvent* event){
 	Background->setGeometry(0,0,width(),height());
 	SymbolsSelector->setGeometry(51*width()/333,18*height()/513,250,130); //FIXME
+	TargetsTable->setColumnWidth(0,TargetsTable->width()*3/5);
+	TargetsTable->setColumnWidth(1,TargetsTable->width()*2/5);
 }
 void EffectsBuilder::SetEffectType(int index){
 	if (EffectTypeCombo->itemData(index).toInt()==EffectsConstants::EffectTypes::TriggeredEffect){
@@ -192,13 +246,19 @@ void EffectsBuilder::SetDoesntStack(){
 	EffectPreview->SetDoesntStack(DoesntStackCheck->isChecked());
 }
 void EffectsBuilder::ResetCost(){
+	CostViewer->setText(tr("Cost: "));
+	ResetCostButton->setEnabled(false);
 	EffectPreview->SetEffectCost();
 	EffectPreview->UpdateAspect();
 }
 void EffectsBuilder::AddCost(int index){
 	if (index==0) return;
+	ResetCostButton->setEnabled(true);
 	EffectPreview->AddEffectCost(AddCostCombo->itemData(index).toInt(),1);
 	EffectPreview->UpdateAspect();
+	QString TextToPrint=CostViewer->text();
+	TextToPrint.append(EffectsConstants::EffectCostStrings[AddCostCombo->itemData(index).toInt()]);
+	CostViewer->setText(TextToPrint);
 	AddCostCombo->setCurrentIndex(0);
 }
 void EffectsBuilder::SetEffectText(){
@@ -208,4 +268,40 @@ void EffectsBuilder::SetEffectText(){
 void EffectsBuilder::AddSymbol(int index){
 	if (index<0 || index>=Symbols::Num_Symbols) return;
 	EffectTextEditor->insertHtml(QString("<img src=\"%1\" height=\"13\" />").arg(Symbols::symbols_paths[index]));
+}
+void EffectsBuilder::TargetTypeSelected(int index){
+	if (index==0){
+		TargetNumberSpin->setEnabled(false);
+		AddTargetButton->setEnabled(false);
+	}
+	else {
+		TargetNumberSpin->setEnabled(true);
+		AddTargetButton->setEnabled(true);
+	}
+	TargetNumberSpin->setValue(1);
+}
+void  EffectsBuilder::AddTarget(){
+	int TempType=TargetTypeSelector->itemData(TargetTypeSelector->currentIndex()).toInt();
+	EffectPreview->AddTarget(TempType,TargetNumberSpin->value());
+	TargetsTable->setSortingEnabled(false);
+	int temp=TargetsTable->rowCount();
+	TargetsTable->setRowCount(temp+1);
+	TargetsTable->setItem(temp,0,
+		new QTableWidgetItem(EffectsConstants::TargetNames[TempType])
+	);
+	TargetsTable->setItem(temp,1,
+		new QTableWidgetItem(QString("%1").arg(TargetNumberSpin->value()))
+	);
+	TargetsTable->setRowHeight(temp,TableRowHeight);
+	TargetsTable->setSortingEnabled(true);
+	ResetTargetButton->setEnabled(true);
+	TargetTypeSelector->setCurrentIndex(0);
+}
+void  EffectsBuilder::ResetTarget(){
+	TargetTypeSelector->setCurrentIndex(0);
+	EffectPreview->SetTargets();
+	TargetsTable->setRowCount(0);
+	TargetNumberSpin->setEnabled(false);
+	AddTargetButton->setEnabled(false);
+	ResetTargetButton->setEnabled(false);
 }
