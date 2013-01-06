@@ -29,12 +29,16 @@ private:
 	QString FromCostToString();
 	void TestStuff();
 public:
-	void SetEffectText(const QString& a){EffectText=a;}
+	void SetEffectBody(int a){if (a>=-1 && a<EffectsConstants::Effects::END) EffectBody=a;}
+	void SetEffectBody() {EffectBody=-1;}
+	int GetEffectBody() const {return EffectBody;}
+	void SetEffectText(const QString& a);
 	const QString& GetEffectText() const {return EffectText;}
 	const QList<int>& GetTriggers() const {return Triggers;}
 	void SetTargets();
 	void SetTargets(const QMap<int,int>& a){Targets.clear(); Targets=a;}
 	void SetTargets(int key, int val){SetTargets(); AddTarget(key,val);}
+	const QMap<int,int>& GetTargets() const {return Targets;}
 	void AddTarget(int key,int val){if (key>=0 && key<=EffectsConstants::Targets::Planeswalker) Targets[key]+=val;}
 	void SetTriggers(const QList<int>& a){Triggers.clear(); Triggers=a;}
 	void SetTriggers(){Triggers.clear();}
@@ -53,6 +57,8 @@ public:
 	void SetHiddenEffect(bool a){HiddenEffect=a;}
 	bool GetHiddenEffect() const {return HiddenEffect;}
 	Effect(QWidget* parent=0);
+	Effect(const Effect& a,QWidget* parent=0);
+	Effect& operator=(const Effect& a);
 	void SetEffectType(int a){if (a>=EffectsConstants::EffectTypes::PassiveEffect && a<=EffectsConstants::EffectTypes::OnResolutionEffect) EffectType=a;}
 	const QMap<int,int>& GetEffectCost() const {return EffectCost;}
 	void SetEffectCost(const QMap<int,int>& a){EffectCost.clear(); EffectCost=a;}
@@ -77,4 +83,6 @@ signals:
 	void AskForTargets(Effect*,QMap<int,int>);
 	void SendToStack(Effect*);
 };
+QDataStream &operator<<(QDataStream &out, const Effect &effect);
+QDataStream &operator>>(QDataStream &in, Effect &effect);
 #endif

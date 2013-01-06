@@ -9,7 +9,10 @@
 #include <QPainter>
 #include <QStyle>
 #include <QMessageBox>
+#include "Effect.h"
 #include "PowerToughnesLabel.h"
+#include <QTableWidget>
+#include <QHeaderView>
 Card::Card(QWidget* parent)
 	:QWidget(parent)
 	,CardEdition(0)
@@ -25,6 +28,8 @@ Card::Card(QWidget* parent)
 	,HasFlipped(NoFlip)
 	,FlippedCard(NULL)
 	,HasManaCost(true)
+	,CardBackground(Constants::CardBacksrounds::Colorless)
+	,CardRarity(Constants::CardRarities::Common)
 {
 	setObjectName("Card");
 	Background=new QFrame(this);
@@ -42,6 +47,7 @@ Card::Card(QWidget* parent)
 	NameLabel->setScaledContents(true);
 	CostLabel=new ManaCostLabel(this);
 	CostLabel->setObjectName("CostLabel");
+	ResetCardCost();
 	ImageLabel=new QLabel(this);
 	ImageLabel->setScaledContents(true);
 	ImageLabel->setObjectName("ImageLabel");
@@ -54,11 +60,25 @@ Card::Card(QWidget* parent)
 	AvailableEditions.append(Constants::Editions::NONE);
 	PTLabel=new PowerToughnesLabel(this);
 	PTLabel->setObjectName("PTLabel");
-	ResetCardCost();
-	CardBackground=Constants::CardBacksrounds::Colorless;
-	CardRarity=Constants::CardRarities::Common;
+	FlavorTextLabel=new QLabel(this);
+	FlavorTextLabel->setObjectName("FlavorTextLabel");
+	FlavorTextLabel->setWordWrap(true);
+	FlavorTextLabel->setScaledContents(true);
+	EffectsTable=new QTableWidget(this);
+	EffectsTable->setShowGrid(false);
+	EffectsTable->setObjectName("EffectsTable");
+	EffectsTable->setColumnCount(1);
+	EffectsTable->verticalHeader()->setVisible(false);
+	EffectsTable->horizontalHeader()->setVisible(false);
+	EffectsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	EffectsTable->setSortingEnabled(false);
+	EffectsTable->setSelectionMode(QAbstractItemView::NoSelection);
+	EffectsTable->insertRow(0);
+	EffectsTable->setItem(0,0,new QTableWidgetItem);
+	EffectsTable->setCellWidget(0,0,FlavorTextLabel);
+TestStuff();
 	setMinimumSize(200,279);
-	setStyleSheet(StyleSheets::CardCSS); //Test
+	setStyleSheet(StyleSheets::CardCSS);
 	UpdateAspect();
 }
 void Card::resizeEvent(QResizeEvent* event){
@@ -82,6 +102,8 @@ void Card::resizeEvent(QResizeEvent* event){
 		,10*height()/279
 		).mask());
 	ImageLabel->setGeometry(17*width()/200,33*height()/279,166*width()/200,123*height()/279);
+	EffectsTable->setGeometry(15*width()/200,173*height()/279,167*width()/200,76*height()/279);
+	EffectsTable->setColumnWidth(0,EffectsTable->width());
 }
 void Card::SetAvailableImages(const QPixmap& a){
 	AvailableImages.clear();
@@ -208,6 +230,7 @@ void Card::UpdateAspect(){
 		}
 	}
 	else PTLabel->hide();
+	FlavorTextLabel->setText("<i>"+CardFlavorText+"</i>");
 	setStyleSheet(StyleSheets::CardCSS);
 }
 QString Card::CreateManaCostString() const{
@@ -406,43 +429,70 @@ Card& Card::operator=(const Card& a){
 	return *this;
 }
 Card::Card(const Card& a,QWidget* parent):QWidget(parent)
-	,CardEdition(0)
-	,CardPower(0)
-	,CardToughness(0)
-	,CardImage(0)
+	,CardEdition(a.CardEdition)
+	,CardPower(a.CardPower)
+	,CardToughness(a.CardToughness)
+	,CardImage(a.CardImage)
 	,PTBox(":/CardImage/PTBox.png")
 	,PTMask(":/CardImage/PTBoxMask.png")
 	,Covered(false)
-	,HasPT(false)
-	,Certified(false)
-	,CardName("")
-	,HasFlipped(NoFlip)
+	,HasPT(a.HasPT)
+	,Certified(a.Certified)
+	,CardName(a.CardName)
+	,HasFlipped(a.HasFlipped)
 	,FlippedCard(NULL)
-	,HasManaCost(true)
+	,HasManaCost(a.HasManaCost)
+	,CardColor(a.CardColor)
+	,CardCost(a.CardCost)
+	,CardCostModifiers(a.CardCostModifiers)
+	,CardType(a.CardType)
+	,CardSubType(a.CardSubType)
+	,AvailableEditions(a.AvailableEditions)
+	,AvailableBackgrounds(a.AvailableBackgrounds)
+	,AvailableImages(a.AvailableImages)
+	,CardBackground(a.CardBackground)
+	,CardFlavorText(a.CardFlavorText)
+	,CardPowerModifiers(a.CardPowerModifiers)
+	,CardToughnessModifiers(a.CardToughnessModifiers)
+	,CardRarity(a.CardRarity)
 {
-	CardName=a.CardName;
-	CardColor=a.CardColor;
-	CardCost=a.CardCost;
-	CardCostModifiers=a.CardCostModifiers;
-	CardType=a.CardType;
-	CardSubType=a.CardSubType;
-	AvailableEditions=a.AvailableEditions;
-	AvailableImages=a.AvailableImages;
-	AvailableBackgrounds=a.AvailableBackgrounds;
-	CardEdition=a.CardEdition;
-	CardBackground=a.CardBackground;
-	CardFlavorText=a.CardFlavorText;
-	HasPT=a.HasPT;
-	CardPower=a.CardPower;
-	CardPowerModifiers=a.CardPowerModifiers;
-	CardToughness=a.CardToughness;
-	CardToughnessModifiers=a.CardToughnessModifiers;
-	CardRarity=a.CardRarity;
-	CardImage=a.CardImage;
-	Certified=a.Certified;
-	HasManaCost=a.HasManaCost;
-	HasFlipped=a.HasFlipped;
-	FlippedCard=a.FlippedCard;
+	setObjectName("Card");
+	Background=new QFrame(this);
+	Background->setObjectName("Background");
+	Rear=new QFrame(this);
+	Rear->setObjectName("Rear");
+	QHBoxLayout* BackLayout=new QHBoxLayout(this);
+	BackLayout->setMargin(0);
+	BackLayout->setSpacing(0);
+	BackLayout->addWidget(Background);
+	BackLayout->addWidget(Rear);
+	Rear->hide();
+	NameLabel=new QLabel(this);
+	NameLabel->setObjectName("NameLabel");
+	NameLabel->setScaledContents(true);
+	CostLabel=new ManaCostLabel(this);
+	CostLabel->setObjectName("CostLabel");
+	ImageLabel=new QLabel(this);
+	ImageLabel->setScaledContents(true);
+	ImageLabel->setObjectName("ImageLabel");
+	TypeLabel=new QLabel(this);
+	TypeLabel->setObjectName("TypeLabel");
+	TypeLabel->setScaledContents(true);
+	EditionLabel=new QLabel(this);
+	EditionLabel->setObjectName("EditionLabel");
+	EditionLabel->setScaledContents(true);
+	AvailableEditions.append(Constants::Editions::NONE);
+	PTLabel=new PowerToughnesLabel(this);
+	PTLabel->setObjectName("PTLabel");
+	ResetCardCost();
+	CardBackground=Constants::CardBacksrounds::Colorless;
+	CardRarity=Constants::CardRarities::Common;
+	setMinimumSize(200,279);
+	setStyleSheet(StyleSheets::CardCSS);
+	if (HasFlipped==HasFlip)
+		FlippedCard=new Card(*a.FlippedCard,parent);
+	else if (HasFlipped==AllreadyFlipped)
+		FlippedCard=a.FlippedCard;
 	UpdateAspect();
 }
 int Card::GetConvertedManaCost() const{
@@ -453,4 +503,25 @@ int Card::GetConvertedManaCost() const{
 		else Result+=CardCost[i];
 	}
 	return Result;
+}
+void Card::SetEffects(){
+	foreach(Effect* eff,Effects){
+		eff->deleteLater();
+	}
+	Effects.clear();
+}
+void Card::SetEffects(const QList<Effect*>& a){
+	SetEffects();
+	foreach(Effect* eff,a){
+		Effects.append(new Effect(*eff,this));
+	}
+}
+void Card::AddEffect(const Effect& a){
+	Effects.append(new Effect(a,this));
+}
+void Card::TestStuff(){
+	CardFlavorText="Prova 1234";
+	/*Effects.append(new Effect(this));
+	Effects.last()->SetEffectType(1);
+	Effects.last()->SetEffectText("Prova 12345");*/
 }

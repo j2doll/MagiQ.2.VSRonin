@@ -24,10 +24,10 @@ private:
 	QCheckBox* HiddenEffectCheck;
 	QLabel* TriggersLabel;
 	QComboBox* AddTriggerCombo;
+	QTableWidget* TriggersTable;
 	QPushButton* ResetTriggersButton;
 	QComboBox* AddCostCombo;
 	QPushButton* ResetCostButton;
-	//TODO Add cost preview
 	QTextEdit* EffectTextEditor;
 	QPushButton* SymbolsMenuButton;
 	SmilesSelector* SymbolsSelector;
@@ -37,8 +37,13 @@ private:
 	QPushButton* ResetTargetButton;
 	QTableWidget* TargetsTable;
 	QLabel* CostViewer;
+	QComboBox* EffectBodySelector;
+	QPushButton* ResetAllButton;
+	QPushButton* SaveButton;
+	QPushButton* OpenButton;
 public:
 	EffectsBuilder(QWidget* parent=0);
+	Effect* GetEffect() const {return EffectPreview;}
 protected:
 	void resizeEvent(QResizeEvent* event);
 private slots:
@@ -55,5 +60,14 @@ private slots:
 	void TargetTypeSelected(int index);
 	void AddTarget();
 	void ResetTarget();
+	void SetEffectBody(int index);
+	void OpenFromFile();
+public slots:
+	void ResetAll();
+	void Open(const Effect &a);
+	void ShowOpenButton(bool a);
+	void SaveToFile();
+signals:
+	void Saved();
 };
 #endif

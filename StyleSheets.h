@@ -149,6 +149,10 @@ namespace StyleSheets{
 			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::Timeshifted)+
 				"border-image: url(:/Editions/TimeshiftedBackground.png);"
 			"}"
+			"Card #EffectsTable{"
+				"background-color: rgba(0,0,0,0);"
+				//"border: none;"
+			"}"
 		);
 		const QString EffectCSS(
 			"Effect #EffectButton{"

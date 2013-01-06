@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QPixmap>
 #include <QDataStream>
+#include <QVBoxLayout>
 class ManaCostLabel;
 class QFrame;
 class QLabel;
@@ -13,6 +14,8 @@ class QScrollArea;
 class QPushButton;
 class PowerToughnesLabel;
 class MagiQPlayer;
+class Effect;
+class QTableWidget;
 class Card : public QWidget{
 	Q_OBJECT
 	Q_PROPERTY(int CardRarity READ GetCardRarity)
@@ -29,8 +32,7 @@ private:
 	QLabel* TypeLabel;
 	QLabel* EditionLabel;
 	PowerToughnesLabel* PTLabel;
-	QScrollArea* EffectsArea;
-	QList<QPushButton*> EffectButtons;
+	QTableWidget* EffectsTable;
 	QLabel* FlavorTextLabel;
 	QPixmap PTBox;
 	QPixmap PTMask;
@@ -58,6 +60,8 @@ private:
 	bool HasManaCost;
 	int HasFlipped;
 	Card* FlippedCard;
+	//TODO Serialize This:
+	QList<Effect*> Effects;
 // Game Properties
 	MagiQPlayer* Owner;
 	MagiQPlayer* Controller;
@@ -68,7 +72,13 @@ private:
 // Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
+	void TestStuff();
 public:
+	const QList<Effect*>& GetEffects() const {return Effects;}
+	void SetEffects();
+	void SetEffects(const QList<Effect*>& a);
+	void SetEffects(const Effect& a){SetEffects(); AddEffect(a);}
+	void AddEffect(const Effect& a);
 	MagiQPlayer* GetOwner() const{return Owner;}
 	MagiQPlayer* GetController() const{return Controller;}
 	void SetOwner(MagiQPlayer* a){Owner=a;}

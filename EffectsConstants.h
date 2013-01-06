@@ -41,7 +41,7 @@ namespace EffectsConstants{
 	const QString TargetNames[]={
 		QObject::tr("Creature")
 		,QObject::tr("Player")
-		,QObject::tr("CreatureOrPlayer")
+		,QObject::tr("Creature or Player")
 		,QObject::tr("Planeswalker")
 	};
 	namespace EffectCosts{
@@ -107,11 +107,11 @@ namespace EffectsConstants{
 		};
 	}
 	const QString EffectStrings[]={
-		QObject::tr("Add %1 to your mana pool").arg("<img src=\":/Effects/WMana.png\" >")
-		,QObject::tr("Add %1 to your mana pool").arg("<img src=\":/Effects/UMana.png\" >")
-		,QObject::tr("Add %1 to your mana pool").arg("<img src=\":/Effects/BMana.png\" >")
-		,QObject::tr("Add %1 to your mana pool").arg("<img src=\":/Effects/RMana.png\" >")
-		,QObject::tr("Add %1 to your mana pool").arg("<img src=\":/Effects/GMana.png\" >")
+		QObject::tr("Add White to your mana pool")
+		,QObject::tr("Add Blue to your mana pool")
+		,QObject::tr("Add Black to your mana pool")
+		,QObject::tr("Add Red to your mana pool")
+		,QObject::tr("Add Green to your mana pool")
 	};
 }
 namespace Symbols{

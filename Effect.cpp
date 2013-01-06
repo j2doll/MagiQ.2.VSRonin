@@ -6,6 +6,7 @@
 #include "StyleSheets.h"
 #include "CostantsDefinition.h"
 #include "MagiQPlayer.h"
+#include <QMessageBox>
 Effect::Effect(QWidget* parent/* =0 */)
 	:QWidget(parent)
 	,AttachedCard(NULL)
@@ -22,12 +23,13 @@ Effect::Effect(QWidget* parent/* =0 */)
 	EffectLabel=new QLabel(EffectButton);
 	EffectLabel->setObjectName("EffectLabel");
 	EffectLabel->setScaledContents(true);
+	EffectLabel->setWordWrap(true);
 	QVBoxLayout* EffectButtonLayout=new QVBoxLayout(EffectButton);
 	EffectButtonLayout->addWidget(EffectLabel);
 	QVBoxLayout* MainLayout=new QVBoxLayout(this);
-	MainLayout->addWidget(EffectButton);
+ 	MainLayout->addWidget(EffectButton);
 	SetEffectCost();
-	setMinimumSize(100,100); //FIXME
+	//setMinimumSize(100,100); //FIXME
 	//TestStuff();
 	UpdateAspect();
 }
@@ -41,7 +43,10 @@ void Effect::UpdateAspect(){
 	else show();
 	if (EffectType!=EffectsConstants::EffectTypes::ActivatedEffect) EffectButton->setFlat(true);
 	EffectLabel->setText(EffectText);
+	if (EffectLabel->sizeHint().width()>width() || EffectLabel->sizeHint().height()>height())
+		resize(EffectLabel->sizeHint());
 	setStyleSheet(StyleSheets::EffectCSS);
+	update();
 }
 void Effect::SetEffectCost(){
 	EffectCost.clear();
@@ -165,4 +170,84 @@ void Effect::SetTargets(){
 	for (int i=0;i<=EffectsConstants::Targets::Planeswalker;i++){
 		Targets.insert(i,0);
 	}
+}
+void Effect::SetEffectText(const QString& a){
+	EffectText=a;
+}
+Effect::Effect(const Effect& a,QWidget* parent)
+	:QWidget(parent)
+	,AttachedCard(NULL)
+	,EffectType(a.EffectType)
+	,ManaEffect(a.ManaEffect)
+	,DoesntStack(a.DoesntStack)
+	,HiddenEffect(a.HiddenEffect)
+	,EffectCost(a.EffectCost)
+	,Targets(a.Targets)
+	,Triggers(a.Triggers)
+	,EffectBody(a.EffectBody)
+	,EffectText(a.EffectText)
+{
+	EffectButton=new QPushButton(this);
+	EffectButton->setObjectName("EffectButton");
+	EffectButton->setCheckable(false);
+	EffectButton->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	EffectLabel=new QLabel(EffectButton);
+	EffectLabel->setObjectName("EffectLabel");
+	EffectLabel->setScaledContents(true);
+	EffectLabel->setWordWrap(true);
+	QVBoxLayout* EffectButtonLayout=new QVBoxLayout(EffectButton);
+	EffectButtonLayout->addWidget(EffectLabel);
+	QVBoxLayout* MainLayout=new QVBoxLayout(this);
+	MainLayout->addWidget(EffectButton);
+	UpdateAspect();
+}
+Effect& Effect::operator=(const Effect& a){
+	EffectType=a.EffectType;
+	ManaEffect=a.ManaEffect;
+	DoesntStack=a.DoesntStack;
+	HiddenEffect=a.HiddenEffect;
+	EffectCost=a.EffectCost;
+	Targets=a.Targets;
+	Triggers=a.Triggers;
+	EffectBody=a.EffectBody;
+	EffectText=a.EffectText;
+	return *this;
+}
+QDataStream &operator<<(QDataStream &out, const Effect &effect)
+{
+	out << qint32(Card::CardVersion)
+		<< qint32(effect.GetEffectType())
+		<< effect.GetManaEffect()
+		<< effect.GetDoesntStack()
+		<< effect.GetHiddenEffect()
+		<< effect.GetEffectCost()
+		<< effect.GetTargets()
+		<< effect.GetTriggers()
+		<< qint32(effect.GetEffectBody())
+		<< effect.GetEffectText()
+	;
+	return out;
+}
+QDataStream &operator>>(QDataStream &input, Effect &effect){
+	qint32 Numbers;
+	QString Strings;
+	QList<int> IntLists;
+	QMap<int,int> IntMap;
+	bool Booleans;
+	input >> Numbers;
+	if (Numbers!=Card::CardVersion){
+		QMessageBox::critical(0,QObject::tr("Wrong File Type"),QObject::tr("Error: Unable to Read the File\nMake sure it's a valid MagiQ Effect File"));
+		return input;
+	}
+	input >> Numbers; effect.SetEffectType(Numbers);
+	input >> Booleans; effect.SetManaEffect(Booleans);
+	input >> Booleans; effect.SetDoesntStack(Booleans);
+	input >> Booleans; effect.SetHiddenEffect(Booleans);
+	input >> IntMap; effect.SetEffectCost(IntMap); IntMap.clear();
+	input >> IntMap; effect.SetTargets(IntMap); IntMap.clear();
+	input >> IntLists; effect.SetTriggers(IntLists);
+	input >> Numbers; effect.SetEffectBody(Numbers);
+	input >> Strings; effect.SetEffectText(Strings);
+	effect.UpdateAspect();
+	return input;
 }
