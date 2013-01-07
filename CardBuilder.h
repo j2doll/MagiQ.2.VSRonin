@@ -12,6 +12,7 @@ class QGroupBox;
 class QFrame;
 class QLabel;
 class SelettoreImmagini;
+class EffectsBuilder;
 class CardBuilder : public QWidget{
 	Q_OBJECT
 public:
@@ -61,6 +62,9 @@ private:
 	QPushButton* OpenButton;
 	QPushButton* ResetButton;
 	QPushButton* ExitButton;
+	QPushButton* AddEffectButton;
+	QPushButton* ResetEffectButton;
+	EffectsBuilder* EffBuilder;
 signals:
 	void FlippedAccepted(Card* FlipCard);
 	void FlippedRejected();
@@ -100,5 +104,8 @@ private slots:
 	void SetFlippedCard(Card* a);
 	void OpenCard();
 	void ImageJump(int index);
+	void AskForEffect();
+	void AddEffect();
+	void ResetEffects();
 };
 #endif

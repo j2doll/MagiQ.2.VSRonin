@@ -295,20 +295,24 @@ namespace Constants{
 		enum{
 			NONE=-1
 			,TSP
+			,ISD
 			,AVR
 			,END
 		};
 	}
 	const QString EditionNames[]={
 		QObject::tr("Time Spiral")
+		,QObject::tr("Innistrad")
 		,QObject::tr("Avacyn Restored")
 	};
 	const QString EditionSymbolsIcons[]={
 		":/Editions/TSP.png"
+		,":/Editions/ISD.png"
 		,":/Editions/AVR.png"
 	};
 	const QSize EditionSymbolSyze[]={
 		QSize(89,101) //TSP
+		,QSize(272,246) //ISD
 		,QSize(92,93) //AVR
 	};
 	const QString CardSubTypesNames[]={

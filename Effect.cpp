@@ -1,12 +1,9 @@
 #include "Effect.h"
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QLabel>
 #include "Card.h"
 #include "StyleSheets.h"
 #include "CostantsDefinition.h"
 #include "MagiQPlayer.h"
-#include <QMessageBox>
+#include <QtGui>
 Effect::Effect(QWidget* parent/* =0 */)
 	:QWidget(parent)
 	,AttachedCard(NULL)
@@ -26,25 +23,20 @@ Effect::Effect(QWidget* parent/* =0 */)
 	EffectLabel->setWordWrap(true);
 	QVBoxLayout* EffectButtonLayout=new QVBoxLayout(EffectButton);
 	EffectButtonLayout->addWidget(EffectLabel);
+	EffectButtonLayout->setContentsMargins(5,1,5,1);
+	EffectButtonLayout->setSpacing(0);
 	QVBoxLayout* MainLayout=new QVBoxLayout(this);
+	MainLayout->setMargin(0);
+	MainLayout->setSpacing(0);
  	MainLayout->addWidget(EffectButton);
 	SetEffectCost();
-	//setMinimumSize(100,100); //FIXME
-	//TestStuff();
 	UpdateAspect();
 }
-void Effect::TestStuff(){
-	EffectCost[EffectsConstants::EffectCosts::Tap]=1;
-	//EffectType=ActivatedEffect;
-	EffectBody=EffectsConstants::Effects::AddWToManaPool;
-}
 void Effect::UpdateAspect(){
-	if (HiddenEffect) hide();
-	else show();
 	if (EffectType!=EffectsConstants::EffectTypes::ActivatedEffect) EffectButton->setFlat(true);
 	EffectLabel->setText(EffectText);
-	if (EffectLabel->sizeHint().width()>width() || EffectLabel->sizeHint().height()>height())
-		resize(EffectLabel->sizeHint());
+	if (EffectLabel->sizeHint().height()>height())
+		resize(width(),EffectLabel->sizeHint().height());
 	setStyleSheet(StyleSheets::EffectCSS);
 	update();
 }

@@ -27,7 +27,6 @@ private:
 	Card* AttachedCard;
 // Functions
 	QString FromCostToString();
-	void TestStuff();
 public:
 	void SetEffectBody(int a){if (a>=-1 && a<EffectsConstants::Effects::END) EffectBody=a;}
 	void SetEffectBody() {EffectBody=-1;}

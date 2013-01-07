@@ -73,6 +73,7 @@
         <file alias="RareBackground.png">Resources/Editions/RareBackground.png</file>
         <file alias="UncommonBackground.png">Resources/Editions/UncommonBackground.png</file>
         <file alias="AVR.png">Resources/Editions/AVR.png</file>
+        <file alias="ISD.png">Resources/Editions/ISD.png</file>
     </qresource>
     <qresource prefix="/PTLabelBases">
         <file alias="BBox.png">Resources/PTBoxes/BBox.png</file>
@@ -116,5 +117,9 @@
         <file alias="CMana6.png">Resources/Effects/CMana6.png</file>
         <file alias="CMana7.png">Resources/Effects/CMana7.png</file>
         <file alias="CMana8.png">Resources/Effects/CMana8.png</file>
+    </qresource>
+    <qresource prefix="/Various">
+        <file alias="DownArrow.png">Resources/DownArrow.png</file>
+        <file alias="UpArrow.png">Resources/UpArrow.png</file>
     </qresource>
 </RCC>

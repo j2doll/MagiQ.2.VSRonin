@@ -149,10 +149,30 @@ namespace StyleSheets{
 			+QString("Card[CardRarity=\"%1\"] #EditionLabel{").arg(Constants::CardRarities::Timeshifted)+
 				"border-image: url(:/Editions/TimeshiftedBackground.png);"
 			"}"
+		//Effect Table
 			"Card #EffectsTable{"
 				"background-color: rgba(0,0,0,0);"
-				//"border: none;"
+				"border: none;"
 			"}"
+			/*"#EffectsTable QScrollBar:vertical{"
+				"border-radius: 15px;"
+				"background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+					"stop: 0 rgb(76,76,76), stop: 1 rgb(230,230,230,));"
+			"}"
+			"#EffectsTable QScrollBar::handle:vertical {"
+				"background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+					"stop: 1 rgb(76,76,76), stop: 0 rgb(230,230,230,));"
+				"border: none;"
+			"}"
+			"#EffectsTable QScrollBar::up-arrow:vertical{"
+				"background-color: rgba(0,0,0,0);"
+				"image: url(:/Various/UpArrow.png);"
+			"}"
+			"#EffectsTable QScrollBar::down-arrow:vertical {"
+				"background-color: rgba(0,0,0,0);"
+				"image: url(:/Various/DownArrow.png);"
+			"}"*/
+
 		);
 		const QString EffectCSS(
 			"Effect #EffectButton{"

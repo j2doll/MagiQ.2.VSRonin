@@ -3,7 +3,7 @@ MagiQ Source Readme
 
 This project aims to recreate a digital and rule-aware enviroment to play **Magic: The Gathering**&reg;  
 
-No copyright or patent law is intended. Any submission that will violate the law will be immediately removed.
+No copyright or patent infringment is intended. Any submission that will violate the law will be immediately removed.
 
 <table border="1" width="100%">
 	<tr>

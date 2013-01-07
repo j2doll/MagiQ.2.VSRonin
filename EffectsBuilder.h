@@ -41,6 +41,7 @@ private:
 	QPushButton* ResetAllButton;
 	QPushButton* SaveButton;
 	QPushButton* OpenButton;
+	QPushButton* AbortButton;
 public:
 	EffectsBuilder(QWidget* parent=0);
 	Effect* GetEffect() const {return EffectPreview;}

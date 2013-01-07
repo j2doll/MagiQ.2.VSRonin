@@ -239,6 +239,11 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	ButtonsLayout->addWidget(ResetAllButton);
 	QSpacerItem* ButtonsSpacer=new QSpacerItem(20,20,QSizePolicy::Expanding);
 	ButtonsLayout->addItem(ButtonsSpacer);
+	AbortButton=new QPushButton(this);
+	AbortButton->setObjectName("AbortButton");
+	AbortButton->setText(tr("Cancel"));
+	connect(AbortButton,SIGNAL(clicked()),this,SLOT(hide()));
+	ButtonsLayout->addWidget(AbortButton);
 	ButtonsLayout->addWidget(OpenButton);
 	SaveButton=new QPushButton(this);
 	SaveButton->setObjectName("SaveButton");

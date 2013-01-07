@@ -20,11 +20,12 @@
 #include <QCloseEvent>
 #include "ConstantProportionLayout.h"
 #include "SelettoreImmagini.h"
+#include "EffectsBuilder.h"
 CardBuilder::CardBuilder(QWidget* parent)
 	:QWidget(parent)
 	,EditingFlip(false)
 {
-	setMinimumHeight(720);
+	setMinimumHeight(750);
 	setWindowIcon(QIcon(QPixmap(":/CardImage/Rear.png")));
 	setWindowTitle(tr("Card Editor"));
 	Background=new QFrame(this);
@@ -260,17 +261,35 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CardBackgroundLayout->addWidget(CardBackgroundLabel,2,0,1,2);
 	CardBackgroundLayout->addWidget(CardBackgroundSelector,3,0,1,2);
 
+	QGroupBox* FalvorEffectGroup=new QGroupBox(this);
+	FalvorEffectGroup->setObjectName("FalvorEffectGroup");
+	FalvorEffectGroup->setTitle("Effects and Flavor Text");
+	EffBuilder=new EffectsBuilder;
+	EffBuilder->setObjectName("EffBuilder");
+	EffBuilder->setWindowModality(Qt::ApplicationModal);
+	connect(EffBuilder,SIGNAL(Saved()),this,SLOT(AddEffect()));
+	connect(EffBuilder,SIGNAL(Saved()),EffBuilder,SLOT(hide()));
+	AddEffectButton=new QPushButton(this);
+	AddEffectButton->setObjectName("AddEffectButton");
+	AddEffectButton->setText("Add Effect");
+	connect(AddEffectButton,SIGNAL(clicked()),this,SLOT(AskForEffect()));
+	ResetEffectButton=new QPushButton(this);
+	ResetEffectButton->setObjectName("ResetEffectButton");
+	ResetEffectButton->setText("Reset Effects");
+	connect(ResetEffectButton,SIGNAL(clicked()),this,SLOT(ResetEffects()));
 	QLabel* FlavorTextLabel=new QLabel(this);
 	FlavorTextLabel->setObjectName("FlavorTextLabel");
 	FlavorTextLabel->setText(tr("Flavor Text"));
 	CardFlavorTextEdit=new QTextEdit(this);
 	CardFlavorTextEdit->setObjectName("CardFlavorTextEdit");
-	CardFlavorTextEdit->setHtml("");
+	CardFlavorTextEdit->setPlainText("");
 	CardFlavorTextEdit->setToolTip(tr("You can use HTML tags to customize the text"));
 	connect(CardFlavorTextEdit,SIGNAL(textChanged()),this,SLOT(SetFlavorText()));
-	QVBoxLayout* FlavorTextLayout=new QVBoxLayout;
-	FlavorTextLayout->addWidget(FlavorTextLabel);
-	FlavorTextLayout->addWidget(CardFlavorTextEdit);
+	QGridLayout* FlavorTextLayout=new QGridLayout(FalvorEffectGroup);
+	FlavorTextLayout->addWidget(AddEffectButton,0,0);
+	FlavorTextLayout->addWidget(ResetEffectButton,0,1);
+	FlavorTextLayout->addWidget(FlavorTextLabel,1,0,1,2);
+	FlavorTextLayout->addWidget(CardFlavorTextEdit,2,0,1,2);
 
 	HasPTGroup=new QGroupBox(this);
 	HasPTGroup->setObjectName("HasPTGroup");
@@ -452,7 +471,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	QVBoxLayout* RightLayout2=new QVBoxLayout;
 	RightLayout2->addWidget(ImageGroup);
 	RightLayout2->addWidget(CardBackgroundGroup);
-	RightLayout2->addLayout(FlavorTextLayout);
+	RightLayout2->addWidget(FalvorEffectGroup);
 	RightLayout2->addWidget(HasPTGroup);
 	MainLayout->addLayout(RightLayout);
 	MainLayout->addLayout(RightLayout2);
@@ -767,7 +786,7 @@ void CardBuilder::SelectRarity(int index){
 	CardPreview->UpdateAspect();
 }
 void CardBuilder::SetFlavorText(){
-	CardPreview->SetCardFlavorText(CardFlavorTextEdit->toHtml());
+	CardPreview->SetCardFlavorText(CardFlavorTextEdit->toPlainText());
 	CardPreview->UpdateAspect();
 }
 void CardBuilder::SetHasPT(bool a){
@@ -835,6 +854,7 @@ void CardBuilder::ResetAll(){
 	ResetCardEdition();
 	ResetCardImages();
 	ResetCardBackground();
+	ResetEffects();
 	HasManaCostCheck->setChecked(false);
 	RemoveFlippedCard();
 	CardPreview->UpdateAspect();
@@ -970,4 +990,16 @@ void CardBuilder::SetFlippedCard(Card* a){
 	AddFlippedButton->setText(tr("Edit Split or Flip Card"));
 	FlippedCard->SetCovered(false);
 	FlippedCard->UpdateAspect();
+}
+void CardBuilder::AskForEffect(){
+	EffBuilder->ResetAll();
+	EffBuilder->show();
+}
+void CardBuilder::AddEffect(){
+	CardPreview->AddEffect(*(EffBuilder->GetEffect()));
+	CardPreview->UpdateAspect();
+}
+void CardBuilder::ResetEffects(){
+	CardPreview->SetEffects();
+	CardPreview->UpdateAspect();
 }

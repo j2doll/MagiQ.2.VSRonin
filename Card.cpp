@@ -30,6 +30,7 @@ Card::Card(QWidget* parent)
 	,HasManaCost(true)
 	,CardBackground(Constants::CardBacksrounds::Colorless)
 	,CardRarity(Constants::CardRarities::Common)
+	,ShowFlavorText(true)
 {
 	setObjectName("Card");
 	Background=new QFrame(this);
@@ -60,25 +61,19 @@ Card::Card(QWidget* parent)
 	AvailableEditions.append(Constants::Editions::NONE);
 	PTLabel=new PowerToughnesLabel(this);
 	PTLabel->setObjectName("PTLabel");
-	FlavorTextLabel=new QLabel(this);
-	FlavorTextLabel->setObjectName("FlavorTextLabel");
-	FlavorTextLabel->setWordWrap(true);
-	FlavorTextLabel->setScaledContents(true);
 	EffectsTable=new QTableWidget(this);
 	EffectsTable->setShowGrid(false);
 	EffectsTable->setObjectName("EffectsTable");
 	EffectsTable->setColumnCount(1);
+	EffectsTable->setRowCount(0);
 	EffectsTable->verticalHeader()->setVisible(false);
 	EffectsTable->horizontalHeader()->setVisible(false);
+	EffectsTable->horizontalHeader()->setStretchLastSection(true);
 	EffectsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	EffectsTable->setSortingEnabled(false);
 	EffectsTable->setSelectionMode(QAbstractItemView::NoSelection);
-	EffectsTable->insertRow(0);
-	EffectsTable->setItem(0,0,new QTableWidgetItem);
-	EffectsTable->setCellWidget(0,0,FlavorTextLabel);
-TestStuff();
+	EffectsTable->setFocusPolicy(Qt::NoFocus);
 	setMinimumSize(200,279);
-	setStyleSheet(StyleSheets::CardCSS);
 	UpdateAspect();
 }
 void Card::resizeEvent(QResizeEvent* event){
@@ -102,8 +97,17 @@ void Card::resizeEvent(QResizeEvent* event){
 		,10*height()/279
 		).mask());
 	ImageLabel->setGeometry(17*width()/200,33*height()/279,166*width()/200,123*height()/279);
-	EffectsTable->setGeometry(15*width()/200,173*height()/279,167*width()/200,76*height()/279);
-	EffectsTable->setColumnWidth(0,EffectsTable->width());
+	EffectsTable->setGeometry(18*width()/200,176*height()/279,163*width()/200,74*height()/279);
+	int RequiredHeight=0;
+	for (int i=0;i<EffectsTable->rowCount()-2;i++)
+		RequiredHeight+=EffectsTable->rowHeight(i);
+	RequiredHeight+=EffectsTable->rowHeight(EffectsTable->rowCount()-1);
+	EffectsTable->setRowHeight(EffectsTable->rowCount()-2,
+		RequiredHeight<EffectsTable->height() ?
+			EffectsTable->height()-RequiredHeight
+		:
+			0
+	);
 }
 void Card::SetAvailableImages(const QPixmap& a){
 	AvailableImages.clear();
@@ -126,6 +130,7 @@ void Card::UpdateAspect(){
 		TypeLabel->hide();
 		EditionLabel->hide();
 		PTLabel->hide();
+		EffectsTable->hide();
 		setStyleSheet(StyleSheets::CardCSS);
 		return;
 	}
@@ -138,6 +143,7 @@ void Card::UpdateAspect(){
 		TypeLabel->show();
 		EditionLabel->show();
 		PTLabel->show();
+		EffectsTable->show();
 	}
 	QPixmap NamePixmap(646,57);
 	NamePixmap.fill(QColor(0,0,0,0));
@@ -230,7 +236,49 @@ void Card::UpdateAspect(){
 		}
 	}
 	else PTLabel->hide();
-	FlavorTextLabel->setText("<i>"+CardFlavorText+"</i>");
+	QString FlavorAdj(CardFlavorText);
+	FlavorAdj.replace(QRegExp("<[ /]*i *>"),"");
+	//**************************************************
+	// Inefficient
+	QList<Effect*> CopyEffects;
+	foreach(Effect* eff,Effects){
+		CopyEffects.append(new Effect(*eff,this));
+		eff->deleteLater();
+	}
+	EffectsTable->setRowCount(0);
+	Effects=CopyEffects;
+	FlavorTextLabel=new QLabel(this);
+	FlavorTextLabel->setObjectName("FlavorTextLabel");
+	FlavorTextLabel->setWordWrap(true);
+	FlavorTextLabel->setScaledContents(true);
+	//**************************************************
+	if(!FlavorAdj.isEmpty()) FlavorTextLabel->setText("<i>"+FlavorAdj+"</i>");
+	else FlavorTextLabel->setText("");
+	int RequiredHeight=0;
+	QRegExp tagMatcher("<.+>");
+	tagMatcher.setMinimal(true);
+	foreach(Effect* eff,Effects){
+		if (eff->GetHiddenEffect()) continue;
+		EffectsTable->insertRow(0);
+		EffectsTable->setItem(0,0,&QTableWidgetItem());
+		EffectsTable->setCellWidget(0,0,eff);
+		EffectsTable->setRowHeight(0,eff->sizeHint().height());
+		RequiredHeight+=EffectsTable->rowHeight(0);
+		eff->UpdateAspect();
+	}
+	EffectsTable->insertRow(EffectsTable->rowCount());
+	EffectsTable->setItem(EffectsTable->rowCount()-1,0,&QTableWidgetItem());
+	EffectsTable->setCellWidget(EffectsTable->rowCount()-1,0,FlavorTextLabel);
+	EffectsTable->setRowHeight(EffectsTable->rowCount()-1,FlavorTextLabel->sizeHint().height());
+	RequiredHeight+=EffectsTable->rowHeight(EffectsTable->rowCount()-1);
+	EffectsTable->insertRow(EffectsTable->rowCount()-1);
+	EffectsTable->setItem(EffectsTable->rowCount()-2,0,&QTableWidgetItem());
+	EffectsTable->setRowHeight(EffectsTable->rowCount()-2,
+		RequiredHeight<EffectsTable->height() ?
+			EffectsTable->height()-RequiredHeight
+		:
+			0
+	);
 	setStyleSheet(StyleSheets::CardCSS);
 }
 QString Card::CreateManaCostString() const{
@@ -285,14 +333,20 @@ QDataStream &operator<<(QDataStream &out, const Card &card)
 		<< qint32(card.GetCardImage())
 		<< card.GetCertified()
 		<< card.GetHasManaCost()
+		<< qint32(card.GetEffects().size())
 		<< qint32(card.GetHasFlipped())
 	;
+	foreach(Effect* eff,card.GetEffects()){
+		out << *eff;
+	}
 	if (card.GetHasFlipped()==Card::HasFlip)
 		out << *(card.GetFlippedCard());
 	return out;
 }
 QDataStream &operator>>(QDataStream &input, Card &card){
 	qint32 Numbers;
+	qint32 NumberOfEffects;
+	Effect effect;
 	QString Strings;
 	QList<int> IntLists;
 	QMap<int,int> IntMap;
@@ -352,8 +406,14 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	card.SetCertified(Booleans);
 	input >> Booleans;
 	card.SetHasManaCost(Booleans);
+	input >> NumberOfEffects;
 	input >> Numbers;
 	card.SetHasFlipped(Numbers);
+	card.SetEffects();
+	for (int i=0;i<NumberOfEffects;i++){
+		input >> effect;
+		card.AddEffect(effect);
+	}
 	if (Numbers==Card::HasFlip){
 		Card* TempCard;
 		if (card.parent()){
@@ -425,6 +485,8 @@ Card& Card::operator=(const Card& a){
 	HasManaCost=a.HasManaCost;
 	HasFlipped=a.HasFlipped;
 	FlippedCard=a.FlippedCard;
+	foreach(Effect* eff,a.Effects)
+		AddEffect(*eff);
 	UpdateAspect();
 	return *this;
 }
@@ -455,6 +517,7 @@ Card::Card(const Card& a,QWidget* parent):QWidget(parent)
 	,CardPowerModifiers(a.CardPowerModifiers)
 	,CardToughnessModifiers(a.CardToughnessModifiers)
 	,CardRarity(a.CardRarity)
+	,ShowFlavorText(a.ShowFlavorText)
 {
 	setObjectName("Card");
 	Background=new QFrame(this);
@@ -487,12 +550,14 @@ Card::Card(const Card& a,QWidget* parent):QWidget(parent)
 	ResetCardCost();
 	CardBackground=Constants::CardBacksrounds::Colorless;
 	CardRarity=Constants::CardRarities::Common;
-	setMinimumSize(200,279);
-	setStyleSheet(StyleSheets::CardCSS);
 	if (HasFlipped==HasFlip)
 		FlippedCard=new Card(*a.FlippedCard,parent);
 	else if (HasFlipped==AllreadyFlipped)
 		FlippedCard=a.FlippedCard;
+	foreach(Effect* eff,a.Effects)
+		AddEffect(*eff);
+	setMinimumSize(200,279);
+	setStyleSheet(StyleSheets::CardCSS);
 	UpdateAspect();
 }
 int Card::GetConvertedManaCost() const{
@@ -505,9 +570,9 @@ int Card::GetConvertedManaCost() const{
 	return Result;
 }
 void Card::SetEffects(){
-	foreach(Effect* eff,Effects){
+	foreach(Effect* eff,Effects)
 		eff->deleteLater();
-	}
+	EffectsTable->setRowCount(0);
 	Effects.clear();
 }
 void Card::SetEffects(const QList<Effect*>& a){
@@ -516,12 +581,6 @@ void Card::SetEffects(const QList<Effect*>& a){
 		Effects.append(new Effect(*eff,this));
 	}
 }
-void Card::AddEffect(const Effect& a){
+void Card::AddEffect(Effect& a){
 	Effects.append(new Effect(a,this));
-}
-void Card::TestStuff(){
-	CardFlavorText="Prova 1234";
-	/*Effects.append(new Effect(this));
-	Effects.last()->SetEffectType(1);
-	Effects.last()->SetEffectText("Prova 12345");*/
 }

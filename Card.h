@@ -60,7 +60,6 @@ private:
 	bool HasManaCost;
 	int HasFlipped;
 	Card* FlippedCard;
-	//TODO Serialize This:
 	QList<Effect*> Effects;
 // Game Properties
 	MagiQPlayer* Owner;
@@ -68,17 +67,19 @@ private:
 	bool Covered;
 	bool Tapped;
 	QMap<int,int> Counters;
+	bool ShowFlavorText;
 
 // Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
-	void TestStuff();
 public:
+	void SetShowFlavorText(bool a){ShowFlavorText=a;}
+	bool GetShowFlavorText() const {return ShowFlavorText;}
 	const QList<Effect*>& GetEffects() const {return Effects;}
 	void SetEffects();
 	void SetEffects(const QList<Effect*>& a);
-	void SetEffects(const Effect& a){SetEffects(); AddEffect(a);}
-	void AddEffect(const Effect& a);
+	void SetEffects(Effect& a){SetEffects(); AddEffect(a);}
+	void AddEffect(Effect& a);
 	MagiQPlayer* GetOwner() const{return Owner;}
 	MagiQPlayer* GetController() const{return Controller;}
 	void SetOwner(MagiQPlayer* a){Owner=a;}
