@@ -2,6 +2,7 @@
 #define EFFECT_H
 #include <QWidget>
 #include <QMap>
+#include "EffectData.h"
 #include "EffectsConstants.h"
 class QPushButton;
 class Card;
@@ -23,11 +24,16 @@ private:
 	QList<int> Triggers;
 	int EffectBody;
 	QString EffectText;
+	QString EffectTooltip;
 // Game Properties
 	Card* AttachedCard;
 // Functions
 	QString FromCostToString();
+	void PrepareUi();
 public:
+	void SetEffectTooltip(const QString& a){EffectTooltip=a;}
+	const QString& GetEffectTooltip() const {return EffectTooltip;}
+	int GetMinimumHeight() const;
 	void SetEffectBody(int a){if (a>=-1 && a<EffectsConstants::Effects::END) EffectBody=a;}
 	void SetEffectBody() {EffectBody=-1;}
 	int GetEffectBody() const {return EffectBody;}
@@ -41,10 +47,7 @@ public:
 	void AddTarget(int key,int val){if (key>=0 && key<=EffectsConstants::Targets::Planeswalker) Targets[key]+=val;}
 	void SetTriggers(const QList<int>& a){Triggers.clear(); Triggers=a;}
 	void SetTriggers(){Triggers.clear();}
-	void SetTriggers(int a){Triggers.clear(); if (
-		a>=EffectsConstants::Triggers::EntersTheBattlefield &&
-		a<=EffectsConstants::Triggers::Dies
-		) Triggers.append(a);}
+	void SetTriggers(int a){Triggers.clear(); AddTrigger(a);}
 	void AddTrigger(int a){if (
 		a>=EffectsConstants::Triggers::EntersTheBattlefield &&
 		a<=EffectsConstants::Triggers::Dies
@@ -57,6 +60,7 @@ public:
 	bool GetHiddenEffect() const {return HiddenEffect;}
 	Effect(QWidget* parent=0);
 	Effect(const Effect& a,QWidget* parent=0);
+	Effect(const EffectData& a,QWidget* parent=0);
 	Effect& operator=(const Effect& a);
 	void SetEffectType(int a){if (a>=EffectsConstants::EffectTypes::PassiveEffect && a<=EffectsConstants::EffectTypes::OnResolutionEffect) EffectType=a;}
 	const QMap<int,int>& GetEffectCost() const {return EffectCost;}

@@ -154,8 +154,12 @@ namespace StyleSheets{
 				"background-color: rgba(0,0,0,0);"
 				"border: none;"
 			"}"
+			"Card #EffectsTable::item{"
+				"border: none;"
+				"padding: 2px;"
+			"}"
 			/*"#EffectsTable QScrollBar:vertical{"
-				"border-radius: 15px;"
+			"border-radius: 15px;"
 				"background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
 					"stop: 0 rgb(76,76,76), stop: 1 rgb(230,230,230,));"
 			"}"
@@ -174,7 +178,7 @@ namespace StyleSheets{
 			"}"*/
 
 		);
-		const QString EffectCSS(
+		const QString EffectCSS(""
 			"Effect #EffectButton{"
 				"background-color: rgba(0,0,0,0);"
 				"border: none;"

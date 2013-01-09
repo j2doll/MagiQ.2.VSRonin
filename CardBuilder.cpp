@@ -25,7 +25,7 @@ CardBuilder::CardBuilder(QWidget* parent)
 	:QWidget(parent)
 	,EditingFlip(false)
 {
-	setMinimumHeight(750);
+	setMinimumHeight(768);
 	setWindowIcon(QIcon(QPixmap(":/CardImage/Rear.png")));
 	setWindowTitle(tr("Card Editor"));
 	Background=new QFrame(this);
@@ -820,7 +820,7 @@ void CardBuilder::SetNoManaCost(){
 }
 void CardBuilder::RemoveFlippedCard(){
 	CardPreview->SetFlippedCard(NULL);
-	CardPreview->SetHasFlipped(Card::NoFlip);
+	CardPreview->SetHasFlipped(Constants::CardFlipMode::NoFlip);
 	FlippedCard->operator=(Card());
 	FlippedCard->SetCovered(true);
 	FlippedCard->UpdateAspect();
@@ -880,7 +880,7 @@ void CardBuilder::OpenCard(){
 	input.setVersion(QDataStream::Qt_4_7);
 	input >> *CardPreview;
 	file.close();
-	if (CardPreview->GetHasFlipped()==Card::HasFlip){
+	if (CardPreview->GetHasFlipped()==Constants::CardFlipMode::HasFlip){
 		SetFlippedCard(CardPreview->GetFlippedCard());
 	}
 	SetCard(CardPreview);
@@ -910,13 +910,15 @@ void CardBuilder::EditingFlipCard(Card* ParentCard){
 	FlippedCard->operator=(*ParentCard);
 	FlippedCard->SetCovered(false);
 	AddFlippedButton->hide();
-	CardPreview->SetHasFlipped(Card::AllreadyFlipped);
+	CardPreview->SetHasFlipped(Constants::CardFlipMode::AllreadyFlipped);
 	CardPreview->SetFlippedCard(ParentCard);
 	FlippedCard->UpdateAspect();
 }
 void CardBuilder::SetCard(Card* a){
-	CardPreview->operator=(*a);
-	CardPreview->UpdateAspect();
+	if (a!=CardPreview){
+		CardPreview->operator=(*a);
+		CardPreview->UpdateAspect();
+	}
 	NameEditor->setText(CardPreview->GetCardName());
 	QList<int> TempList=CardPreview->GetCardColor();
 	if (TempList.contains(Constants::CardColor::White)){
@@ -984,7 +986,7 @@ void CardBuilder::SetFlippedCard(Card* a){
 	if (!a) return RemoveFlippedCard();
 	FlippedCard->operator=(*a);
 	FlippedCard->UpdateAspect();
-	CardPreview->SetHasFlipped(Card::HasFlip);
+	CardPreview->SetHasFlipped(Constants::CardFlipMode::HasFlip);
 	CardPreview->SetFlippedCard(FlippedCard);
 	RemoveFlippedButton->show();
 	AddFlippedButton->setText(tr("Edit Split or Flip Card"));

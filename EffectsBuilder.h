@@ -29,6 +29,7 @@ private:
 	QComboBox* AddCostCombo;
 	QPushButton* ResetCostButton;
 	QTextEdit* EffectTextEditor;
+	QTextEdit* EffectTooltipEditor;
 	QPushButton* SymbolsMenuButton;
 	SmilesSelector* SymbolsSelector;
 	QComboBox* TargetTypeSelector;
@@ -63,6 +64,7 @@ private slots:
 	void ResetTarget();
 	void SetEffectBody(int index);
 	void OpenFromFile();
+	void SetEffectTooltip();
 public slots:
 	void ResetAll();
 	void Open(const Effect &a);

@@ -2,6 +2,7 @@
 #define PLAYER_H
 #include <QObject>
 #include <QMap>
+#include "CardData.h"
 class Card;
 class MagiQPlayer : public QObject{
 	Q_OBJECT
@@ -11,22 +12,22 @@ private:
 	int SecondaryOrdering;
 	bool CanPlayMana;
 	QMap<int,int> ManaPool;
-	QList<Card*> Library;
-	QList<Card*> Hand;
-	QList<Card*> Graveyard;
-	QList<Card*> Exile;
-	QList<Card*> OwnedCards;
-	QList<Card*> ControlledCards;
+	QList<CardData> Library;
+	QList<CardData> Hand;
+	QList<CardData> Graveyard;
+	QList<CardData> Exile;
+	QList<CardData> OwnedCards;
+	QList<CardData> ControlledCards;
 signals:
 	void LifeChanged(int l);
 	void CardDrawn();
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
-	enum {ByName,ByManaCost,ByType,ByColor};
-	void SetPrimaryOrdering(int a){if (a>=ByName && a <=ByColor) PrimaryOrdering=a;}
+	
+	void SetPrimaryOrdering(int a){if (a>=CardData::ByName && a <=CardData::ByColor) PrimaryOrdering=a;}
 	int GetPrimaryOrdering() const {return PrimaryOrdering;}
-	void SetSecondaryOrdering(int a){if (a>=ByName && a <=ByColor) SecondaryOrdering=a;}
+	void SetSecondaryOrdering(int a){if (a>=CardData::ByName && a <=CardData::ByColor) SecondaryOrdering=a;}
 	int GetSecondaryOrdering() const {return SecondaryOrdering;}
 	MagiQPlayer(QObject* parent=0);
 	void SetLife(int a){Life=a; emit LifeChanged(Life);}
@@ -42,11 +43,5 @@ public:
 	void SortHand();
 	void SetCanPlayMana(bool a){CanPlayMana=a;}
 	bool GetCanPlayMana() const {return CanPlayMana;}
-
-	static bool RandomOrder(Card* a, Card* b);
-	static bool NameOrder( Card* a,Card* b);
-	static bool ManaCostOrder( Card* a, Card* b);
-	static bool TypeOrder( Card* a, Card* b);
-	static bool ColorOrder( Card* a, Card* b);
 };
 #endif

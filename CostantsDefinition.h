@@ -89,6 +89,7 @@ namespace Constants{
 		,Instant
 		,Artifact
 		,Enchantment
+		,Token
 		,Legendary
 		,Snow
 		,Tribal
@@ -104,6 +105,7 @@ namespace Constants{
 		,QObject::tr("Instant")
 		,QObject::tr("Artifact")
 		,QObject::tr("Enchantment")
+		,QObject::tr("Token")
 		,QObject::tr("Legendary")
 		,QObject::tr("Snow")
 		,QObject::tr("Tribal")
@@ -392,5 +394,8 @@ namespace Constants{
 			,Age
 		};
 	}
+	namespace Legality{enum{Legacy,Modern,Standard,Extended,Commander,END_Legal};}
+	namespace CardFlipMode{enum{AllreadyFlipped=-1,NoFlip=0,HasFlip=1};};
+	enum {CardVersion=0};
 }
 #endif

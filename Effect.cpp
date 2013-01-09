@@ -13,6 +13,11 @@ Effect::Effect(QWidget* parent/* =0 */)
 	,EffectBody(-1)
 	,DoesntStack(false)
 {
+	PrepareUi();
+	SetEffectCost();
+	UpdateAspect();
+}
+void Effect::PrepareUi(){
 	EffectButton=new QPushButton(this);
 	EffectButton->setObjectName("EffectButton");
 	EffectButton->setCheckable(false);
@@ -28,10 +33,9 @@ Effect::Effect(QWidget* parent/* =0 */)
 	QVBoxLayout* MainLayout=new QVBoxLayout(this);
 	MainLayout->setMargin(0);
 	MainLayout->setSpacing(0);
- 	MainLayout->addWidget(EffectButton);
-	SetEffectCost();
-	UpdateAspect();
+	MainLayout->addWidget(EffectButton);
 }
+int Effect::GetMinimumHeight() const{return EffectLabel->sizeHint().height()+2;}
 void Effect::UpdateAspect(){
 	if (EffectType!=EffectsConstants::EffectTypes::ActivatedEffect) EffectButton->setFlat(true);
 	EffectLabel->setText(EffectText);
@@ -178,19 +182,26 @@ Effect::Effect(const Effect& a,QWidget* parent)
 	,Triggers(a.Triggers)
 	,EffectBody(a.EffectBody)
 	,EffectText(a.EffectText)
+	,EffectTooltip(a.EffectTooltip)
 {
-	EffectButton=new QPushButton(this);
-	EffectButton->setObjectName("EffectButton");
-	EffectButton->setCheckable(false);
-	EffectButton->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	EffectLabel=new QLabel(EffectButton);
-	EffectLabel->setObjectName("EffectLabel");
-	EffectLabel->setScaledContents(true);
-	EffectLabel->setWordWrap(true);
-	QVBoxLayout* EffectButtonLayout=new QVBoxLayout(EffectButton);
-	EffectButtonLayout->addWidget(EffectLabel);
-	QVBoxLayout* MainLayout=new QVBoxLayout(this);
-	MainLayout->addWidget(EffectButton);
+	PrepareUi();
+	UpdateAspect();
+}
+Effect::Effect(const EffectData& a,QWidget* parent)
+	:QWidget(parent)
+	,AttachedCard(NULL)
+	,EffectType(a.GetEffectType())
+	,ManaEffect(a.GetManaEffect())
+	,DoesntStack(a.GetDoesntStack())
+	,HiddenEffect(a.GetHiddenEffect())
+	,EffectCost(a.GetEffectCost())
+	,Targets(a.GetTargets())
+	,Triggers(a.GetTriggers())
+	,EffectBody(a.GetEffectBody())
+	,EffectText(a.GetEffectText())
+	,EffectTooltip(a.GetEffectTooltip())
+{
+	PrepareUi();
 	UpdateAspect();
 }
 Effect& Effect::operator=(const Effect& a){
@@ -203,11 +214,12 @@ Effect& Effect::operator=(const Effect& a){
 	Triggers=a.Triggers;
 	EffectBody=a.EffectBody;
 	EffectText=a.EffectText;
+	EffectTooltip=a.EffectTooltip;
 	return *this;
 }
 QDataStream &operator<<(QDataStream &out, const Effect &effect)
 {
-	out << qint32(Card::CardVersion)
+	out << qint32(Constants::CardVersion)
 		<< qint32(effect.GetEffectType())
 		<< effect.GetManaEffect()
 		<< effect.GetDoesntStack()
@@ -227,7 +239,7 @@ QDataStream &operator>>(QDataStream &input, Effect &effect){
 	QMap<int,int> IntMap;
 	bool Booleans;
 	input >> Numbers;
-	if (Numbers!=Card::CardVersion){
+	if (Numbers!=Constants::CardVersion){
 		QMessageBox::critical(0,QObject::tr("Wrong File Type"),QObject::tr("Error: Unable to Read the File\nMake sure it's a valid MagiQ Effect File"));
 		return input;
 	}

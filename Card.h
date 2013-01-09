@@ -1,12 +1,12 @@
 #ifndef CARD_H
 #define CARD_H
 #include "CostantsDefinition.h"
+#include "CardData.h"
 #include <QWidget>
 #include <QList>
 #include <QMap>
 #include <QPixmap>
 #include <QDataStream>
-#include <QVBoxLayout>
 class ManaCostLabel;
 class QFrame;
 class QLabel;
@@ -40,7 +40,6 @@ private:
 	QString CardName;
 	QList<int> CardColor;
 	QMap<int,int> CardCost;
-	QList<int> CardCostModifiers;
 	QList<int> CardType;
 	QList<int> CardSubType;
 	QList<int> AvailableEditions;
@@ -51,9 +50,7 @@ private:
 	QString CardFlavorText;
 	bool HasPT;
 	int CardPower;
-	QList<int> CardPowerModifiers;
 	int CardToughness;
-	QList<int> CardToughnessModifiers;
 	int CardRarity;
 	int CardImage;
 	bool Certified;
@@ -62,6 +59,9 @@ private:
 	Card* FlippedCard;
 	QList<Effect*> Effects;
 // Game Properties
+	QList<int> CardToughnessModifiers;
+	QList<int> CardPowerModifiers;
+	QList<int> CardCostModifiers;
 	MagiQPlayer* Owner;
 	MagiQPlayer* Controller;
 	bool Covered;
@@ -72,6 +72,7 @@ private:
 // Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
+	void PrepareUi();
 public:
 	void SetShowFlavorText(bool a){ShowFlavorText=a;}
 	bool GetShowFlavorText() const {return ShowFlavorText;}
@@ -86,10 +87,10 @@ public:
 	void SetController(MagiQPlayer* a){Controller=a;}
 	int GetConvertedManaCost() const;
 	Card(const Card& a,QWidget* parent=0);
+	Card(const CardData& a,QWidget* parent=0);
 	Card& operator=(const Card& a);
 	enum {StarPowerToughness=-2147483648};
-	enum{AllreadyFlipped=-1,NoFlip=0,HasFlip=1};
-	void SetHasFlipped(int a){if (a>=AllreadyFlipped && a<=HasFlip) HasFlipped=a;};
+	void SetHasFlipped(int a){if (a>=Constants::CardFlipMode::AllreadyFlipped && a<=Constants::CardFlipMode::HasFlip) HasFlipped=a;};
 	int GetHasFlipped() const {return HasFlipped;}
 	void SetFlippedCard(Card* a){FlippedCard=a;}
 	Card* GetFlippedCard() const {return FlippedCard;}
@@ -112,7 +113,6 @@ public:
 	void SetCardToughnessModifiers(const QList<int>& a){CardToughnessModifiers.clear(); CardToughnessModifiers=a;}
 	void AddCardPowerModifier(int a){CardPowerModifiers.append(a);}
 	void AddCardToughnessModifier(int a){CardToughnessModifiers.append(a);}
-	enum {CardVersion=0};
 	bool IsTapped() const {return Tapped;}
 	void SetTapped(bool a){Tapped=a;}
 	Card(QWidget* parent=0);

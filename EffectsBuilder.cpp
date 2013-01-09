@@ -17,9 +17,12 @@
 #include <QHeaderView>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "SizeSliders.h"
 EffectsBuilder::EffectsBuilder(QWidget* parent)
 	:QWidget(parent)
 {
+	setMinimumSize(589,578);
+	setMaximumSize(589,578);
 	Background=new QFrame(this);
 	Background->setObjectName("Background");
 
@@ -33,7 +36,7 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 
 	QGroupBox* NameTextGroup=new QGroupBox(this);
 	NameTextGroup->setObjectName("NameTextGroup");
-	NameTextGroup->setTitle(tr("Name and Text"));
+	NameTextGroup->setTitle(tr("Text and ToolTip"));
 	QGridLayout* NameTextLayout=new QGridLayout(NameTextGroup);
 	QLabel* EffectTextLabel=new QLabel(this);
 	EffectTextLabel->setObjectName("EffectTextLabel");
@@ -47,11 +50,22 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	SymbolsSelector=new SmilesSelector(this);
 	SymbolsSelector->setObjectName("SymbolsSelector");
 	connect(SymbolsMenuButton,SIGNAL(clicked()),SymbolsSelector,SLOT(show_toggle()));
+	connect(SymbolsMenuButton,SIGNAL(clicked()),SymbolsSelector,SLOT(raise()));
 	connect(SymbolsSelector,SIGNAL(selected(int)),this,SLOT(AddSymbol(int)));
 	EffectTextEditor=new QTextEdit(this);
 	EffectTextEditor->setObjectName("EffectTextEditor");
 	connect(EffectTextEditor,SIGNAL(textChanged()),this,SLOT(SetEffectText()));
 	NameTextLayout->addWidget(EffectTextEditor,1,0,1,2);
+	QLabel* ToolTipLabel=new QLabel(this);
+	ToolTipLabel->setObjectName("ToolTipLabel");
+	ToolTipLabel->setText(tr("Tooltip"));
+	NameTextLayout->addWidget(ToolTipLabel,2,0);
+	EffectTooltipEditor=new QTextEdit(this);
+	EffectTooltipEditor->setObjectName("EffectTooltipEditor");
+	EffectTooltipEditor->setToolTip(tr("Insert here an explanation of how the effect works or informative text of keywords.<br>You can use HTML tags to customize it"));
+	EffectTooltipEditor->setPlainText("");
+	connect(EffectTooltipEditor,SIGNAL(textChanged()),this,SLOT(SetEffectTooltip()));
+	NameTextLayout->addWidget(EffectTooltipEditor,3,0,1,2);
 
 	QGroupBox* EffectTypeGroup=new QGroupBox(this);
 	QGridLayout* EffectTypelayout=new QGridLayout(EffectTypeGroup);
@@ -98,6 +112,10 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	TriggersTable->setHorizontalHeaderLabels(TempHeaders);
 	TriggersTable->verticalHeader()->setVisible(false);
 	TriggersTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	TriggersTable->horizontalHeader()->setStretchLastSection(true);
+	TriggersTable->setSelectionMode(QAbstractItemView::NoSelection);
+	TriggersTable->setFocusPolicy(Qt::NoFocus);
+	TriggersTable->setSortingEnabled(false);
 	EffectTypelayout->addWidget(TriggersTable,3,0,1,2);
 	TriggersLabel->hide();
 	AddTriggerCombo->hide();
@@ -251,21 +269,25 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	connect(SaveButton,SIGNAL(clicked()),this,SIGNAL(Saved()));
 	ButtonsLayout->addWidget(SaveButton);
 
-	QGridLayout* MainLayout=new QGridLayout(this);
-	MainLayout->addWidget(EffectPreviewGroup,0,0);
-	MainLayout->addWidget(NameTextGroup,1,0);
-	MainLayout->addWidget(EffectTypeGroup,0,1);
-	MainLayout->addWidget(CostTragetBox,1,1);
-	MainLayout->addWidget(EffectBodyGroup,2,1);
-	MainLayout->addWidget(CheckBoxesGroup,2,0);
-	MainLayout->addLayout(ButtonsLayout,3,0,1,2);
+	QVBoxLayout* LeftLayout=new QVBoxLayout;
+	QVBoxLayout* RightLayout=new QVBoxLayout;
+	LeftLayout->addWidget(EffectPreviewGroup);
+	LeftLayout->addWidget(NameTextGroup);
+	RightLayout->addWidget(EffectTypeGroup);
+	RightLayout->addWidget(CostTragetBox);
+	RightLayout->addWidget(EffectBodyGroup);
+	LeftLayout->addWidget(CheckBoxesGroup);
+	LeftLayout->addLayout(ButtonsLayout);
+	QHBoxLayout* MainLayout=new QHBoxLayout(this);
+	MainLayout->addLayout(LeftLayout);
+	MainLayout->addLayout(RightLayout);
 }
 void EffectsBuilder::resizeEvent(QResizeEvent* event){
 	Background->setGeometry(0,0,width(),height());
-	SymbolsSelector->setGeometry(51*width()/333,18*height()/513,250,130); //FIXME
+	QPoint ButtonPos(SymbolsMenuButton->pos());
+	SymbolsSelector->setGeometry(33+width()-589,117+height()-585,250,130);
 	TargetsTable->setColumnWidth(0,TargetsTable->width()*3/5);
 	TargetsTable->setColumnWidth(1,TargetsTable->width()*2/5);
-	TriggersTable->setColumnWidth(0,TriggersTable->width());
 }
 void EffectsBuilder::SetEffectType(int index){
 	if (EffectTypeCombo->itemData(index).toInt()==EffectsConstants::EffectTypes::TriggeredEffect){
@@ -292,14 +314,12 @@ void EffectsBuilder::ResetTriggers(){
 void EffectsBuilder::AddTrigger(int index){
 	if (index==0) return;
 	EffectPreview->AddTrigger(AddTriggerCombo->itemData(index).toInt());
-	TriggersTable->setSortingEnabled(false);
 	int temp=TriggersTable->rowCount();
 	TriggersTable->setRowCount(temp+1);
 	TriggersTable->setItem(temp,0,
 		new QTableWidgetItem(AddTriggerCombo->itemText(index))
 		);
 	TriggersTable->setRowHeight(temp,TableRowHeight);
-	TriggersTable->setSortingEnabled(true);
 	EffectPreview->UpdateAspect();
 	AddTriggerCombo->setCurrentIndex(0);
 }
@@ -468,4 +488,7 @@ void EffectsBuilder::SaveToFile(){
 void EffectsBuilder::ShowOpenButton(bool a){
 	if (a) OpenButton->show();
 	else OpenButton->hide();
+}
+void EffectsBuilder::SetEffectTooltip(){
+	EffectPreview->SetEffectTooltip(EffectTooltipEditor->toPlainText());
 }

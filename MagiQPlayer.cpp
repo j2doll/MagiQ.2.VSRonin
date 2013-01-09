@@ -5,8 +5,8 @@
 MagiQPlayer::MagiQPlayer(QObject* parent)
 	:QObject(parent)
 	,Life(20)
-	,PrimaryOrdering(ByManaCost)
-	,SecondaryOrdering(ByType)
+	,PrimaryOrdering(CardData::ByManaCost)
+	,SecondaryOrdering(CardData::ByType)
 	,CanPlayMana(true)
 {
 	ResetManaPool();
@@ -21,29 +21,11 @@ void MagiQPlayer::ResetManaPool(){
 	ManaPool.insert(Constants::ManaCosts::G,0);
 	emit RequireUpdateAspect();
 }
-bool MagiQPlayer::RandomOrder(Card* a,Card* b) {return qrand()%2==0;}
-bool MagiQPlayer::ManaCostOrder(Card* a,Card* b) {return a->GetConvertedManaCost()<b->GetConvertedManaCost();}
-bool MagiQPlayer::NameOrder(Card* a,Card* b) {return a->GetCardName()<b->GetCardName();}
-bool MagiQPlayer::TypeOrder(Card* a,Card* b) {
-	QList<int> TypeA=a->GetCardType();
-	QList<int> TypeB=b->GetCardType();
-	for (int i=0;i<Constants::CardTypes::END;i++){
-		if (TypeA.contains(i)) return true;
-		if (TypeB.contains(i)) return false;
-	}
-	return false;
-}
-bool MagiQPlayer::ColorOrder(Card* a,Card* b)  {
-	QList<int> TypeA=a->GetCardColor();
-	QList<int> TypeB=b->GetCardColor();
-	for (int i=0;i<=Constants::CardColor::Green;i++){
-		if (TypeA.contains(i)) return true;
-		if (TypeB.contains(i)) return false;
-	}
-	return false;
-}
+
 void MagiQPlayer::ShuffleLibrary(){
-	qSort(Library.begin(),Library.end(),RandomOrder);
+	foreach(CardData card,Library)
+		card.SetSortingMethod(CardData::Random);
+	qSort(Library.begin(),Library.end());
 }
 void MagiQPlayer::DrawCard(){
 	if (Library.isEmpty()){
@@ -56,27 +38,11 @@ void MagiQPlayer::DrawCard(){
 }
 
 void MagiQPlayer::SortHand(){
-	switch (SecondaryOrdering){
-	case ByName:
-		qSort(Hand.begin(),Hand.end(),NameOrder); break;
-	case ByManaCost:
-		qSort(Hand.begin(),Hand.end(),ManaCostOrder);
-	case ByColor:
-		qSort(Hand.begin(),Hand.end(),ColorOrder); break;
-	case ByType:
-	default:
-		qSort(Hand.begin(),Hand.end(),TypeOrder); break;
-	}
-	switch (PrimaryOrdering){
-		case ByName:
-			qStableSort(Hand.begin(),Hand.end(),NameOrder); break;
-		case ByType:
-			qStableSort(Hand.begin(),Hand.end(),TypeOrder); break;
-		case ByColor:
-			qStableSort(Hand.begin(),Hand.end(),ColorOrder); break;
-		case ByManaCost:
-		default:
-			qStableSort(Hand.begin(),Hand.end(),ManaCostOrder);
-	}
+	foreach(CardData card,Hand)
+		card.SetSortingMethod(SecondaryOrdering);
+	qSort(Hand.begin(),Hand.end());
+	foreach(CardData card,Hand)
+		card.SetSortingMethod(PrimaryOrdering);
+	qStableSort(Hand.begin(),Hand.end());
 	emit RequireUpdateAspect();
 }

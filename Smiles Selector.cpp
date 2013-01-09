@@ -36,7 +36,7 @@ SmilesSelector::SmilesSelector(QWidget* parent,int SmilePR)
 	hide();
 }
 void SmilesSelector::resizeEvent(QResizeEvent* event){
-	Sfondo->setGeometry(2,2,sizeHint().width()-4,sizeHint().height()-4);
+	Sfondo->setGeometry(0,0,width(),height());
 }
 void SmilesSelector::show_toggle(){
 	if (isVisible())

@@ -1,21 +1,33 @@
 #include "Deck.h"
-CardDeck::CardDeck(QObject* parent/* =0 */)
+CardDeck::CardDeck(QObject* parent)
 	:QObject(parent)
-{
-	
+{}
+CardDeck::CardDeck(const CardDeck& a,QObject* parent)
+	:QObject(parent)
+	,MainBoard(a.MainBoard)
+	,SideBoard(a.SideBoard)
+{}
+void CardDeck::AddCard(const CardData& c){
+	MainBoard.append(c);
 }
-void CardDeck::AddCard(const Card& c){
-	MainBoard.append(new Card(c));
-}
-void CardDeck::AddSideboard(const Card& c){
-	SideBoard.append(new Card(c));
+void CardDeck::AddSideboard(const CardData& c){
+	SideBoard.append(c);
 }
 QList<int> CardDeck::Legality() const{
 	QList<int> Result;
 	if (NumMain()<60 || (NumSide()!=0 && NumSide()!=15)) return Result;
-	for (int i=0;i<END_Legal;i++){
+	for (int i=0;i<Constants::Legality::END_Legal;i++){
 		Result.append(i);
 	}
 	//TODO Controlla le Edizioni e le carte
 	return Result;
+}
+bool CardDeck::IsCertified() const{
+	foreach(CardData card,MainBoard){
+		if(!card.GetCertified()) return false;
+	}
+	foreach(CardData card,SideBoard){
+		if(!card.GetCertified()) return false;
+	}
+	return true;
 }
