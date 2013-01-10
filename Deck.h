@@ -19,5 +19,6 @@ public:
 	int NumSide() const {return SideBoard.size();}
 	QList<int> Legality() const;
 	bool IsCertified() const;
+	QMap<int,int> ManaBreakDown();
 };
 #endif

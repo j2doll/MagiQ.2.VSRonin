@@ -2,11 +2,14 @@
 #define PLAYER_H
 #include <QObject>
 #include <QMap>
+#include <QPixmap>
 #include "CardData.h"
 class Card;
 class MagiQPlayer : public QObject{
 	Q_OBJECT
 private:
+	QPixmap Avatar;
+	QString PlayerName;
 	int Life;
 	int PrimaryOrdering;
 	int SecondaryOrdering;

@@ -139,6 +139,7 @@ QDataStream &operator<<(QDataStream &out, const CardData &card)
 		<< card.GetCardSubType()
 		<< card.GetAvailableEditions()
 		<< card.GetAvailableImages()
+		<< card.GetImagesTitles()
 		<< card.GetAvailableBackgrounds()
 		<< qint32(card.GetCardEdition())
 		<< qint32(card.GetCardBackground())
@@ -149,6 +150,7 @@ QDataStream &operator<<(QDataStream &out, const CardData &card)
 		<< qint32(card.GetCardRarity())
 		<< qint32(card.GetCardImage())
 		<< card.GetCertified()
+		<< qint32(card.GetCertifiedCardID())
 		<< card.GetHasManaCost()
 		<< qint32(card.GetEffects().size())
 		<< qint32(card.GetHasFlipped())
@@ -164,6 +166,7 @@ QDataStream &operator>>(QDataStream &input, CardData &card){
 	qint32 NumberOfEffects;
 	EffectData effect;
 	QString Strings;
+	QStringList StrList;
 	QList<int> IntLists;
 	QMap<int,int> IntMap;
 	QList<QPixmap> ImageLists;
@@ -191,6 +194,8 @@ QDataStream &operator>>(QDataStream &input, CardData &card){
 	card.SetAvailableEditions(IntLists);
 	input >> ImageLists;
 	card.SetAvailableImages(ImageLists);
+	input >> StrList;
+	card.SetImagesTitles(StrList);
 	IntLists.clear();
 	input >> IntLists;
 	card.SetAvailableBackgrounds(IntLists);
@@ -212,6 +217,8 @@ QDataStream &operator>>(QDataStream &input, CardData &card){
 	card.SetCardImage(Numbers);
 	input >> Booleans;
 	card.SetCertified(Booleans);
+	input >> Numbers;
+	card.SetCertifiedCardID(Numbers);
 	input >> Booleans;
 	card.SetHasManaCost(Booleans);
 	input >> NumberOfEffects;

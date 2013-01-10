@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QScopedPointer>
 #include <QDataStream>
+#include <QStringList>
 class CardData{
 public:
 	CardData();
@@ -20,6 +21,7 @@ public:
 	const QList<int>& GetCardSubType() const {return CardSubType;}
 	const QList<int>& GetAvailableEditions() const {return AvailableEditions;}
 	const QList<QPixmap>& GetAvailableImages() const {return AvailableImages;}
+	const QStringList& GetImagesTitles() const {return ImagesTitles;}
 	const QList<int>& GetAvailableBackgrounds() const {return AvailableBackgrounds;}
 	int GetCardEdition() const {return CardEdition;}
 	int GetCardBackground() const {return CardBackground;}
@@ -30,6 +32,7 @@ public:
 	int GetCardRarity() const {return CardRarity;}
 	int GetCardImage() const {return CardImage;}
 	bool GetCertified() const {return Certified;}
+	int GetCertifiedCardID() const {return CertifiedCardID;}
 	bool GetHasManaCost() const {return HasManaCost;}
 	int GetHasFlipped() const {return HasFlipped;}
 	const QScopedPointer<CardData>& GetFlippedCard() const {return FlippedCard;}
@@ -62,6 +65,10 @@ public:
 	void SetAvailableImages();
 	void AddAvailableImages(const QPixmap& a);
 	void SetAvailableImages(const QList<QPixmap>& a);
+	void SetImagesTitles(){ImagesTitles.clear();}
+	void SetImagesTitles(const QStringList& a){ImagesTitles.clear(); ImagesTitles=a;}
+	void AddImageTitle(const QString& a){ImagesTitles.append(a);}
+	void SetImagesTitles(const QString& a){SetImagesTitles(); AddImageTitle(a);}
 	void SetAvailableBackgrounds(){AvailableBackgrounds.clear(); CardBackground=Constants::CardBacksrounds::Colorless;}
 	void AddAvailableBackground(const int& a){if (a>=0 && a<Constants::CardBacksrounds::END) AvailableBackgrounds.append(a);}
 	void SetAvailableBackgrounds(const int& a){AvailableBackgrounds.clear(); AvailableBackgrounds.append(a);}
@@ -75,6 +82,7 @@ public:
 	void SetCardrarity(int a){if (a<Constants::CardRarities::Common || a>Constants::CardRarities::MythicRare) return; CardRarity=a;}
 	void SetCardImage(int a){if(a<0 || a>=AvailableImages.size()) return; CardImage=a;}
 	void SetCertified(bool a){Certified=a;}
+	void SetCertifiedCardID(int a){CertifiedCardID=a;}
 	void SetHasManaCost(bool a){HasManaCost=a;}
 	void SetHasFlipped(int a){if (a>=Constants::CardFlipMode::AllreadyFlipped && a<=Constants::CardFlipMode::HasFlip) HasFlipped=a;};
 	void SetFlippedCard(CardData* a){FlippedCard.reset(a);}
@@ -94,6 +102,7 @@ private:
 	QList<int> CardSubType;
 	QList<int> AvailableEditions;
 	QList<QPixmap> AvailableImages;
+	QStringList ImagesTitles;
 	QList<int> AvailableBackgrounds;
 	int CardEdition;
 	int CardBackground;
@@ -104,6 +113,7 @@ private:
 	int CardRarity;
 	int CardImage;
 	bool Certified;
+	int CertifiedCardID;
 	bool HasManaCost;
 	int HasFlipped;
 	QScopedPointer<CardData> FlippedCard;

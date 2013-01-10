@@ -56,19 +56,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CampoDiGioco.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_Card.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_Card.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_CampoDiGioco.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_CampoDiGioco.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_MagiQ.cpp">
@@ -194,6 +185,15 @@
     <ClCompile Include="EffectData.cpp">
       <Filter>Source Files\Card</Filter>
     </ClCompile>
+    <ClCompile Include="BattleGround.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_BattleGround.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_BattleGround.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -216,9 +216,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="CampoDiGioco.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="MagiQ.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
@@ -260,6 +257,9 @@
     </CustomBuild>
     <CustomBuild Include="Smiles Selector.h">
       <Filter>Header Files\Utility Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="BattleGround.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

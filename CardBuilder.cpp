@@ -21,6 +21,8 @@
 #include "ConstantProportionLayout.h"
 #include "SelettoreImmagini.h"
 #include "EffectsBuilder.h"
+#include <QSpinBox>
+//#define CERTIFICATION_ENABLED
 CardBuilder::CardBuilder(QWidget* parent)
 	:QWidget(parent)
 	,EditingFlip(false)
@@ -60,10 +62,18 @@ CardBuilder::CardBuilder(QWidget* parent)
 	CertifiedCheck->setObjectName("CertifiedCheck");
 	CertifiedCheck->setText(tr("Certified Card"));
 	connect(CertifiedCheck,SIGNAL(stateChanged(int)),this,SLOT(SetCertified()));
+	CertifiedIDSpin=new QSpinBox(this);
+	CertifiedIDSpin->setObjectName("CertifiedIDSpin");
+	CertifiedIDSpin->setRange(1,std::numeric_limits<int>::max());
+	CertifiedIDSpin->setEnabled(false);
+	connect(CertifiedIDSpin,SIGNAL(valueChanged(int)),this,SLOT(SetCertifiedID(int)));
 	QHBoxLayout* BasicChecksLayout=new QHBoxLayout;
 	BasicChecksLayout->addWidget(CertifiedCheck);
+	BasicChecksLayout->addWidget(CertifiedIDSpin);
+#ifndef CERTIFICATION_ENABLED
 	CertifiedCheck->hide();
-
+	CertifiedIDSpin->hide();
+#endif
 	QGroupBox* NameGroup=new QGroupBox(this);
 	NameGroup->setObjectName("NameGroup");
 	NameGroup->setTitle(tr("Card Name"));
@@ -485,6 +495,10 @@ void CardBuilder::resizeEvent(QResizeEvent* event){
 }
 void CardBuilder::SetCertified(){
 	CardPreview->SetCertified(CertifiedCheck->isChecked());
+	CertifiedIDSpin->setEnabled(CertifiedCheck->isChecked());
+}
+void CardBuilder::SetCertifiedID(int a){
+	CardPreview->SetCertifiedCardID(a);
 }
 void CardBuilder::SetCardColor(){
 	CardPreview->SetCardColor(-1);
@@ -727,6 +741,7 @@ void CardBuilder::AddCardImage(){
 		int TempNum = CardPreview->GetAvailableImages().size();
 		QString TempString(fileName.right(fileName.size()-fileName.lastIndexOf(QRegExp("[\\\\/]"))-1));
 		TempString=TempString.left(TempString.lastIndexOf('.'));
+		CardPreview->AddImageTitle(TempString);
 		CardImageSelector->AggiungiImmagine(
 			TempPix,
 			TempString
@@ -734,6 +749,7 @@ void CardBuilder::AddCardImage(){
 		CardImageSelector->setEnabled(true);
 		CardImageJump->addItem(TempPix,TempString,TempNum-1);
 		if(TempNum>5) CardImageJump->show();
+		else CardImageJump->hide();
 		if (TempNum==1){
 			CardPreview->SetCardImage(0);
 		}
@@ -742,6 +758,7 @@ void CardBuilder::AddCardImage(){
 }
 void CardBuilder::ResetCardImages(){
 	CardPreview->SetAvailableImages();
+	CardPreview->SetImagesTitles();
 	CardImageSelector->CancellaTutte();
 	CardImageSelector->setEnabled(false);
 	CardImageJump->clear();
@@ -953,13 +970,15 @@ void CardBuilder::SetCard(Card* a){
 				*i);
 		}
 	}
-	QList<QPixmap> ImageList=CardPreview->GetAvailableImages();
+	const QList<QPixmap>& ImageList=CardPreview->GetAvailableImages();
+	const QStringList& TitlesList=CardPreview->GetImagesTitles();
 	CardImageSelector->setEnabled(!ImageList.isEmpty());
 	for (int i=0;i<ImageList.size();i++){
 		CardImageSelector->AggiungiImmagine(
 			ImageList.at(i),
-			tr("Image %1").arg(i+1)
+			TitlesList.at(i)
 			);
+		CardImageJump->addItem(ImageList.at(i),TitlesList.at(i),i);
 	}
 	TempList=CardPreview->GetAvailableBackgrounds();
 	CardBackgroundSelector->setEnabled(!TempList.isEmpty());
@@ -977,9 +996,9 @@ void CardBuilder::SetCard(Card* a){
 		else
 			PowerEdit->setText(QString("%1").arg(CardPreview->GetCardPower()));
 		if (CardPreview->GetCardToughness()==Card::StarPowerToughness)
-			PowerEdit->setText(QString("*"));
+			ToughnesEdit->setText(QString("*"));
 		else
-			PowerEdit->setText(QString("%1").arg(CardPreview->GetCardToughness()));
+			ToughnesEdit->setText(QString("%1").arg(CardPreview->GetCardToughness()));
 	}
 }
 void CardBuilder::SetFlippedCard(Card* a){

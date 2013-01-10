@@ -32,6 +32,7 @@ Card::Card(QWidget* parent)
 	,CardBackground(Constants::CardBacksrounds::Colorless)
 	,CardRarity(Constants::CardRarities::Common)
 	,ShowFlavorText(true)
+	,CertifiedCardID(-1)
 {
 	PrepareUi();
 	AvailableEditions.append(Constants::Editions::NONE);
@@ -306,6 +307,7 @@ QDataStream &operator<<(QDataStream &out, const Card &card)
 		<< card.GetCardSubType()
 		<< card.GetAvailableEditions()
 		<< card.GetAvailableImages()
+		<< card.GetImagesTitles()
 		<< card.GetAvailableBackgrounds()
 		<< qint32(card.GetEdition())
 		<< qint32(card.GetCardBackground())
@@ -316,6 +318,7 @@ QDataStream &operator<<(QDataStream &out, const Card &card)
 		<< qint32(card.GetCardRarity())
 		<< qint32(card.GetCardImage())
 		<< card.GetCertified()
+		<< qint32(card.GetCertifiedCardID())
 		<< card.GetHasManaCost()
 		<< qint32(card.GetEffects().size())
 		<< qint32(card.GetHasFlipped())
@@ -335,6 +338,7 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	QList<int> IntLists;
 	QMap<int,int> IntMap;
 	QList<QPixmap> ImageLists;
+	QStringList StrList;
 	bool Booleans;
 	input >> Numbers;
 	if (Numbers!=Constants::CardVersion){
@@ -359,6 +363,8 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	card.SetAvailableEditions(IntLists);
 	input >> ImageLists;
 	card.SetAvailableImages(ImageLists);
+	input >> StrList;
+	card.SetImagesTitles(StrList);
 	IntLists.clear();
 	input >> IntLists;
 	card.SetAvailableBackgrounds(IntLists);
@@ -380,6 +386,8 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 	card.SetCardImage(Numbers);
 	input >> Booleans;
 	card.SetCertified(Booleans);
+	input >> Numbers;
+	card.SetCertifiedCardID(Numbers);
 	input >> Booleans;
 	card.SetHasManaCost(Booleans);
 	input >> NumberOfEffects;
@@ -446,6 +454,7 @@ Card& Card::operator=(const Card& a){
 	CardSubType=a.CardSubType;
 	AvailableEditions=a.AvailableEditions;
 	AvailableImages=a.AvailableImages;
+	ImagesTitles=a.ImagesTitles;
 	AvailableBackgrounds=a.AvailableBackgrounds;
 	CardEdition=a.CardEdition;
 	CardBackground=a.CardBackground;
@@ -458,6 +467,7 @@ Card& Card::operator=(const Card& a){
 	CardRarity=a.CardRarity;
 	CardImage=a.CardImage;
 	Certified=a.Certified;
+	CertifiedCardID=a.CertifiedCardID;
 	HasManaCost=a.HasManaCost;
 	HasFlipped=a.HasFlipped;
 	FlippedCard=a.FlippedCard;
@@ -495,6 +505,7 @@ Card::Card(const Card& a,QWidget* parent):QWidget(parent)
 	,CardToughnessModifiers(a.CardToughnessModifiers)
 	,CardRarity(a.CardRarity)
 	,ShowFlavorText(a.ShowFlavorText)
+	,CertifiedCardID(a.CertifiedCardID)
 {
 	PrepareUi();
 	if (HasFlipped==Constants::CardFlipMode::HasFlip){
@@ -529,6 +540,7 @@ Card::Card(const CardData& a,QWidget* parent):QWidget(parent)
 	,CardBackground(a.GetCardBackground())
 	,CardFlavorText(a.GetCardFlavorText())
 	,CardRarity(a.GetCardRarity())
+	,CertifiedCardID(a.GetCertifiedCardID())
 	,ShowFlavorText(true)
 {
 	PrepareUi();

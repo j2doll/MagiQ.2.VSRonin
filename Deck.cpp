@@ -31,3 +31,11 @@ bool CardDeck::IsCertified() const{
 	}
 	return true;
 }
+QMap<int,int> CardDeck::ManaBreakDown(){
+	QMap<int,int> Result;
+	foreach(CardData card,MainBoard){
+		Result[card.GetConvertedManaCost()]=
+			Result.value(card.GetConvertedManaCost(),0)+1;
+	}
+	return Result;
+}

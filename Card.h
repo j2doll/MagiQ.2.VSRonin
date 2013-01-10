@@ -7,6 +7,7 @@
 #include <QMap>
 #include <QPixmap>
 #include <QDataStream>
+#include <QStringList>
 class ManaCostLabel;
 class QFrame;
 class QLabel;
@@ -44,6 +45,7 @@ private:
 	QList<int> CardSubType;
 	QList<int> AvailableEditions;
 	QList<QPixmap> AvailableImages;
+	QStringList ImagesTitles;
 	QList<int> AvailableBackgrounds;
 	int CardEdition;
 	int CardBackground;
@@ -54,6 +56,7 @@ private:
 	int CardRarity;
 	int CardImage;
 	bool Certified;
+	int CertifiedCardID;
 	bool HasManaCost;
 	int HasFlipped;
 	Card* FlippedCard;
@@ -74,6 +77,13 @@ private:
 	void ResetCardCost();
 	void PrepareUi();
 public:
+	int GetCertifiedCardID() const {return CertifiedCardID;}
+	void SetCertifiedCardID(int a){CertifiedCardID=a;}
+	void SetImagesTitles(){ImagesTitles.clear();}
+	void SetImagesTitles(const QStringList& a){ImagesTitles.clear(); ImagesTitles=a;}
+	void AddImageTitle(const QString& a){ImagesTitles.append(a);}
+	void SetImagesTitles(const QString& a){SetImagesTitles(); AddImageTitle(a);}
+	const QStringList& GetImagesTitles() const {return ImagesTitles;}
 	void SetShowFlavorText(bool a){ShowFlavorText=a;}
 	bool GetShowFlavorText() const {return ShowFlavorText;}
 	const QList<Effect*>& GetEffects() const {return Effects;}

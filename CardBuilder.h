@@ -13,6 +13,7 @@ class QFrame;
 class QLabel;
 class SelettoreImmagini;
 class EffectsBuilder;
+class QSpinBox;
 class CardBuilder : public QWidget{
 	Q_OBJECT
 public:
@@ -25,6 +26,7 @@ private:
 	Card* CardPreview;
 	Card* FlippedCard;
 	QCheckBox* CertifiedCheck;
+	QSpinBox* CertifiedIDSpin;
 	QLineEdit* NameEditor;
 	QGroupBox* CardColorGroup;
 	QCheckBox* ColorlessCheck;
@@ -72,6 +74,7 @@ protected:
 	void resizeEvent(QResizeEvent* event);
 	void closeEvent(QCloseEvent *event);
 private slots:
+	void SetCertifiedID(int a);
 	void SetCertified();
 	void SetCardColor();
 	void SetCardName();
