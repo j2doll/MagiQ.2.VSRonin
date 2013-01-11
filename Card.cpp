@@ -240,6 +240,7 @@ void Card::UpdateAspect(){
 	QList<Effect*> CopyEffects;
 	foreach(Effect* eff,Effects){
 		CopyEffects.append(new Effect(*eff,this));
+		if (eff->GetHiddenEffect()) {CopyEffects.last()->hide();}
 		eff->deleteLater();
 	}
 	EffectsTable->setRowCount(0);
@@ -250,23 +251,36 @@ void Card::UpdateAspect(){
 	FlavorTextLabel->setWordWrap(true);
 	FlavorTextLabel->setScaledContents(true);
 	//**************************************************/
-	if(!FlavorAdj.isEmpty()) FlavorTextLabel->setText("<br><i>"+FlavorAdj+"</i><br>");
-	else FlavorTextLabel->setText("");
-	QRegExp tagMatcher("<.+>");
-	tagMatcher.setMinimal(true);
-	int RequiredHeight=0;
-	foreach(Effect* eff,Effects){
-		if (eff->GetHiddenEffect()) continue;
-		eff->UpdateAspect();
-		EffectsTable->insertRow(EffectsTable->rowCount());
-		EffectsTable->setCellWidget(EffectsTable->rowCount()-1,0,eff);
-		EffectsTable->setRowHeight(EffectsTable->rowCount()-1,eff->GetMinimumHeight()+4);
-		RequiredHeight+=eff->GetMinimumHeight()+4;
+	if (CardType.contains(Constants::CardTypes::Basic) && CardType.contains(Constants::CardTypes::Land)){
+		if (CardSubType.contains(Constants::CardSubTypes::Plain)) FlavorTextLabel->setPixmap(QPixmap(":/CardImage/PlainSymbol.png"));
+		else if (CardSubType.contains(Constants::CardSubTypes::Island)) FlavorTextLabel->setPixmap(QPixmap(":/CardImage/IslandSymbol.png"));
+		else if (CardSubType.contains(Constants::CardSubTypes::Swamp)) FlavorTextLabel->setPixmap(QPixmap(":/CardImage/SwampSymbol.png"));
+		else if (CardSubType.contains(Constants::CardSubTypes::Mountain)) FlavorTextLabel->setPixmap(QPixmap(":/CardImage/MountainSymbol.png"));
+		else if (CardSubType.contains(Constants::CardSubTypes::Forest)) FlavorTextLabel->setPixmap(QPixmap(":/CardImage/ForestSymbol.png"));
+		EffectsTable->insertRow(0);
+		EffectsTable->setItem(0,0,&QTableWidgetItem());
+		EffectsTable->setCellWidget(0,0,FlavorTextLabel);
+		EffectsTable->setRowHeight(0,EffectsTable->height());
 	}
-	EffectsTable->insertRow(EffectsTable->rowCount());
-	EffectsTable->setItem(EffectsTable->rowCount()-1,0,&QTableWidgetItem());
-	EffectsTable->setCellWidget(EffectsTable->rowCount()-1,0,FlavorTextLabel);
-	EffectsTable->setRowHeight(EffectsTable->rowCount()-1,qMax(FlavorTextLabel->sizeHint().height(),EffectsTable->height()-RequiredHeight));
+	else{
+		int RequiredHeight=0;
+		if(!FlavorAdj.isEmpty()) FlavorTextLabel->setText("<br><i>"+FlavorAdj+"</i><br>");
+		else FlavorTextLabel->setText("");
+		QRegExp tagMatcher("<.+>");
+		tagMatcher.setMinimal(true);
+		foreach(Effect* eff,Effects){
+			if (eff->GetHiddenEffect()) continue;
+			eff->UpdateAspect();
+			EffectsTable->insertRow(EffectsTable->rowCount());
+			EffectsTable->setCellWidget(EffectsTable->rowCount()-1,0,eff);
+			EffectsTable->setRowHeight(EffectsTable->rowCount()-1,eff->GetMinimumHeight()+4);
+			RequiredHeight+=eff->GetMinimumHeight()+4;
+		}
+		EffectsTable->insertRow(EffectsTable->rowCount());
+		EffectsTable->setItem(EffectsTable->rowCount()-1,0,&QTableWidgetItem());
+		EffectsTable->setCellWidget(EffectsTable->rowCount()-1,0,FlavorTextLabel);
+		EffectsTable->setRowHeight(EffectsTable->rowCount()-1,qMax(FlavorTextLabel->sizeHint().height(),EffectsTable->height()-RequiredHeight));
+	}
 	setStyleSheet(StyleSheets::CardCSS);
 }
 QString Card::CreateManaCostString() const{

@@ -237,3 +237,9 @@ QDataStream &operator>>(QDataStream &input, CardData &card){
 	}
 	return input;
 }
+CardData CardData::ToNoImage() const {
+	CardData Result(*this);
+	Result.SetAvailableImages();
+	Result.SetImagesTitles();
+	return Result;
+}

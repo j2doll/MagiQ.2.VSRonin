@@ -94,6 +94,7 @@ public:
 	
 	bool operator<(const CardData& a) const;
 	const CardData& operator=(const CardData& a);
+	CardData ToNoImage() const;
 private:
 	QString CardName;
 	QList<int> CardColor;

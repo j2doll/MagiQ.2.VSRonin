@@ -36,6 +36,11 @@
         <file alias="LandWGBase.png">Resources/Card/LandWGBase.png</file>
         <file alias="LandWRBase.png">Resources/Card/LandWRBase.png</file>
         <file alias="LandWUBase.png">Resources/Card/LandWUBase.png</file>
+        <file alias="ForestSymbol.png">Resources/Card/ForestSymbol.png</file>
+        <file alias="IslandSymbol.png">Resources/Card/IslandSymbol.png</file>
+        <file alias="MountainSymbol.png">Resources/Card/MountainSymbol.png</file>
+        <file alias="PlainSymbol.png">Resources/Card/PlainSymbol.png</file>
+        <file alias="SwampSymbol.png">Resources/Card/SwampSymbol.png</file>
     </qresource>
     <qresource prefix="/ManaSymbols">
         <file alias="BManaSha.png">Resources/BManaSha.png</file>

@@ -684,12 +684,16 @@ void CardBuilder::ResetCardType(){
 }
 void CardBuilder::AddCardType(int index){
 	if (index==0) return;
-	if (CardPreview->GetCardType().contains(CardTypeSelector->itemData(index).toInt())) return;
+	if (CardPreview->GetCardType().contains(CardTypeSelector->itemData(index).toInt())) {
+		CardTypeSelector->setCurrentIndex(0);
+		return;
+	}
 	CardPreview->AddCardType(CardTypeSelector->itemData(index).toInt());
-	QList<int> Temp(CardPreview->GetCardType());
+	const QList<int>& Temp(CardPreview->GetCardType());
 	if (Temp.contains(Constants::CardTypes::Creature) || Temp.contains(Constants::CardTypes::Planeswalker))
 		HasPTGroup->setChecked(true);
-	if (Temp.contains(Constants::CardTypes::Land)) HasManaCostCheck->setChecked(true);
+	if (Temp.contains(Constants::CardTypes::Land))
+		HasManaCostCheck->setChecked(true);
 	CardTypeSelector->setCurrentIndex(0);
 	CardPreview->UpdateAspect();
 }
@@ -700,8 +704,73 @@ void CardBuilder::ResetCardSubType(){
 }
 void CardBuilder::AddCardSubType(int index){
 	if (index==0) return;
-	if (CardPreview->GetCardSubType().contains(CardSubTypeSelector->itemData(index).toInt())) return;
+	if (CardPreview->GetCardSubType().contains(CardSubTypeSelector->itemData(index).toInt())){
+		CardSubTypeSelector->setCurrentIndex(0);
+		return;
+	}
 	CardPreview->AddCardSubType(CardSubTypeSelector->itemData(index).toInt());
+	if (CardPreview->GetCardType().contains(Constants::CardTypes::Land)){
+		ResetCardBackground();
+		if (CardPreview->GetCardSubType().size()==1){
+			if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Plain))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandWhite));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Island))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandBlue));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Swamp))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandBlack));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Mountain))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandRed));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Forest))
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandGreen));
+			else
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandColorless));
+		}
+		else if (CardPreview->GetCardSubType().size()==2){
+			if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Plain)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Island)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandWhiteBlue));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Plain)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Swamp)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandWhiteBlack));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Plain)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Mountain)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandWhiteRed));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Plain)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Forest)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandWhiteGreen));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Island)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Swamp)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandBlueBlack));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Island)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Mountain)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandBlueRed));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Island)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Forest)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandBlueGreen));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Swamp)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Mountain)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandBlackRed));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Swamp)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Forest)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandBlackGreen));
+			else if (CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Mountain)
+				&& CardPreview->GetCardSubType().contains(Constants::CardSubTypes::Forest)
+				)
+				AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandRedGreen));
+			AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandGold));
+		}
+		else if (CardPreview->GetCardSubType().size()>2) AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandGold));
+		else AddCardBackground(CardAvailableBackgroundsSelector->findData(Constants::CardBacksrounds::LandColorless));
+	}
 	CardSubTypeSelector->setCurrentIndex(0);
 	CardPreview->UpdateAspect();
 }
@@ -777,14 +846,17 @@ void CardBuilder::ImageJump(int index){
 }
 void CardBuilder::AddCardBackground(int index){
 	if (index==0) return;
-	if (CardPreview->GetAvailableBackgrounds().contains(CardAvailableBackgroundsSelector->itemData(index).toInt())) return;
+	if (CardPreview->GetAvailableBackgrounds().contains(CardAvailableBackgroundsSelector->itemData(index).toInt())){
+		CardAvailableBackgroundsSelector->setCurrentIndex(0);
+		return;
+	}
 	CardPreview->AddAvailableBackground(CardAvailableBackgroundsSelector->itemData(index).toInt());
-	CardAvailableBackgroundsSelector->setCurrentIndex(0);
 	CardBackgroundSelector->addItem(
 		QIcon(QPixmap(Constants::BackgroundImages[CardAvailableBackgroundsSelector->itemData(index).toInt()])),
 		Constants::BackgroundNames[CardAvailableBackgroundsSelector->itemData(index).toInt()],
 		CardAvailableBackgroundsSelector->itemData(index).toInt());
 	CardBackgroundSelector->setEnabled(true);
+	CardAvailableBackgroundsSelector->setCurrentIndex(0);
 	CardPreview->UpdateAspect();
 }
 void CardBuilder::ResetCardBackground(){

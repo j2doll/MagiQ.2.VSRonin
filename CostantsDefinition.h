@@ -134,6 +134,7 @@ namespace Constants{
 		,Elf
 		,Faerie
 		,Fish
+		,Forest
 		,Frog
 		,Gargoyle
 		,Gnome
@@ -148,6 +149,7 @@ namespace Constants{
 		,Illusion
 		,Imp
 		,Insect
+		,Island
 		,Jellyfish
 		,Juggernaut
 		,Knight
@@ -155,8 +157,10 @@ namespace Constants{
 		,Licid
 		,Masticore
 		,Minotaur
+		,Mountain
 		,Myr
 		,Pest
+		,Plain
 		,Rhino
 		,Rougue
 		,Scarecrow
@@ -174,6 +178,7 @@ namespace Constants{
 		,Sphinx
 		,Spider
 		,Spirit
+		,Swamp
 		,Thoper
 		,Vedalken
 		,Viashino
@@ -184,6 +189,82 @@ namespace Constants{
 		,Zombie
 		,END
 	};}
+	const QString CardSubTypesNames[]={
+		QObject::tr("Ally")
+		,QObject::tr("Angel")
+		,QObject::tr("Artificier")
+		,QObject::tr("AssemblyWorker")
+		,QObject::tr("Beast")
+		,QObject::tr("Berserker")
+		,QObject::tr("Bird")
+		,QObject::tr("Boar")
+		,QObject::tr("Cat")
+		,QObject::tr("Chicken")
+		,QObject::tr("Chimera")
+		,QObject::tr("Cleric")
+		,QObject::tr("Construct")
+		,QObject::tr("Dragon")
+		,QObject::tr("Drake")
+		,QObject::tr("Dreadnought")
+		,QObject::tr("Drone")
+		,QObject::tr("Elemental")
+		,QObject::tr("Elf")
+		,QObject::tr("Faerie")
+		,QObject::tr("Fish")
+		,QObject::tr("Forest")
+		,QObject::tr("Frog")
+		,QObject::tr("Gargoyle")
+		,QObject::tr("Gnome")
+		,QObject::tr("Goblin")
+		,QObject::tr("Golem")
+		,QObject::tr("Homunculus")
+		,QObject::tr("Horror")
+		,QObject::tr("Horse")
+		,QObject::tr("Hound")
+		,QObject::tr("Human")
+		,QObject::tr("Hydra")
+		,QObject::tr("Illusion")
+		,QObject::tr("Imp")
+		,QObject::tr("Insect")
+		,QObject::tr("Island")
+		,QObject::tr("Jellyfish")
+		,QObject::tr("Juggernaut")
+		,QObject::tr("Knight")
+		,QObject::tr("Leviathan")
+		,QObject::tr("Licid")
+		,QObject::tr("Masticore")
+		,QObject::tr("Minotaur")
+		,QObject::tr("Mountain")
+		,QObject::tr("Myr")
+		,QObject::tr("Pest")
+		,QObject::tr("Plain")
+		,QObject::tr("Rhino")
+		,QObject::tr("Rougue")
+		,QObject::tr("Scarecrow")
+		,QObject::tr("Scorpion")
+		,QObject::tr("Scout")
+		,QObject::tr("Serpent")
+		,QObject::tr("Shaman")
+		,QObject::tr("Shapeshifter")
+		,QObject::tr("Sheep")
+		,QObject::tr("Slith")
+		,QObject::tr("Sliver")
+		,QObject::tr("Snake")
+		,QObject::tr("Soldier")
+		,QObject::tr("Spellshaper")
+		,QObject::tr("Sphinx")
+		,QObject::tr("Spider")
+		,QObject::tr("Spirit")
+		,QObject::tr("Swamp")
+		,QObject::tr("Thoper")
+		,QObject::tr("Vedalken")
+		,QObject::tr("Viashino")
+		,QObject::tr("Wall")
+		,QObject::tr("Warrior")
+		,QObject::tr("Wizard")
+		,QObject::tr("Wurm")
+		,QObject::tr("Zombie")
+	};
 	namespace CardBacksrounds{enum {
 		LandColorless,
 		LandWhite,
@@ -316,77 +397,6 @@ namespace Constants{
 		QSize(89,101) //TSP
 		,QSize(272,246) //ISD
 		,QSize(92,93) //AVR
-	};
-	const QString CardSubTypesNames[]={
-		"Ally"
-		,"Angel"
-		,"Artificier"
-		,"AssemblyWorker"
-		,"Beast"
-		,"Berserker"
-		,"Bird"
-		,"Boar"
-		,"Cat"
-		,"Chicken"
-		,"Chimera"
-		,"Cleric"
-		,"Construct"
-		,"Dragon"
-		,"Drake"
-		,"Dreadnought"
-		,"Drone"
-		,"Elemental"
-		,"Elf"
-		,"Faerie"
-		,"Fish"
-		,"Frog"
-		,"Gargoyle"
-		,"Gnome"
-		,"Goblin"
-		,"Golem"
-		,"Homunculus"
-		,"Horror"
-		,"Horse"
-		,"Hound"
-		,"Human"
-		,"Hydra"
-		,"Illusion"
-		,"Imp"
-		,"Insect"
-		,"Jellyfish"
-		,"Juggernaut"
-		,"Knight"
-		,"Leviathan"
-		,"Licid"
-		,"Masticore"
-		,"Minotaur"
-		,"Myr"
-		,"Pest"
-		,"Rhino"
-		,"Rougue"
-		,"Scarecrow"
-		,"Scorpion"
-		,"Scout"
-		,"Serpent"
-		,"Shaman"
-		,"Shapeshifter"
-		,"Sheep"
-		,"Slith"
-		,"Sliver"
-		,"Snake"
-		,"Soldier"
-		,"Spellshaper"
-		,"Sphinx"
-		,"Spider"
-		,"Spirit"
-		,"Thoper"
-		,"Vedalken"
-		,"Viashino"
-		,"Wall"
-		,"Warrior"
-		,"Wizard"
-		,"Wurm"
-		,"Zombie"
 	};
 	namespace CounterTypes{
 		enum{
