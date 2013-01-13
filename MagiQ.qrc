@@ -127,4 +127,7 @@
         <file alias="DownArrow.png">Resources/DownArrow.png</file>
         <file alias="UpArrow.png">Resources/UpArrow.png</file>
     </qresource>
+    <qresource prefix="/Board">
+        <file alias="2PlayersBoard.png">Resources/2PlayersBoard.png</file>
+    </qresource>
 </RCC>

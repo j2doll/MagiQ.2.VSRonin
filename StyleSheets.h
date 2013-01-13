@@ -178,7 +178,7 @@ namespace StyleSheets{
 			"}"*/
 
 		);
-		const QString EffectCSS(""
+		const QString EffectCSS(
 			"Effect #EffectButton{"
 				"background-color: rgba(0,0,0,0);"
 				"border: none;"
@@ -198,6 +198,14 @@ namespace StyleSheets{
 					"stop: 0 rgba(61,115,136,170), stop: 1 rgba(109,207,246,170));"	
 				"background-color: rgba(109,207,246,170);"
 			"}"
-			);
+		);
+		const QString BoardCSS(
+			"BattleGround[NumOfPlayers=\"2\"] #Board{"
+				"border-image: url(:/Board/2PlayersBoard.png)"
+			"}"
+			"BattleGround #DeckLabel{"
+				"border-image: url(:/CardImage/Rear.png)"
+			"}"
+		);
 }
 #endif

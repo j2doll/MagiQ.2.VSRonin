@@ -46,3 +46,36 @@ void MagiQPlayer::SortHand(){
 	qStableSort(Hand.begin(),Hand.end());
 	emit RequireUpdateAspect();
 }
+MagiQPlayer::MagiQPlayer(const MagiQPlayer& a,QObject* parent)
+	:QObject(parent)
+	,Avatar(a.Avatar)
+	,PlayerName(a.PlayerName)
+	,Life(a.Life)
+	,PrimaryOrdering(a.PrimaryOrdering)
+	,SecondaryOrdering(a.SecondaryOrdering)
+	,CanPlayMana(a.CanPlayMana)
+	,ManaPool(a.ManaPool)
+	,Library(a.Library)
+	,Hand(a.Hand)
+	,Graveyard(a.Graveyard)
+	,Exile(a.Exile)
+	,OwnedCards(a.OwnedCards)
+	,ControlledCards(a.ControlledCards)
+{}
+
+const MagiQPlayer& MagiQPlayer::operator=(const MagiQPlayer& a){
+	Avatar=a.Avatar;
+	PlayerName=a.PlayerName;
+	Life=a.Life;
+	PrimaryOrdering=a.PrimaryOrdering;
+	SecondaryOrdering=a.SecondaryOrdering;
+	CanPlayMana=a.CanPlayMana;
+	ManaPool=a.ManaPool;
+	Library=a.Library;
+	Hand=a.Hand;
+	Graveyard=a.Graveyard;
+	Exile=a.Exile;
+	OwnedCards=a.OwnedCards;
+	ControlledCards=a.ControlledCards;
+	return *this;
+}

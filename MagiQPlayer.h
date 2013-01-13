@@ -27,7 +27,17 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
-	
+	void SetLibrary(const QList<CardData>& a){Library.clear(); Library=a;}
+	const QList<CardData>& GetLibrary() const {return Library;}
+	const QList<CardData>& GetHand() const {return Hand;}
+	const QList<CardData>& GetGraveyard() const {return Graveyard;}
+	const QList<CardData>& GetExile() const {return Exile;}
+	const QList<CardData>& GetOwnedCards() const {return OwnedCards;}
+	const QList<CardData>& GetControlledCards() const {return ControlledCards;}
+	void SetPlayerName(const QString& a){PlayerName=a;}
+	const QString& GetPlayerName() const {return PlayerName;}
+	void SetAvatar(const QPixmap& a){Avatar=a;}
+	const QPixmap& GetAvatar() const {return Avatar;}
 	void SetPrimaryOrdering(int a){if (a>=CardData::ByName && a <=CardData::ByColor) PrimaryOrdering=a;}
 	int GetPrimaryOrdering() const {return PrimaryOrdering;}
 	void SetSecondaryOrdering(int a){if (a>=CardData::ByName && a <=CardData::ByColor) SecondaryOrdering=a;}
@@ -46,5 +56,7 @@ public:
 	void SortHand();
 	void SetCanPlayMana(bool a){CanPlayMana=a;}
 	bool GetCanPlayMana() const {return CanPlayMana;}
+	MagiQPlayer(const MagiQPlayer& a,QObject* parent=0);
+	const MagiQPlayer& operator=(const MagiQPlayer& a);
 };
 #endif
