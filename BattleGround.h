@@ -12,10 +12,11 @@ class BattleGround : public QWidget
 private:
 //Visual Elements
 	QFrame* Board;
+	QList<QFrame*> Hands;
+	QList<QLabel*> DeckLabels;
 //Game Properties
 	bool GameStarted;
 	QList<MagiQPlayer*> Players;
-	QList<QLabel*> DeckLabels;
 //Functions
 	void UpdateAspect();
 

@@ -59,6 +59,7 @@ MagiQPlayer::MagiQPlayer(const MagiQPlayer& a,QObject* parent)
 	,Hand(a.Hand)
 	,Graveyard(a.Graveyard)
 	,Exile(a.Exile)
+	,Sideboard(a.Sideboard)
 	,OwnedCards(a.OwnedCards)
 	,ControlledCards(a.ControlledCards)
 {}
@@ -75,7 +76,16 @@ const MagiQPlayer& MagiQPlayer::operator=(const MagiQPlayer& a){
 	Hand=a.Hand;
 	Graveyard=a.Graveyard;
 	Exile=a.Exile;
+	Sideboard=a.Sideboard;
 	OwnedCards=a.OwnedCards;
 	ControlledCards=a.ControlledCards;
 	return *this;
+}
+
+void MagiQPlayer::SetLibrary(const CardDeck& a){
+	CardDeck Temp(a.SingleImagesDeck());
+	Library.clear();
+	Sideboard.clear();
+	Library=Temp.GetMainBoard();
+	Sideboard=Temp.GetSideBoard();
 }

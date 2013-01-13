@@ -2,9 +2,12 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QFont>
 #include "MagiQPlayer.h"
 #include "StyleSheets.h"
 #include "SizeSliders.h"
+#include "CostantsDefinition.h"
+#include "HandLayout.h"
 BattleGround::BattleGround(QWidget* parent)
 	:QWidget(parent)
 	,GameStarted(false)
@@ -20,9 +23,32 @@ BattleGround::BattleGround(QWidget* parent)
 	hide();
 }
 void BattleGround::TestStuff(){
-	AddPlayer(MagiQPlayer());
-	AddPlayer(MagiQPlayer());
-	
+	MagiQPlayer Fantoccio;
+	CardData Montagna;
+	Montagna.SetCardName("Mountain");
+	Montagna.AddAvailableBackground(Constants::CardBacksrounds::LandRed);
+	Montagna.AddAvailableEditions(Constants::Editions::AVR);
+	Montagna.AddCardType(Constants::CardTypes::Basic);
+	Montagna.AddCardType(Constants::CardTypes::Land);
+	Montagna.AddCardSubType(Constants::CardSubTypes::Mountain);
+	QList<CardData> Grimorio;
+	for(int i=0;i<60;i++) Grimorio.append(Montagna);
+	Fantoccio.SetLibrary(Grimorio);
+	AddPlayer(Fantoccio);
+	AddPlayer(Fantoccio);
+
+	QFrame* Proviamo=new QFrame;
+	Proviamo->show();
+	Proviamo->setMinimumSize(500,289);
+	HandLayout* TestLay=new HandLayout(Proviamo);
+	TestLay->setSpacing(10);
+	TestLay->setMargin(5);
+	for (int i=0;i<7;i++){
+		QLabel* tmplab=new QLabel(Proviamo);
+		tmplab->setStyleSheet("border-image: url(:/CardImage/Rear.png)");
+		tmplab->setMinimumSize(200,279);
+		TestLay->addWidget(tmplab);
+	}
 	StartGame();
 }
 void BattleGround::resizeEvent(QResizeEvent* event){
@@ -60,9 +86,15 @@ void BattleGround::StartGame(){
 	foreach(QLabel* lab,DeckLabels)
 		lab->deleteLater();
 	DeckLabels.clear();
-	while(DeckLabels.size()<Players.size()){
+	for (int i=0;i<Players.size();i++){
 		DeckLabels.append(new QLabel(this));
 		DeckLabels.last()->setObjectName("DeckLabel");
+		DeckLabels.last()->setAlignment(Qt::AlignCenter);
+		Hands.append(new QFrame(this));
+		Hands.last()->setObjectName("Hand");
+		Players.at(i)->ShuffleLibrary();
+		for (int j=0;j<7;j++)
+			Players.at(i)->DrawCard();
 	}
 	UpdateAspect();
 	GameStarted=true;

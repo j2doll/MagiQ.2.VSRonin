@@ -20,6 +20,9 @@ photothumb.db
 *.cache
 *.ilk
 *.log
+*.sln
+*.sdf
+*.opensdf
 [Bb]in
 [Dd]ebug*/
 [Gg]enerated[Ff]iles*/

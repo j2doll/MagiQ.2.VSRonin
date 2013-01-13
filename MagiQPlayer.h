@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QPixmap>
 #include "CardData.h"
+#include "Deck.h"
 class Card;
 class MagiQPlayer : public QObject{
 	Q_OBJECT
@@ -19,6 +20,7 @@ private:
 	QList<CardData> Hand;
 	QList<CardData> Graveyard;
 	QList<CardData> Exile;
+	QList<CardData> Sideboard;
 	QList<CardData> OwnedCards;
 	QList<CardData> ControlledCards;
 signals:
@@ -27,6 +29,8 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	void SetLibrary(){Library.clear();}
+	void SetLibrary(const CardDeck& a);
 	void SetLibrary(const QList<CardData>& a){Library.clear(); Library=a;}
 	const QList<CardData>& GetLibrary() const {return Library;}
 	const QList<CardData>& GetHand() const {return Hand;}

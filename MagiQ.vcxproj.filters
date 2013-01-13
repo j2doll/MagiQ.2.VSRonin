@@ -194,6 +194,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_BattleGround.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="HandLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -213,6 +216,9 @@
     </ClInclude>
     <ClInclude Include="EffectData.h">
       <Filter>Header Files\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="HandLayout.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

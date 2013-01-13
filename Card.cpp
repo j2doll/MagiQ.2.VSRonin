@@ -155,8 +155,10 @@ void Card::UpdateAspect(){
 		(11*CostLabel->GetNumberOfSymbols())*width()/200,
 		11*height()/279
 		);
-	if(AvailableImages.isEmpty() || CardImage<0 || CardImage>AvailableImages.size())
+	if(AvailableImages.isEmpty() || CardImage<-1 || CardImage>=AvailableImages.size())
 		ImageLabel->setPixmap(QPixmap(":/CardImage/DefaultImage.png"));
+	else if(CardImage==-1)
+		ImageLabel->setPixmap(AvailableImages.at(qrand()%AvailableImages.size()));
 	else
 		ImageLabel->setPixmap(AvailableImages.at(CardImage));
 	NamePixmap.fill(QColor(0,0,0,0));

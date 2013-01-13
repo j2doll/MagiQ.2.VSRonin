@@ -1,4 +1,5 @@
 #include "Deck.h"
+#include "CostantsDefinition.h"
 CardDeck::CardDeck(QObject* parent)
 	:QObject(parent)
 {}
@@ -39,3 +40,29 @@ QMap<int,int> CardDeck::ManaBreakDown(){
 	}
 	return Result;
 }
+CardDeck CardDeck::SingleImagesDeck() const{
+	CardDeck Result(*this);
+	foreach(CardData card,Result.MainBoard){
+		if(card.GetAvailableImages().isEmpty()) continue;
+		if (card.GetCardImage()<-1 || card.GetCardImage()>=card.GetAvailableImages().size())
+			card.SetAvailableImages();
+		else if (card.GetCardImage()==-1)
+			card.SetAvailableImages(card.GetAvailableImages().at(qrand()%card.GetAvailableImages().size()));
+		else
+			card.SetAvailableImages(card.GetAvailableImages().at(card.GetCardImage()));
+		card.SetCardImage(0);
+	}
+	foreach(CardData card,Result.SideBoard){
+		if(card.GetAvailableImages().isEmpty()) continue;
+		if (card.GetCardImage()<-1 || card.GetCardImage()>=card.GetAvailableImages().size())
+			card.SetAvailableImages();
+		else if (card.GetCardImage()==-1)
+			card.SetAvailableImages(card.GetAvailableImages().at(qrand()%card.GetAvailableImages().size()));
+		else
+			card.SetAvailableImages(card.GetAvailableImages().at(card.GetCardImage()));
+		card.SetCardImage(0);
+	}
+	return Result;
+}
+QDataStream& operator<<(QDataStream &out, const CardDeck &deck){out << deck.GetMainBoard() << deck.GetSideBoard(); return out;}
+QDataStream& operator>>(QDataStream &in, CardDeck &deck){QList<CardData> TempList; in >> TempList; deck.SetMainBoard(TempList); TempList.clear(); in >> TempList; deck.SetSideBoard(TempList); return in;}
