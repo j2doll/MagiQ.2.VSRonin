@@ -51,6 +51,12 @@
     <Filter Include="Source Files\Utility Widgets">
       <UniqueIdentifier>{07a19705-7ba8-4ea5-a6b5-2eee320ac14b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Servers and Clients">
+      <UniqueIdentifier>{b7f379d1-dd10-4c2e-b3b2-556f95b328fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Servers and Clients">
+      <UniqueIdentifier>{81e408e5-8d9d-4ab7-bbfe-b9331672918d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -197,6 +203,42 @@
     <ClCompile Include="HandLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CardViewer.cpp">
+      <Filter>Source Files\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_CardViewer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_CardViewer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="LanServer.cpp">
+      <Filter>Source Files\Servers and Clients</Filter>
+    </ClCompile>
+    <ClCompile Include="LanServerThread.cpp">
+      <Filter>Source Files\Servers and Clients</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LanServerThread.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LanServerThread.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LanServer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LanServer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="LanClient.cpp">
+      <Filter>Source Files\Servers and Clients</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LanClient.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LanClient.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -219,6 +261,9 @@
     </ClInclude>
     <ClInclude Include="HandLayout.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComunicationConstants.h">
+      <Filter>Header Files\Servers and Clients</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +311,18 @@
     </CustomBuild>
     <CustomBuild Include="BattleGround.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CardViewer.h">
+      <Filter>Header Files\Card</Filter>
+    </CustomBuild>
+    <CustomBuild Include="LanServerThread.h">
+      <Filter>Header Files\Servers and Clients</Filter>
+    </CustomBuild>
+    <CustomBuild Include="LanServer.h">
+      <Filter>Header Files\Servers and Clients</Filter>
+    </CustomBuild>
+    <CustomBuild Include="LanClient.h">
+      <Filter>Header Files\Servers and Clients</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

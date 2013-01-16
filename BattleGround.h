@@ -2,9 +2,11 @@
 #define CAMPODIGIOCO_H
 #include <QWidget>
 #include <QList>
+class HandLayout;
 class MagiQPlayer;
 class QFrame;
 class QLabel;
+class CardViewer;
 class BattleGround : public QWidget
 {
 	Q_OBJECT
@@ -12,11 +14,14 @@ class BattleGround : public QWidget
 private:
 //Visual Elements
 	QFrame* Board;
-	QList<QFrame*> Hands;
+	QList<QFrame*> HandFrames;
+	QList<HandLayout*> HandsLay;
 	QList<QLabel*> DeckLabels;
+
 //Game Properties
 	bool GameStarted;
 	QList<MagiQPlayer*> Players;
+	CardViewer* ScheduledRaise;
 //Functions
 	void UpdateAspect();
 
@@ -36,6 +41,8 @@ public:
 	MagiQPlayer* GetPlayer(int index){return Players.value(index,NULL);}
 public slots:
 	void StartGame();
+private slots:
+	void ResetHandOrder();
 protected:
 	void resizeEvent(QResizeEvent* event);
 };

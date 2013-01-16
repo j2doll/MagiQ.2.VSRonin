@@ -201,10 +201,10 @@ namespace StyleSheets{
 		);
 		const QString BoardCSS(
 			"BattleGround[NumOfPlayers=\"2\"] #Board{"
-				"border-image: url(:/Board/2PlayersBoard.png)"
+				"border-image: url(:/Board/2PlayersBoard.png);"
 			"}"
 			"BattleGround #DeckLabel{"
-				"border-image: url(:/CardImage/Rear.png)"
+				"border-image: url(:/CardImage/Rear.png);"
 			"}"
 		);
 }

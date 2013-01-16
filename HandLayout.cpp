@@ -47,10 +47,10 @@ QSize HandLayout::minimumSize() const{
 QSize HandLayout::sizeHint() const{
 	if (items.isEmpty()) return QSize(0,0);
 	int MaxSizeHintHei=items.at(0)->sizeHint().height();
-	int SumSizeWid=items.at(0)->sizeHint().width();
+	int SumSizeWid=items.at(0)->minimumSize().width();
 	for (QList<QLayoutItem*>::const_iterator i=items.begin()+1;i!=items.end();i++){
-		if ((*i)->sizeHint().height()>MaxSizeHintHei) MaxSizeHintHei=(*i)->sizeHint().height();
-		SumSizeWid+=(*i)->sizeHint().width();
+		if ((*i)->minimumSize().height()>MaxSizeHintHei) MaxSizeHintHei=(*i)->minimumSize().height();
+		SumSizeWid+=(*i)->minimumSize().width();
 	}
 	return QSize(SumSizeWid+(spacing()*(count()-1)),MaxSizeHintHei);
 }
