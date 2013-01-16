@@ -1,4 +1,5 @@
 #include "LanServerThread.h"
+#include "ComunicationConstants.h"
 #include <QSslSocket>
 LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	:QThread(parent)
@@ -6,6 +7,7 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	,nextBlockSize(0)
 {
 	tcpSocket=new QSslSocket(this);
+	connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(ClientDisconnected()));
 	connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readData()));
 	connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this,SIGNAL(error(QAbstractSocket::SocketError)));
 }
@@ -20,7 +22,8 @@ void LanServerThread::run(){
 void LanServerThread::readData(){
 	QDataStream incom(tcpSocket);
 	incom.setVersion(QDataStream::Qt_4_7);
-	qint32 RequestType;
+	quint32 RequestType;
+	QString strings;
 	forever {
 		if (nextBlockSize == 0) {
 			if (tcpSocket->bytesAvailable() < sizeof(quint32))
@@ -34,27 +37,20 @@ void LanServerThread::readData(){
 		if (tcpSocket->bytesAvailable() < nextBlockSize)
 			break;
 		incom >> RequestType;
-		/*if(TipoRichiesta==Comunicazioni::RichiediInfo){
-			emit GotRichiediInfo();
+		if(RequestType==Comunications::TransmissionType::ChatMessage){
+			incom >> strings;
+			emit ChatMessageRecieved(strings);
 		}
-		else if(TipoRichiesta==Comunicazioni::PartecipaServer){
-			emit IWantToJoin(socketDescriptor);
-		}
-		else if(TipoRichiesta==Comunicazioni::CambiateInfo){
-			incom >> dato1 >> stringa1 >> dato2; // ID, Nuovo Nome, Nuovo Colore
-			emit CambiateInfo(dato1,stringa1,dato2);
-		}
-		else if(TipoRichiesta==Comunicazioni::SonoPronto){
-			incom >> dato1; //ID di chi è pronto
-			emit IsReady(dato1);
-		}
-		else if(TipoRichiesta==Comunicazioni::NonSonoPronto){
-			incom >> dato1; //ID di chi è pronto
-			emit IsNotReady(dato1);
-		}
-		else if(TipoRichiesta==Comunicazioni::IDRicevuto){
-			emit RicevutoID(socketDescriptor);
-		}*/
 		nextBlockSize = 0;
 	}
+}
+void LanServerThread::SendChatMessage(QString& Message){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::ChatMessage) << Message << quint32(0xFFFF);
+	out.device()->seek(0);
+	out << quint32(block.size() - 2*sizeof(quint32));
+	tcpSocket->write(block);
+	if(!tcpSocket->waitForBytesWritten(5000)) emit CantSendData();
 }
