@@ -2,25 +2,21 @@
 #define LANSERVERTHREAD_H
 #include <QThread>
 #include <QAbstractSocket>
-class QSslSocket;
+class LanServerSocket;
 class LanServerThread : public QThread{
 	Q_OBJECT
 private:
-	quint32 nextBlockSize;
 	int SocketID;
-	QSslSocket* tcpSocket;
+	LanServerSocket* tcpSocket;
 public:
 	LanServerThread(int SockDesc,QObject* parent=0);
-	void run();
+	void run(){exec();}
+	void stop(){exit(0);}
 signals:
-	void error(QAbstractSocket::SocketError socketError);
-	void Disconnected(int a);
-	void ChatMessageRecieved(QString Message);
-	void CantSendData();
+	void ChatMessageRecieved(QString msg);
+	void SendMessage(QString msg);
+	void ReachedEnd(int SocID);
 private slots:
-	void ClientDisconnected(){emit Disconnected(SocketID);}
-	void readData();
-public slots:
-	void SendChatMessage(QString& Message);
+	void SendReachedEnd(){emit ReachedEnd(SocketID);}
 };
 #endif

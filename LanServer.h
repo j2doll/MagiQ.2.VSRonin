@@ -19,9 +19,8 @@ signals:
 	void ChatMessage(QString Message);
 	void CantBindPort();
 public slots:
-	void StartListening(){
-		if (!listen(QHostAddress::Any, PortToListen))
-			emit CantBindPort();
-	}
+	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
+private slots:
+	void EraseThread(int a);
 };
 #endif

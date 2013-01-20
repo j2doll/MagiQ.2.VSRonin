@@ -17,5 +17,7 @@ public:
 private slots:
 	void InviaMex();
 	void RiceviMex(QString a);
+	void Disconnesso();
+	void MostraErrori(QAbstractSocket::SocketError socketError);
 };
 #endif

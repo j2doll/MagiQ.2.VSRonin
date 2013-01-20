@@ -248,6 +248,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_TestWidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LanServerSocket.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LanServerSocket.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="LanServerSocket.cpp">
+      <Filter>Source Files\Servers and Clients</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -335,6 +344,9 @@
     </CustomBuild>
     <CustomBuild Include="TestWidget.h">
       <Filter>Header Files\Test Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="LanServerSocket.h">
+      <Filter>Header Files\Servers and Clients</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

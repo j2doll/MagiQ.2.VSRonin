@@ -24,11 +24,13 @@ photothumb.db
 *.sln
 *.sdf
 *.opensdf
-[Bb]in
+[Bb]in*/
+ipch*/
 [Dd]ebug*/
 [Gg]enerated[Ff]iles*/
 *.lib
 *.sbr
+.*log
 obj/
 [Rr]elease*/
 _ReSharper*/
