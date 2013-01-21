@@ -17,7 +17,7 @@ void CardDeck::AddSideboard(const CardData& c){
 QList<int> CardDeck::Legality() const{
 	QList<int> Result;
 	if (NumMain()<60 || (NumSide()!=0 && NumSide()!=15)) return Result;
-	for (int i=0;i<Constants::Legality::END_Legal;i++){
+	for (int i=0;i<Constants::Legality::END;i++){
 		Result.append(i);
 	}
 	//TODO Controlla le Edizioni e le carte

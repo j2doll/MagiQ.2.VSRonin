@@ -1,8 +1,8 @@
-#include "Smiles Selector.h"
+#include "Symbols Selector.h"
 #include "SmileButton.h"
 #include <QFrame>
 #include <QGridLayout>
-SmilesSelector::SmilesSelector(QWidget* parent,int SmilePR)
+SymbolsSelector::SymbolsSelector(QWidget* parent,int SmilePR)
 	:QWidget(parent)
 	,SmilesPerRow(SmilePR)
 {
@@ -35,10 +35,10 @@ SmilesSelector::SmilesSelector(QWidget* parent,int SmilePR)
 	setLayout(Lay);
 	hide();
 }
-void SmilesSelector::resizeEvent(QResizeEvent* event){
+void SymbolsSelector::resizeEvent(QResizeEvent* event){
 	Sfondo->setGeometry(0,0,width(),height());
 }
-void SmilesSelector::show_toggle(){
+void SymbolsSelector::show_toggle(){
 	if (isVisible())
 		hide();
 	else

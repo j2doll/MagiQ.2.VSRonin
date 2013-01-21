@@ -9,7 +9,7 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include "Effect.h"
-#include "Smiles Selector.h"
+#include "Symbols Selector.h"
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QSpinBox>
@@ -47,11 +47,11 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 	SymbolsMenuButton->setIcon(QIcon(QPixmap(":/Effects/TapBig.png")));
 	SymbolsMenuButton->setToolTip(tr("Insert Symbol"));
 	NameTextLayout->addWidget(SymbolsMenuButton,0,1);
-	SymbolsSelector=new SmilesSelector(this);
-	SymbolsSelector->setObjectName("SymbolsSelector");
-	connect(SymbolsMenuButton,SIGNAL(clicked()),SymbolsSelector,SLOT(show_toggle()));
-	connect(SymbolsMenuButton,SIGNAL(clicked()),SymbolsSelector,SLOT(raise()));
-	connect(SymbolsSelector,SIGNAL(selected(int)),this,SLOT(AddSymbol(int)));
+	SymSelector=new SymbolsSelector(this);
+	SymSelector->setObjectName("SymbolsSelector");
+	connect(SymbolsMenuButton,SIGNAL(clicked()),SymSelector,SLOT(show_toggle()));
+	connect(SymbolsMenuButton,SIGNAL(clicked()),SymSelector,SLOT(raise()));
+	connect(SymSelector,SIGNAL(selected(int)),this,SLOT(AddSymbol(int)));
 	EffectTextEditor=new QTextEdit(this);
 	EffectTextEditor->setObjectName("EffectTextEditor");
 	connect(EffectTextEditor,SIGNAL(textChanged()),this,SLOT(SetEffectText()));
@@ -285,7 +285,7 @@ EffectsBuilder::EffectsBuilder(QWidget* parent)
 void EffectsBuilder::resizeEvent(QResizeEvent* event){
 	Background->setGeometry(0,0,width(),height());
 	QPoint ButtonPos(SymbolsMenuButton->pos());
-	SymbolsSelector->setGeometry(33+width()-589,117+height()-585,250,130);
+	SymSelector->setGeometry(33+width()-589,117+height()-585,250,130);
 	TargetsTable->setColumnWidth(0,TargetsTable->width()*3/5);
 	TargetsTable->setColumnWidth(1,TargetsTable->width()*2/5);
 }

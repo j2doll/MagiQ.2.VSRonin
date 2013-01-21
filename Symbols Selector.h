@@ -1,14 +1,14 @@
-#ifndef SMILESSELECTOR_H
-#define SMILESSELECTOR_H
+#ifndef SYMBOLSSELECTOR_H
+#define SYMBOLSSELECTOR_H
 #include <QWidget>
 #include "EffectsConstants.h"
 class SmileButton;
 class QFrame;
-class SmilesSelector : public QWidget
+class SymbolsSelector : public QWidget
 {
 	Q_OBJECT
 	public:
-		SmilesSelector(QWidget* parent=0,int SmilePR=8);
+		SymbolsSelector(QWidget* parent=0,int SmilePR=8);
 		void SetSmilesPerRow(const int& spr){SmilesPerRow=spr;}
 	signals:
 		void selected(int iden);

@@ -11,6 +11,7 @@ class LanClient : public QObject{
 private:
 	QString HostIP;
 	int ListenPort;
+	bool IsReady;
 #ifdef USE_SSL
 	QSslSocket* tcpSocket;
 #endif
@@ -32,10 +33,15 @@ signals:
 	void CantConnect();
 	void CantSendData();
 	void ChatMessageRecieved(QString Message);
+	void ServerInfos(QString,int,int,int,int,int);
+	void ServerIsFull();
 private slots:
 	void IncomingTransmission();
 public slots:
 	void ConnectToHost();
-	void SendChatMessage(QString& Message);
+	void SendChatMessage(QString Message);
+	void SendJoinRequest();
+	void disconnectFromHost();
+	void SendReady();
 };
 #endif

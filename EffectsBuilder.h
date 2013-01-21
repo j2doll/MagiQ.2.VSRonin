@@ -7,7 +7,7 @@ class QPushButton;
 class QFrame;
 class QLabel;
 class Effect;
-class SmilesSelector;
+class SymbolsSelector;
 class QLineEdit;
 class QTextEdit;
 class QSpinBox;
@@ -31,7 +31,7 @@ private:
 	QTextEdit* EffectTextEditor;
 	QTextEdit* EffectTooltipEditor;
 	QPushButton* SymbolsMenuButton;
-	SmilesSelector* SymbolsSelector;
+	SymbolsSelector* SymSelector;
 	QComboBox* TargetTypeSelector;
 	QSpinBox* TargetNumberSpin;
 	QPushButton* AddTargetButton;

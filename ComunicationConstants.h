@@ -5,6 +5,9 @@ namespace Comunications{
 	enum {DefaultTCPport=7677};
 	namespace TransmissionType{enum{
 		SeverInformations
+		,JoinRequest
+		,ServerFull
+		,ReadyToPlay
 		,ChatMessage
 	};}
 }

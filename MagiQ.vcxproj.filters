@@ -173,15 +173,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_SmileButton.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Smiles Selector.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Smiles Selector.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Smiles Selector.cpp">
-      <Filter>Source Files\Utility Widgets</Filter>
-    </ClCompile>
     <ClCompile Include="SmileButton.cpp">
       <Filter>Source Files\Utility Widgets</Filter>
     </ClCompile>
@@ -257,6 +248,33 @@
     <ClCompile Include="LanServerSocket.cpp">
       <Filter>Source Files\Servers and Clients</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Symbols Selector.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Symbols Selector.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Symbols Selector.cpp">
+      <Filter>Source Files\Utility Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="SmilesSelector.cpp">
+      <Filter>Source Files\Utility Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatWidget.cpp">
+      <Filter>Source Files\Utility Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ChatWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ChatWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SmilesSelector.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SmilesSelector.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -324,9 +342,6 @@
     <CustomBuild Include="SmileButton.h">
       <Filter>Header Files\Utility Widgets</Filter>
     </CustomBuild>
-    <CustomBuild Include="Smiles Selector.h">
-      <Filter>Header Files\Utility Widgets</Filter>
-    </CustomBuild>
     <CustomBuild Include="BattleGround.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -347,6 +362,15 @@
     </CustomBuild>
     <CustomBuild Include="LanServerSocket.h">
       <Filter>Header Files\Servers and Clients</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Symbols Selector.h">
+      <Filter>Header Files\Utility Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ChatWidget.h">
+      <Filter>Header Files\Utility Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SmilesSelector.h">
+      <Filter>Header Files\Utility Widgets</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
