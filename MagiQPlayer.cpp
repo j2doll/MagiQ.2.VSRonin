@@ -8,6 +8,7 @@ MagiQPlayer::MagiQPlayer(QObject* parent)
 	,PrimaryOrdering(CardData::ByManaCost)
 	,SecondaryOrdering(CardData::ByType)
 	,CanPlayMana(true)
+	,PlayerColor(0,0,0)
 {
 	ResetManaPool();
 }
@@ -88,4 +89,8 @@ void MagiQPlayer::SetLibrary(const CardDeck& a){
 	Sideboard.clear();
 	Library=Temp.GetMainBoard();
 	Sideboard=Temp.GetSideBoard();
+}
+void MagiQPlayer::SetPlayerColor(const QString& a){
+	PlayerColor.setNamedColor(a);
+	if(!PlayerColor.isValid()) PlayerColor.setRgb(0,0,0);
 }

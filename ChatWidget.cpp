@@ -123,3 +123,11 @@ void ChatWidget::Connected(){
 	ChatText->append("<font color=\"green\"><b>"+tr("Connected")+"</b></font>");
 	ChatText->ensureCursorVisible();
 }
+void ChatWidget::AnotherJoin(QString nam){
+	ChatText->append("<b>"+tr("%1 joined the chat").arg(nam)+"</b>");
+	ChatText->ensureCursorVisible();
+}
+void ChatWidget::AnotherLeave(QString nam){
+	ChatText->append("<b>"+tr("%1 left the chat").arg(nam)+"</b>");
+	ChatText->ensureCursorVisible();
+}

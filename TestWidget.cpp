@@ -6,15 +6,23 @@ TestWidget::TestWidget(QWidget* parent)
 	setMinimumSize(200,200);
 	Server=new LanServer(this);
 	Server->StartListening();
-	connect(Server,SIGNAL(LeftTheGame()),this,SLOT(StampaLeftGame()));
+	connect(Server,SIGNAL(LeftTheGame(QString)),this,SLOT(StampaLeftGame(QString)));
 	Client=new LanClient(this);
 	connect(Client,SIGNAL(ChatMessageRecieved(QString)),this,SLOT(RiceviMex(QString)));
 	connect(Client,SIGNAL(Disconnected()),this,SLOT(Disconnesso()));
 	connect(Client,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(MostraErrori(QAbstractSocket::SocketError)));
 	connect(Client,SIGNAL(ServerInfos(QString,int,int,int,int,int)),this,SLOT(StampaServerInfo(QString,int,int,int,int,int)));
+	IPEditor=new QLineEdit(this);
+	QRegExpValidator* validatore=new QRegExpValidator(QRegExp("^localhost|(([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))$"),IPEditor);
+	IPEditor->setValidator(validatore);
+	IPEditor->setText("localhost");
+	connect(IPEditor,SIGNAL(textEdited(QString)),Client,SLOT(SetHostIP(QString)));
 	ConnectButton=new QPushButton(this);
-	ConnectButton->setText("Join");
-	connect(ConnectButton,SIGNAL(clicked()),Client,SLOT(SendJoinRequest()));
+	ConnectButton->setText("Connect");
+	connect(ConnectButton,SIGNAL(clicked()),Client,SLOT(ConnectToHost()));
+	JoinButton=new QPushButton(this);
+	JoinButton->setText("Join");
+	connect(JoinButton,SIGNAL(clicked()),Client,SLOT(SendJoinRequest()));
 	DisconnectButton=new QPushButton(this);
 	DisconnectButton->setText("Leave");
 	//DisconnectButton->hide();
@@ -27,17 +35,22 @@ TestWidget::TestWidget(QWidget* parent)
 	SendButton->setText("Send");
 	connect(SendButton,SIGNAL(clicked()),this,SLOT(InviaMex()));
 	QVBoxLayout* MainLay=new QVBoxLayout(this);
+	MainLay->addWidget(IPEditor);
 	MainLay->addWidget(ConnectButton);
+	MainLay->addWidget(JoinButton);
 	MainLay->addWidget(DisconnectButton);
 	MainLay->addWidget(MessageDisplay);
 	MainLay->addWidget(MessageWrite);
 	MainLay->addWidget(SendButton);
-	Client->ConnectToHost();
-	ChatWidget* chat=new ChatWidget;
+
+	/*ChatWidget* chat=new ChatWidget;
 	connect(chat,SIGNAL(OutgoingMessage(QString)),Client,SLOT(SendChatMessage(QString)));
 	connect(Client,SIGNAL(ChatMessageRecieved(QString)),chat,SLOT(IncomingMesage(QString)));
 	connect(Client,SIGNAL(Disconnected()),chat,SLOT(Disconnected()));
-	chat->show();
+	connect(Client,SIGNAL(UserJoined(QString)),chat,SLOT(AnotherJoin(QString)));
+	connect(JoinButton,SIGNAL(clicked()),chat,SLOT(Connected()));
+	connect(Client,SIGNAL(UserLeft(QString)),chat,SLOT(AnotherLeave(QString)));
+	chat->show();*/
 }
 void TestWidget::RiceviMex(QString a){
 	MessageDisplay->append(a);
@@ -84,6 +97,6 @@ void TestWidget::StampaServerInfo(QString nam,int gamemode,int legal,int minp,in
 		.arg(maxp)
 		.arg(currp));
 }
-void TestWidget::StampaLeftGame(){
-	MessageDisplay->append("Un Giocatore ha lasciato la partita");
+void TestWidget::StampaLeftGame(QString a){
+	MessageDisplay->append("<b>"+a+" ha lasciato la partita</b>");
 }

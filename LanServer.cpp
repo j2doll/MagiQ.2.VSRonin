@@ -14,7 +14,7 @@ void LanServer::incomingConnection(int socketDescriptor){
 	clients[socketDescriptor]=new LanServerThread(socketDescriptor,this);
 	LanServerThread* TempPoint=clients[socketDescriptor];
 	connect(this,SIGNAL(ServerInfos(QString,int,int,int,int,int)),TempPoint,SIGNAL(ServerInfos(QString,int,int,int,int,int)));
-	connect(TempPoint,SIGNAL(RequestJoin(int)),this,SLOT(IncomingJoinRequest(int)));
+	connect(TempPoint,SIGNAL(RequestJoin(int,QString)),this,SLOT(IncomingJoinRequest(int,QString)));
 	connect(this,SIGNAL(ServerIsFull(int)),TempPoint,SIGNAL(ServerIsFull(int)));
 	connect(TempPoint,SIGNAL(ReachedEnd(int)),this,SLOT(EraseThread(int)));
 	TempPoint->start();
@@ -22,9 +22,11 @@ void LanServer::incomingConnection(int socketDescriptor){
 }
 void LanServer::EraseThread(int a){
 	if (PlayersSockets.contains(a)){
+		QString Temp=PlayerNames.value(PlayersSockets.indexOf(a),"A Player");
+		PlayerNames.erase(PlayerNames.begin()+PlayersSockets.indexOf(a));
 		PlayersSockets.erase(PlayersSockets.begin()+PlayersSockets.indexOf(a));
 		SendServerInfos();
-		SendLeftTheGame(a);
+		SendLeftTheGame(Temp);
 	}
 	QMap<int,bool>::iterator indexReady=ReadyPlayers.find(a);
 	if (indexReady!=ReadyPlayers.end()){
@@ -48,17 +50,24 @@ bool LanServer::EverybodyReady() const{
 	}
 	return true;
 }
-void LanServer::IncomingJoinRequest(int a){
+void LanServer::IncomingJoinRequest(int a, QString nam){
 	if (!clients.value(a,NULL)) return;
 	if (PlayersSockets.size()>=MaxPlayer){
 		emit ServerIsFull(a);
 		return;
 	}
 	PlayersSockets.append(a);
+	QString adjName(nam);
+	for (int i=1;PlayerNames.contains(adjName);i++)
+		adjName=nam+QString(" (%1)").arg(i);
+	PlayerNames.append(adjName);
+	emit Joined(adjName);
 	ReadyPlayers[a]=false;
 	LanServerThread* TempPoint=clients[a];
 	connect(this,SIGNAL(ChatMessage(QString)),TempPoint,SIGNAL(SendMessage(QString)));
 	connect(TempPoint,SIGNAL(ChatMessageRecieved(QString)),this,SIGNAL(ChatMessage(QString)));
 	connect(TempPoint,SIGNAL(ReadyToPlay(int,bool)),this,SLOT(IsReadyToPlay(int,bool)));
+	connect(this,SIGNAL(Joined(QString)),TempPoint,SIGNAL(Joined(QString)));
+	connect(this,SIGNAL(LeftTheGame(QString)),TempPoint,SIGNAL(LeftTheGame(QString)));
 	SendServerInfos();
 }

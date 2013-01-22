@@ -35,6 +35,8 @@ public slots:
 	void IncomingMesage(QString Msg);
 	void Disconnected();
 	void Connected();
+	void AnotherJoin(QString nam);
+	void AnotherLeave(QString nam);
 protected:
 	void resizeEvent(QResizeEvent* event);
 	bool eventFilter(QObject *target, QEvent *event);

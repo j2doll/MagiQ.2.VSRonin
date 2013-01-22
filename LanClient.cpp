@@ -23,6 +23,8 @@ LanClient::LanClient(QObject* parent)
 	connect(tcpSocket,SIGNAL(disconnected()),this,SIGNAL(Disconnected()));
 	connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(IncomingTransmission()));
 	connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this,SIGNAL(error(QAbstractSocket::SocketError)));
+
+	ClientPlayer.SetPlayerName("Player");
 }
 void LanClient::SetHostIP(const QString& a){
 	QRegExp IPValidator("^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$");
@@ -52,11 +54,13 @@ void LanClient::IncomingTransmission(){
 		if (tcpSocket->bytesAvailable() < nextBlockSize)
 			break;
 		incom >> RequestType;
+
+////////////////////////////////////////////////////////////////////////////
 		if(RequestType==Comunications::TransmissionType::ChatMessage){
 			incom >> strings;
 			emit ChatMessageRecieved(strings);
 		}
-		if(RequestType==Comunications::TransmissionType::SeverInformations){
+		else if(RequestType==Comunications::TransmissionType::SeverInformations){
 			incom >> strings
 				>>int1
 				>>int2
@@ -65,9 +69,19 @@ void LanClient::IncomingTransmission(){
 				>>int5;
 			emit ServerInfos(strings,int1,int2,int3,int4,int5);
 		}
-		if(RequestType==Comunications::TransmissionType::ServerFull){
+		else if(RequestType==Comunications::TransmissionType::ServerFull){
 			emit ServerIsFull();
 		}
+		else if(RequestType==Comunications::TransmissionType::PlayerJoins){
+			incom >> strings;
+			emit UserJoined(strings);
+		}
+		else if(RequestType==Comunications::TransmissionType::PlayerLeave){
+			incom >> strings;
+			emit UserLeft(strings);
+		}
+////////////////////////////////////////////////////////////////////////////
+
 		nextBlockSize = 0;
 	}
 }
@@ -84,7 +98,10 @@ void LanClient::SendJoinRequest(){
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
-	out << quint32(0) << quint32(Comunications::TransmissionType::JoinRequest);
+	out << quint32(0)
+		<< quint32(Comunications::TransmissionType::JoinRequest)
+		<< ClientPlayer.GetPlayerName()
+		;
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	tcpSocket->write(block);

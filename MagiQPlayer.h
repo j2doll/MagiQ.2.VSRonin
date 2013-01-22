@@ -11,6 +11,7 @@ class MagiQPlayer : public QObject{
 private:
 	QPixmap Avatar;
 	QString PlayerName;
+	QColor PlayerColor; //Used in chat
 	int Life;
 	int PrimaryOrdering;
 	int SecondaryOrdering;
@@ -29,6 +30,9 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	void SetPlayerColor(const QColor& a){PlayerColor=a;}
+	void SetPlayerColor(const QString& a);
+	const QColor& GetPlayerColor() const {return PlayerColor;}
 	void SetLibrary(){Library.clear();}
 	void SetLibrary(const CardDeck& a);
 	void SetLibrary(const QList<CardData>& a){Library.clear(); Library=a;}

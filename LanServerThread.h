@@ -22,9 +22,11 @@ signals:
 	void SendMessage(QString msg);
 	void ReachedEnd(int SocID);
 	void ServerInfos(QString,int,int,int,int,int);
-	void RequestJoin(int);
+	void RequestJoin(int,QString);
 	void ServerIsFull(int);
 	void ReadyToPlay(int,bool);
+	void Joined(QString);
+	void LeftTheGame(QString);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

@@ -7,6 +7,8 @@ namespace Comunications{
 		SeverInformations
 		,JoinRequest
 		,ServerFull
+		,PlayerJoins
+		,PlayerLeave
 		,ReadyToPlay
 		,ChatMessage
 	};}

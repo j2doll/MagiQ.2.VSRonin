@@ -31,17 +31,22 @@ void LanServerSocket::readClient(){
 		if (bytesAvailable() < nextBlockSize)
 			break;
 		incom >> RequestType;
+
+///////////////////////////////////////////////////////////////////////////
 		if(RequestType==Comunications::TransmissionType::ChatMessage){
 			incom >> strings;
 			emit ChatMessageRecieved(strings);
 		}
 		if(RequestType==Comunications::TransmissionType::JoinRequest){
-			emit RequestJoin(SocketID);
+			incom >> strings;
+			emit RequestJoin(SocketID,strings);
 		}
 		if(RequestType==Comunications::TransmissionType::ReadyToPlay){
 			incom >> booleans;
 			emit ReadyToPlay(SocketID,booleans);
 		}
+///////////////////////////////////////////////////////////////////////////
+
 		nextBlockSize = 0;
 	}
 }
@@ -77,6 +82,24 @@ void LanServerSocket::SendServerIsFull(int SocID){
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0) << quint32(Comunications::TransmissionType::ServerFull);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendJoined(QString nam){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::PlayerJoins) << nam;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendLeftTheGame(QString nam){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::PlayerLeave) << nam;
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);

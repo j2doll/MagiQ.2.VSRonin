@@ -17,6 +17,7 @@ private:
 	int MaxPlayer;
 	QMap<int,LanServerThread*> clients;
 	QList<int> PlayersSockets;
+	QList<QString> PlayerNames;
 	QMap<int,bool> ReadyPlayers;
 	bool EverybodyReady() const;
 	void StartMatch(){}
@@ -41,14 +42,15 @@ signals:
 	void CantBindPort();
 	void ServerInfos(QString,int,int,int,int,int);
 	void ServerIsFull(int);
-	void LeftTheGame(); //TODO: Add Arguments
+	void LeftTheGame(QString);
+	void Joined(QString);
 public slots:
 	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
 private slots:
 	void EraseThread(int a);
 	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersSockets.size());}
-	void IncomingJoinRequest(int a);
-	void SendLeftTheGame(int a){emit LeftTheGame();} //TODO: Add Arguments
+	void IncomingJoinRequest(int a,QString nam);
+	void SendLeftTheGame(QString a){emit LeftTheGame(a);}
 	void IsReadyToPlay(int a,bool ready);
 };
 #endif

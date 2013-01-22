@@ -27,9 +27,11 @@ public slots:
 	void SendMessage(QString msg);
 	void SendServerInfos(QString nam,int gamemode,int legal,int minp,int maxp,int currp);
 	void SendServerIsFull(int SocID);
+	void SendJoined(QString nam);
+	void SendLeftTheGame(QString nam);
 signals:
 	void ChatMessageRecieved(QString);
-	void RequestJoin(int);
+	void RequestJoin(int,QString);
 	void ReadyToPlay(int,bool);
 };
 #endif
