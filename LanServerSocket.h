@@ -1,12 +1,14 @@
 #ifndef LANSERVERSOCKET_H
 #define LANSERVERSOCKET_H
 #include "ComunicationConstants.h"
+#include "Deck.h"
 #ifdef USE_SSL
 #include <QSslSocket>
 #endif
 #ifndef USE_SSL
 #include <QTcpSocket>
 #endif
+
 class LanServerSocket : public
 #ifndef USE_SSL
 QTcpSocket
@@ -29,9 +31,18 @@ public slots:
 	void SendServerIsFull(int SocID);
 	void SendJoined(QString nam);
 	void SendLeftTheGame(QString nam);
+	void SendYourNameColor(int SocID,QString nam,QColor col);
+	void SendInvalidDeck(int SocID);
+	void SendGameHasStarted();
+	void SendPlayerHand(int SocID,QList<CardData> hand);
+	void SendPlayerLibrary(int SocID,QList<CardData> libr);
+	void SendPlayOrder(QList<int> Order);
 signals:
 	void ChatMessageRecieved(QString);
-	void RequestJoin(int,QString);
+	void RequestJoin(int,QString,QPixmap);
 	void ReadyToPlay(int,bool);
+	void DeckSetUp(int,CardDeck);
+	void Mulligan(int);
+	void HandAccepted(int);
 };
 #endif

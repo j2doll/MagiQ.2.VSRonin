@@ -9,6 +9,9 @@ class Card;
 class MagiQPlayer : public QObject{
 	Q_OBJECT
 private:
+	bool HasAcceptedHand;
+	int PlayerID;
+	bool ReadyToStartMatch;
 	QPixmap Avatar;
 	QString PlayerName;
 	QColor PlayerColor; //Used in chat
@@ -30,6 +33,12 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	void SetHasAcceptedHand(bool a){HasAcceptedHand=a;}
+	bool GetHasAcceptedHand() const {return HasAcceptedHand;}
+	void SetPlayerID(int a){PlayerID=a;}
+	int GetPlayerID() const {return PlayerID;}
+	void SetReadyToStartMatch(bool a){ReadyToStartMatch=a;}
+	bool GetReadyToStartMatch() const {return ReadyToStartMatch;}
 	void SetPlayerColor(const QColor& a){PlayerColor=a;}
 	void SetPlayerColor(const QString& a);
 	const QColor& GetPlayerColor() const {return PlayerColor;}
@@ -37,6 +46,10 @@ public:
 	void SetLibrary(const CardDeck& a);
 	void SetLibrary(const QList<CardData>& a){Library.clear(); Library=a;}
 	const QList<CardData>& GetLibrary() const {return Library;}
+	void SetSideboard(){Sideboard.clear();}
+	void SetSideboard(const CardDeck& a){SetLibrary(a);}
+	void SetSideboard(const QList<CardData>& a){Sideboard.clear(); Sideboard=a;}
+	const QList<CardData>& GetSideboard() const {return Sideboard;}
 	const QList<CardData>& GetHand() const {return Hand;}
 	const QList<CardData>& GetGraveyard() const {return Graveyard;}
 	const QList<CardData>& GetExile() const {return Exile;}
@@ -62,6 +75,8 @@ public:
 	void ShuffleLibrary();
 	void DrawCard();
 	void SortHand();
+	void DiscardRandom(){Graveyard.append(Hand.takeAt(qrand()%Hand.size()));}
+	void HandToBottomLibrary(){while(!Hand.isEmpty()) Library.append(Hand.takeAt(0));}
 	void SetCanPlayMana(bool a){CanPlayMana=a;}
 	bool GetCanPlayMana() const {return CanPlayMana;}
 	MagiQPlayer(const MagiQPlayer& a,QObject* parent=0);

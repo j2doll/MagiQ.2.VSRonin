@@ -12,9 +12,6 @@ public:
 	const QString& GetUserName() const {return UserName;}
 	const QColor& GetUserColor() const {return UserColor;}
 	bool GetShowTimeStamp() const {return ShowTimeStamp;}
-	void SetUserName(const QString& a){UserName=a;}
-	void SetUserColor(const QColor& a){UserColor=a;}
-	void SetUserColor(const QString& a);
 	void SetShowTimeStamp(bool a){ShowTimeStamp=a;}
 private:
 	QString UserName;
@@ -37,6 +34,10 @@ public slots:
 	void Connected();
 	void AnotherJoin(QString nam);
 	void AnotherLeave(QString nam);
+	void SetUserName(const QString& a){UserName=a;}
+	void SetUserColor(const QColor& a){UserColor=a;}
+	void SetUserColor(const QString& a);
+	void SetNameColor(const QString& a,const QColor& b){SetUserName(a); SetUserColor(b);}
 protected:
 	void resizeEvent(QResizeEvent* event);
 	bool eventFilter(QObject *target, QEvent *event);

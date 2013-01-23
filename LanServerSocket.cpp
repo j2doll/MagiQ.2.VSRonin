@@ -22,6 +22,8 @@ void LanServerSocket::readClient(){
 	quint32 RequestType;
 	QString strings;
 	bool booleans;
+	CardDeck deck;
+	QPixmap images;
 	forever {
 		if (nextBlockSize == 0) {
 			if (bytesAvailable() < sizeof(quint32))
@@ -37,13 +39,22 @@ void LanServerSocket::readClient(){
 			incom >> strings;
 			emit ChatMessageRecieved(strings);
 		}
-		if(RequestType==Comunications::TransmissionType::JoinRequest){
+		else if(RequestType==Comunications::TransmissionType::JoinRequest){
 			incom >> strings;
-			emit RequestJoin(SocketID,strings);
+			incom >> images;
+			emit RequestJoin(SocketID,strings,images);
 		}
-		if(RequestType==Comunications::TransmissionType::ReadyToPlay){
+		else if(RequestType==Comunications::TransmissionType::ReadyToPlay){
 			incom >> booleans;
+			incom >> deck;
 			emit ReadyToPlay(SocketID,booleans);
+			emit DeckSetUp(SocketID,deck);
+		}
+		else if(RequestType==Comunications::TransmissionType::Mulligan){
+			emit Mulligan(SocketID);
+		}
+		else if(RequestType==Comunications::TransmissionType::HandAccepted){
+			emit HandAccepted(SocketID);
 		}
 ///////////////////////////////////////////////////////////////////////////
 
@@ -100,6 +111,74 @@ void LanServerSocket::SendLeftTheGame(QString nam){
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0) << quint32(Comunications::TransmissionType::PlayerLeave) << nam;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendYourNameColor(int SocID,QString nam,QColor col){
+	if (SocketID!=SocID) return;
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::YourNameAndColor) << nam << col;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendInvalidDeck(int SocID){
+	if (SocketID!=SocID) return;
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::InvalidDeck);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendGameHasStarted(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::GameStarted);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendPlayOrder(QList<int> Order){
+	if (Order.contains(SocketID))
+		Order.replace(Order.indexOf(SocketID),-1);
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::PlayersOrder) << Order;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendPlayerHand(int SocID,QList<CardData> hand){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	if (SocID==SocketID){
+		out << quint32(0) << quint32(Comunications::TransmissionType::YourHand) << hand;
+	}
+	else{
+		out << quint32(0) << quint32(Comunications::TransmissionType::OthersHand) << SocID << hand.size();
+	}
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendPlayerLibrary(int SocID,QList<CardData> libr){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	if (SocID==SocketID){
+		out << quint32(0) << quint32(Comunications::TransmissionType::YourLibrary) << libr;
+	}
+	else{
+		out << quint32(0) << quint32(Comunications::TransmissionType::OthersLibrary) << SocID << libr.size();
+	}
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);

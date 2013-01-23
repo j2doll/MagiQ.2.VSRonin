@@ -12,6 +12,7 @@ LanClient::LanClient(QObject* parent)
 	,ListenPort(Comunications::DefaultTCPport)
 	,nextBlockSize(0)
 	,IsReady(false)
+	,MyName("Player")
 {
 #ifdef USE_SSL
 	tcpSocket=new QSslSocket(this);
@@ -23,8 +24,6 @@ LanClient::LanClient(QObject* parent)
 	connect(tcpSocket,SIGNAL(disconnected()),this,SIGNAL(Disconnected()));
 	connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(IncomingTransmission()));
 	connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this,SIGNAL(error(QAbstractSocket::SocketError)));
-
-	ClientPlayer.SetPlayerName("Player");
 }
 void LanClient::SetHostIP(const QString& a){
 	QRegExp IPValidator("^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$");
@@ -44,7 +43,10 @@ void LanClient::IncomingTransmission(){
 	incom.setVersion(QDataStream::Qt_4_7);
 	quint32 RequestType;
 	QString strings;
+	QColor colors;
 	qint32 int1,int2,int3,int4,int5;
+	QList<int> intlists;
+	QList<CardData> cardlists;
 	forever {
 		if (nextBlockSize == 0) {
 			if (tcpSocket->bytesAvailable() < sizeof(quint32))
@@ -80,6 +82,38 @@ void LanClient::IncomingTransmission(){
 			incom >> strings;
 			emit UserLeft(strings);
 		}
+		else if(RequestType==Comunications::TransmissionType::YourNameAndColor){
+			incom >> strings;
+			incom >> colors;
+			MyName=strings;
+			emit MyNameAndColor(strings,colors);
+		}
+		else if(RequestType==Comunications::TransmissionType::InvalidDeck){
+			emit InvalidDeck();
+		}
+		else if(RequestType==Comunications::TransmissionType::GameStarted){
+			emit GameHasStarted();
+		}
+		else if(RequestType==Comunications::TransmissionType::PlayersOrder){
+			incom >> intlists;
+			emit PlayOrder(intlists);
+		}
+		else if(RequestType==Comunications::TransmissionType::YourHand){
+			incom >> cardlists;
+			emit MyHand(cardlists);
+		}
+		else if(RequestType==Comunications::TransmissionType::YourLibrary){
+			incom >> cardlists;
+			emit MyLibrary(cardlists);
+		}
+		else if(RequestType==Comunications::TransmissionType::OthersHand){
+			incom >> int1 >> int2;
+			emit OtherHand(int1,int2);
+		}
+		else if(RequestType==Comunications::TransmissionType::OthersLibrary){
+			incom >> int1 >> int2;
+			emit OtherLibrary(int1,int2);
+		}
 ////////////////////////////////////////////////////////////////////////////
 
 		nextBlockSize = 0;
@@ -100,7 +134,8 @@ void LanClient::SendJoinRequest(){
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0)
 		<< quint32(Comunications::TransmissionType::JoinRequest)
-		<< ClientPlayer.GetPlayerName()
+		<< MyName
+		<< MyAvatar
 		;
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
@@ -111,7 +146,29 @@ void LanClient::SendReady(){
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
-	out << quint32(0) << quint32(Comunications::TransmissionType::ReadyToPlay) << IsReady;
+	out << quint32(0)
+		<< quint32(Comunications::TransmissionType::ReadyToPlay)
+		<< IsReady
+		<< MyDeck
+		;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	tcpSocket->write(block);
+}
+void LanClient::SendMulligan(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::Mulligan);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	tcpSocket->write(block);
+}
+void LanClient::SendHandAccepted(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::HandAccepted);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	tcpSocket->write(block);

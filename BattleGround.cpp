@@ -76,7 +76,7 @@ void BattleGround::UpdateAspect(){
 			TempCard->hide();
 			CardViewer* TempViewer=new CardViewer(this);
 			connect(TempViewer,SIGNAL(LeftFocus()),this,SLOT(ResetHandOrder()));
-			connect(TempViewer,SIGNAL(GainFocus()),TempViewer,SLOT(raise()));
+			connect(TempViewer,SIGNAL(GainFocus()),TempViewer,SLOT(raise()),Qt::QueuedConnection);
 			TempViewer->SetCardToDisplay(TempCard);
 			TempViewer->UpdateAspect();
 			HandsLay.at(i)->addWidget(TempViewer);

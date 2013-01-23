@@ -43,14 +43,15 @@ TestWidget::TestWidget(QWidget* parent)
 	MainLay->addWidget(MessageWrite);
 	MainLay->addWidget(SendButton);
 
-	/*ChatWidget* chat=new ChatWidget;
+	ChatWidget* chat=new ChatWidget;
 	connect(chat,SIGNAL(OutgoingMessage(QString)),Client,SLOT(SendChatMessage(QString)));
 	connect(Client,SIGNAL(ChatMessageRecieved(QString)),chat,SLOT(IncomingMesage(QString)));
 	connect(Client,SIGNAL(Disconnected()),chat,SLOT(Disconnected()));
 	connect(Client,SIGNAL(UserJoined(QString)),chat,SLOT(AnotherJoin(QString)));
 	connect(JoinButton,SIGNAL(clicked()),chat,SLOT(Connected()));
 	connect(Client,SIGNAL(UserLeft(QString)),chat,SLOT(AnotherLeave(QString)));
-	chat->show();*/
+	connect(Client,SIGNAL(MyNameAndColor(QString,QColor)),chat,SLOT(SetNameColor(QString,QColor)));
+	chat->show();
 }
 void TestWidget::RiceviMex(QString a){
 	MessageDisplay->append(a);

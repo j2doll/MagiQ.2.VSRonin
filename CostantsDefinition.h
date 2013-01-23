@@ -493,5 +493,16 @@ namespace Constants{
 			":/Smiles/XD.png",
 			":/Smiles/wink.png"
 		};
+		const QString PlayerColors[]={
+			"#336699" //Blue
+			,"#CC0000" //Red
+			,"#005A04" //Green
+			,"#FF9900" //Orange
+			//Extra Colors
+			,"#993366" //Fuchsia
+			,"#663300" //Brown
+			,"#E47297" //Pink
+			,"#FFD900" //Yellow
+		};
 }
 #endif

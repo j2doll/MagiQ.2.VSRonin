@@ -9,6 +9,8 @@ MagiQPlayer::MagiQPlayer(QObject* parent)
 	,SecondaryOrdering(CardData::ByType)
 	,CanPlayMana(true)
 	,PlayerColor(0,0,0)
+	,ReadyToStartMatch(false)
+	,HasAcceptedHand(false)
 {
 	ResetManaPool();
 }

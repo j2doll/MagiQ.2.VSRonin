@@ -3,12 +3,17 @@
 #include <QTcpServer>
 #include <QMap>
 #include <QList>
+#include "Deck.h"
 #include "LanServerThread.h"
 #include "ComunicationConstants.h"
 #include "CostantsDefinition.h"
+#include "MagiQPlayer.h"
 class LanServer : public QTcpServer{
 	Q_OBJECT
 private:
+	int TurnNumber;
+	int TurnOfPlayer;
+	bool GameStarted;
 	int PortToListen;
 	QString ServerName;
 	int GameMode;
@@ -16,11 +21,12 @@ private:
 	int MinPlayer;
 	int MaxPlayer;
 	QMap<int,LanServerThread*> clients;
-	QList<int> PlayersSockets;
-	QList<QString> PlayerNames;
-	QMap<int,bool> ReadyPlayers;
+	QMap<int,MagiQPlayer*> PlayersList;
 	bool EverybodyReady() const;
-	void StartMatch(){}
+	bool EverybodyAcceptedHand() const;
+	void StartMatch();
+	void TurnOfGame();
+	QList<int> PlayersOrder;
 protected:
 	void incomingConnection(int socketDescriptor);
 public:
@@ -44,13 +50,22 @@ signals:
 	void ServerIsFull(int);
 	void LeftTheGame(QString);
 	void Joined(QString);
+	void YourNameColor(int,QString,QColor);
+	void InvalidDeck(int);
+	void PlayerHand(int,QList<CardData>);
+	void PlayerLibrary(int,QList<CardData>);
+	void PlayOrder(QList<int>);
+	void GameHasStarted();
 public slots:
 	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
 private slots:
 	void EraseThread(int a);
-	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersSockets.size());}
-	void IncomingJoinRequest(int a,QString nam);
+	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersList.size());}
+	void IncomingJoinRequest(int a,QString nam,QPixmap avat);
 	void SendLeftTheGame(QString a){emit LeftTheGame(a);}
 	void IsReadyToPlay(int a,bool ready);
+	void DeckSetUp(int socID,CardDeck deck);
+	void DoMulligan(int socID);
+	void AcceptedHand(int SocID);
 };
 #endif

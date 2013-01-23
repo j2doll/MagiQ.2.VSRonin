@@ -8,6 +8,11 @@ CardDeck::CardDeck(const CardDeck& a,QObject* parent)
 	,MainBoard(a.MainBoard)
 	,SideBoard(a.SideBoard)
 {}
+const CardDeck& CardDeck::operator=(const CardDeck& a){
+	MainBoard=a.MainBoard;
+	SideBoard=a.SideBoard;
+	return *this;
+}
 void CardDeck::AddCard(const CardData& c){
 	MainBoard.append(c);
 }

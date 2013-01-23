@@ -8,8 +8,18 @@ namespace Comunications{
 		,JoinRequest
 		,ServerFull
 		,PlayerJoins
+		,YourNameAndColor
 		,PlayerLeave
 		,ReadyToPlay
+		,InvalidDeck
+		,GameStarted
+		,PlayersOrder
+		,YourHand
+		,YourLibrary
+		,OthersHand
+		,OthersLibrary
+		,Mulligan
+		,HandAccepted
 		,ChatMessage
 	};}
 }

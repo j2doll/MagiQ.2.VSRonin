@@ -4,17 +4,19 @@
 #include <QThread>
 #include <QAbstractSocket>
 #include "ComunicationConstants.h"
-#include "MagiQPlayer.h"
+#include <QPixmap>
+#include "Deck.h"
 class QSslSocket;
 class QTcpSocket;
-class MagiQPlayer;
 class LanClient : public QObject{
 	Q_OBJECT
 private:
 	QString HostIP;
 	int ListenPort;
 	bool IsReady;
-	MagiQPlayer ClientPlayer;
+	QPixmap MyAvatar;
+	QString MyName;
+	CardDeck MyDeck;
 #ifdef USE_SSL
 	QSslSocket* tcpSocket;
 #endif
@@ -23,19 +25,16 @@ private:
 #endif
 	quint32 nextBlockSize;
 public:
-	void SetAvatar(const QPixmap& a){ClientPlayer.SetAvatar(a);}
-	void SetUsername(const QString& a){ClientPlayer.SetPlayerName(a); emit UsernameChanged(a);}
-	void SetUserColor(const QString& a){ClientPlayer.SetPlayerColor(a); emit UserColorChanged(ClientPlayer.GetPlayerColor());}
-	void SetUserColor(const QColor& a){ClientPlayer.SetPlayerColor(a); emit UserColorChanged(a);}
-	MagiQPlayer& GetClientPlayer() {return ClientPlayer;}
+	void SetDeck(const CardDeck& a){MyDeck=a;}
+	const CardDeck& GetDeck() const {return MyDeck;}
+	void SetAvatar(const QPixmap& a){MyAvatar=a;}
+	void SetUsername(const QString& a){MyName=a;}
 	const QString& GetHostIP() const {return HostIP;}
 	int GetListenPort() const {return ListenPort;}
 	void SetListenPort(int a){ListenPort=a;}
 	LanClient(QObject* parent);
 	QString GetSocketErrorString() const;
 signals:
-	void UsernameChanged(QString);
-	void UserColorChanged(QColor);
 	void error(QAbstractSocket::SocketError socketError);
 	void Connected();
 	void Disconnected();
@@ -46,6 +45,14 @@ signals:
 	void ServerIsFull();
 	void UserJoined(QString);
 	void UserLeft(QString);
+	void MyNameAndColor(QString,QColor);
+	void InvalidDeck();
+	void GameHasStarted();
+	void PlayOrder(QList<int>);
+	void MyHand(QList<CardData>);
+	void OtherHand(int whos,int numcards);
+	void MyLibrary(QList<CardData>);
+	void OtherLibrary(int whos,int numcards);
 private slots:
 	void IncomingTransmission();
 public slots:
@@ -55,5 +62,7 @@ public slots:
 	void SendJoinRequest();
 	void disconnectFromHost();
 	void SendReady();
+	void SendMulligan();
+	void SendHandAccepted();
 };
 #endif

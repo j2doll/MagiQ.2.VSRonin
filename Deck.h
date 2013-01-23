@@ -11,6 +11,7 @@ private:
 public:
 	CardDeck(QObject* parent=0);
 	CardDeck(const CardDeck& a,QObject* parent=0);
+	const CardDeck& operator=(const CardDeck& a);
 	CardDeck& operator<< (const CardData& c){AddCard(c); return *this;}
 	void AddCard(const CardData& c);
 	void SetMainBoard(){MainBoard.clear();}
