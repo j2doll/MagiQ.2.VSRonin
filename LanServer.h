@@ -11,6 +11,7 @@
 class LanServer : public QTcpServer{
 	Q_OBJECT
 private:
+	unsigned int CardIDCounter;
 	int TurnNumber;
 	int TurnOfPlayer;
 	bool GameStarted;

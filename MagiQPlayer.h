@@ -48,7 +48,7 @@ public:
 	const QColor& GetPlayerColor() const {return PlayerColor;}
 	void SetLibrary(){Library.clear();}
 	void SetLibrary(const CardDeck& a);
-	void SetLibrary(const QList<CardData>& a){Library.clear(); Library=a;}
+	void SetLibrary(const QList<CardData>& a);
 	void AddLibrary(const CardData& a){Library.append(a);}
 	const QList<CardData>& GetLibrary() const {return Library;}
 	void SetSideboard(){Sideboard.clear();}

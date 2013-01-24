@@ -96,3 +96,9 @@ void MagiQPlayer::SetPlayerColor(const QString& a){
 	PlayerColor.setNamedColor(a);
 	if(!PlayerColor.isValid()) PlayerColor.setRgb(0,0,0);
 }
+void MagiQPlayer::SetLibrary(const QList<CardData>& a){
+	Library.clear(); 
+	Library=a;
+	/*foreach(CardData crd, a)
+		AddLibrary(crd);*/
+}

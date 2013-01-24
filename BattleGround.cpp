@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QFont>
+#include <QResizeEvent>
 #include "MagiQPlayer.h"
 #include "StyleSheets.h"
 #include "SizeSliders.h"
@@ -23,6 +24,7 @@ BattleGround::BattleGround(QWidget* parent)
 	MainLayout->addWidget(Board);
 	GenericCard=new Card(this);
 	GenericCard->SetCovered(true);
+	GenericCard->UpdateAspect();
 	GenericCard->hide();
 
 	TestStuff();
@@ -71,28 +73,33 @@ void BattleGround::UpdateAspect(){
 	if (!isVisible()) return;
 	SortCardsInHand();
 	for(QMap<int,MagiQPlayer*>::iterator index=Players.begin();index!=Players.end();index++){
-			if (index.value()->GetLibrary().size()==0) DeckLabels.value(index.key())->hide();
-			else DeckLabels.value(index.key())->setText(QString("<font color=\"white\" size=\"%2\">%1</font>").arg(index.value()->GetLibrary().size()).arg(LibaryCountFontSize));
-			while(index.value()->GetHand().size()>CardsInHandView.value(index.key()).size()){
-				CardsInHandView[index.key()].append(new CardViewer(this));
-				CardViewer* TempViewer=CardsInHandView[index.key()].last();
-				connect(TempViewer,SIGNAL(LeftFocus()),this,SLOT(ResetHandOrder()));
-				connect(TempViewer,SIGNAL(GainFocus()),TempViewer,SLOT(raise()),Qt::QueuedConnection);
-				HandsLay.value(index.key())->addWidget(TempViewer);
-			}
-			while(index.value()->GetHand().size()<CardsInHandView.value(index.key()).size()){
-				CardsInHandView[index.key()].takeFirst()->deleteLater();
-			}
-			for (int j=0;j<index.value()->GetHand().size();j++){
-				if (index.key()==-1)
-					//CardsInHandView[index.key()].at(j)->SetCardToDisplay(index.value()->GetHand().value(j));
-					CardsInHandView[index.key()].at(j)->SetCardToDisplay(CardsInHand.value(j));
-				else
-					CardsInHandView[index.key()].at(j)->SetCardToDisplay(GenericCard);
-				CardsInHandView[index.key()].at(j)->UpdateAspect();
-			}
+		if (index.value()->GetLibrary().size()==0)
+			DeckLabels.value(index.key())->hide();
+		else{
+			DeckLabels.value(index.key())->show();
+			DeckLabels.value(index.key())->setText(QString("<font color=\"white\" size=\"%2\">%1</font>").arg(index.value()->GetLibrary().size()).arg(LibaryCountFontSize));
+		}
+		while(index.value()->GetHand().size()>CardsInHandView.value(index.key()).size()){
+			CardsInHandView[index.key()].append(new CardViewer(this));
+			CardViewer* TempViewer=CardsInHandView[index.key()].last();
+			connect(TempViewer,SIGNAL(LeftFocus()),this,SLOT(ResetHandOrder()));
+			connect(TempViewer,SIGNAL(GainFocus()),TempViewer,SLOT(raise()),Qt::QueuedConnection);
+			HandsLay.value(index.key())->addWidget(TempViewer);
+		}
+		while(index.value()->GetHand().size()<CardsInHandView.value(index.key()).size()){
+			CardsInHandView[index.key()].takeFirst()->deleteLater();
+		}
+		for (int j=0;j<index.value()->GetHand().size();j++){
+			if (index.key()==-1)
+				//CardsInHandView[index.key()].at(j)->SetCardToDisplay(index.value()->GetHand().value(j));
+				CardsInHandView[index.key()].at(j)->SetCardToDisplay(CardsInHand.value(j));
+			else
+				CardsInHandView[index.key()].at(j)->SetCardToDisplay(GenericCard);
+			CardsInHandView[index.key()].at(j)->UpdateAspect();
+		}
 	}
 	setStyleSheet(StyleSheets::BoardCSS);
+	resizeEvent(&QResizeEvent(QSize(1,1),QSize(1,1)));
 }
 void BattleGround::SortCardsInHand(){
 	Players.value(-1)->SortHand();
@@ -119,6 +126,8 @@ void BattleGround::SetPlayersOrder(QList<int> ord){
 		HandFrames[PlayID]=new QFrame(this);
 		HandsLay[PlayID]=new HandLayout(HandFrames[PlayID]);
 		DeckLabels[PlayID]=new QLabel(this);
+		DeckLabels[PlayID]->setObjectName("DeckLabel");
+		DeckLabels[PlayID]->setAlignment(Qt::AlignCenter);
 	}
 }
 void BattleGround::SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt){
@@ -130,9 +139,10 @@ void BattleGround::SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> 
 }
 void BattleGround::SetMyHand(QList<CardData> hnd){
 	Players[-1]->SetHand(hnd);
-	while (CardsInHand.size()>0) CardsInHand.takeAt(0)->deleteLater();
+	while (!CardsInHand.isEmpty()) CardsInHand.takeAt(0)->deleteLater();
 	foreach(CardData crd,Players[-1]->GetHand()){
 		CardsInHand.append(new Card(crd,this));
+		CardsInHand.last()->UpdateAspect();
 		CardsInHand.last()->hide();
 	}
 	UpdateAspect();
@@ -142,7 +152,7 @@ void BattleGround::SetOtherHand(int whos,int numcards){
 	UpdateAspect();
 }
 void BattleGround::SetMyLibrary(QList<CardData> libr){
-	Players[-1]->SetLibrary(libr);
+	Players.value(-1,NULL)->SetLibrary(libr);
 	UpdateAspect();
 }
 void BattleGround::SetOtherLibrary(int whos,int numcards){

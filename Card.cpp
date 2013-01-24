@@ -33,7 +33,7 @@ Card::Card(QWidget* parent)
 	,CardRarity(Constants::CardRarities::Common)
 	,ShowFlavorText(true)
 	,CertifiedCardID(-1)
-	,CardID(-1)
+	,CardID(0)
 {
 	PrepareUi();
 	AvailableEditions.append(Constants::Editions::NONE);
@@ -317,6 +317,7 @@ QString Card::CreateManaCostString() const{
 QDataStream &operator<<(QDataStream &out, const Card &card)
 {
 	out << qint32(Constants::CardVersion)
+		<< quint32(card.GetCardID())
 		<< card.GetCardName()
 		<< card.GetCardColor()
 		<< card.GetCardCost()
@@ -349,6 +350,7 @@ QDataStream &operator<<(QDataStream &out, const Card &card)
 }
 QDataStream &operator>>(QDataStream &input, Card &card){
 	qint32 Numbers;
+	quint32 UnsignedNumbers;
 	qint32 NumberOfEffects;
 	Effect effect;
 	QString Strings;
@@ -362,6 +364,8 @@ QDataStream &operator>>(QDataStream &input, Card &card){
 		QMessageBox::critical(0,QObject::tr("Wrong File Type"),QObject::tr("Error: Unable to Read the File\nMake sure it's a valid MagiQ Card File"));
 		return input;
 	}
+	input >> UnsignedNumbers;
+	card.SetCardID(UnsignedNumbers);
 	input >> Strings;
 	card.SetCardName(Strings);
 	input >> IntLists;

@@ -11,7 +11,10 @@ LanServer::LanServer(QObject* parent)
 	,GameStarted(false)
 	,TurnNumber(0)
 	,TurnOfPlayer(-1)
-{qsrand(QTime::currentTime().msec());}
+	,CardIDCounter(0)
+{
+	qsrand(QTime::currentTime().msec());
+}
 void LanServer::incomingConnection(int socketDescriptor){
 	if (GameStarted) return;
 	if (clients.value(socketDescriptor,NULL))
@@ -61,8 +64,11 @@ bool LanServer::EverybodyAcceptedHand() const{
 }
 void LanServer::DeckSetUp(int socID,CardDeck deck){
 	if (PlayersList.find(socID)==PlayersList.end()) return;
-	if (deck.Legality().contains(DecksFormat))
+	if (deck.Legality().contains(DecksFormat)){
 		PlayersList[socID]->SetLibrary(deck);
+		for (QList<CardData>::const_iterator i=PlayersList[socID]->GetLibrary().constBegin();i!=PlayersList[socID]->GetLibrary().constEnd();i++)
+			i->SetCardID(++CardIDCounter);
+	}
 	else{
 		emit InvalidDeck(socID);
 		PlayersList[socID]->SetReadyToStartMatch(false);

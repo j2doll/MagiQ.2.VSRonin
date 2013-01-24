@@ -14,7 +14,7 @@ public:
 	CardData();
 	CardData(const CardData& a);
 	
-	int GetCardID() const {return CardID;}
+	unsigned int GetCardID() const {return CardID;}
 	const QString& GetCardName() const {return CardName;}
 	const QList<int>& GetCardColor() const {return CardColor;}
 	const QMap<int,int>& GetCardCost() const {return CardCost;}
@@ -42,7 +42,7 @@ public:
 	enum {Random,ByName,ByManaCost,ByType,ByColor};
 	int GetConvertedManaCost() const;
 	
-	void SetCardID(int a){CardID=a;}
+	void SetCardID(unsigned int a) const {CardID=a;}
 	void SetCardName(const QString& a){CardName=a;}
 	void SetCardColor(const int& a){CardColor.clear(); if(a>=Constants::CardColor::Colorless && a<=Constants::CardColor::Green) CardColor.append(a);}
 	void SetCardColor(const QList<int>& a){CardColor.clear(); CardColor=a;}
@@ -98,7 +98,7 @@ public:
 	const CardData& operator=(const CardData& a);
 	CardData ToNoImage() const;
 private:
-	int CardID;
+	mutable unsigned int CardID;
 	QString CardName;
 	QList<int> CardColor;
 	QMap<int,int> CardCost;

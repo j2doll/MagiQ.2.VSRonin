@@ -61,8 +61,8 @@ private:
 	int HasFlipped;
 	Card* FlippedCard;
 	QList<Effect*> Effects;
+	mutable unsigned int CardID;
 // Game Properties
-	int CardID;
 	QList<int> CardToughnessModifiers;
 	QList<int> CardPowerModifiers;
 	QList<int> CardCostModifiers;
@@ -78,8 +78,8 @@ private:
 	void ResetCardCost();
 	void PrepareUi();
 public:
-	int GetCardID() const {return CardID;}
-	void SetCardID(int a) {CardID=a;}
+	unsigned int GetCardID() const {return CardID;}
+	void SetCardID(unsigned int a) const {CardID=a;}
 	int GetCertifiedCardID() const {return CertifiedCardID;}
 	void SetCertifiedCardID(int a){CertifiedCardID=a;}
 	void SetImagesTitles(){ImagesTitles.clear();}

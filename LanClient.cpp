@@ -58,7 +58,10 @@ void LanClient::IncomingTransmission(){
 		if (tcpSocket->bytesAvailable() < nextBlockSize)
 			break;
 		incom >> RequestType;
-
+		stringIntMap.clear();
+		pixmapIntMap.clear();
+		cardlists.clear();
+		intlists.clear();
 ////////////////////////////////////////////////////////////////////////////
 		if(RequestType==Comunications::TransmissionType::ChatMessage){
 			incom >> strings;

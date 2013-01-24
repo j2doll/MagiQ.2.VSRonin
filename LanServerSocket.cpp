@@ -47,8 +47,8 @@ void LanServerSocket::readClient(){
 		else if(RequestType==Comunications::TransmissionType::ReadyToPlay){
 			incom >> booleans;
 			incom >> deck;
-			emit ReadyToPlay(SocketID,booleans);
 			emit DeckSetUp(SocketID,deck);
+			emit ReadyToPlay(SocketID,booleans);
 		}
 		else if(RequestType==Comunications::TransmissionType::Mulligan){
 			emit Mulligan(SocketID);

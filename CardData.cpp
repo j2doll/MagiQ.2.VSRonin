@@ -14,7 +14,7 @@ CardData::CardData()
 	,CardBackground(Constants::CardBacksrounds::Colorless)
 	,CardRarity(Constants::CardRarities::Common)
 	,SortingMethod(Random)
-	,CardID(-1)
+	,CardID(0)
 {}
 CardData::CardData(const CardData& a)
 	:CardEdition(a.CardEdition)
@@ -135,6 +135,7 @@ void CardData::SetAvailableImages(const QList<QPixmap>& a){
 QDataStream &operator<<(QDataStream &out, const CardData &card)
 {
 	out << qint32(Constants::CardVersion)
+		<< quint32(card.GetCardID())
 		<< card.GetCardName()
 		<< card.GetCardColor()
 		<< card.GetCardCost()
@@ -166,6 +167,7 @@ QDataStream &operator<<(QDataStream &out, const CardData &card)
 }
 QDataStream &operator>>(QDataStream &input, CardData &card){
 	qint32 Numbers;
+	quint32 UnsignedNumbers;
 	qint32 NumberOfEffects;
 	EffectData effect;
 	QString Strings;
@@ -179,6 +181,8 @@ QDataStream &operator>>(QDataStream &input, CardData &card){
 		QMessageBox::critical(0,QObject::tr("Wrong File Type"),QObject::tr("Error: Unable to Read the File\nMake sure it's a valid MagiQ Card File"));
 		return input;
 	}
+	input >> UnsignedNumbers;
+	card.SetCardID(UnsignedNumbers);
 	input >> Strings;
 	card.SetCardName(Strings);
 	input >> IntLists;
