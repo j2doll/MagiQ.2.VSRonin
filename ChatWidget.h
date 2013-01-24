@@ -1,6 +1,7 @@
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
 #include <QWidget>
+#include <QAbstractSocket>
 class QFrame;
 class QPushButton;
 class QTextEdit;
@@ -38,6 +39,7 @@ public slots:
 	void SetUserColor(const QColor& a){UserColor=a;}
 	void SetUserColor(const QString& a);
 	void SetNameColor(const QString& a,const QColor& b){SetUserName(a); SetUserColor(b);}
+	void DisplayNetworkErrors(QAbstractSocket::SocketError socketError);
 protected:
 	void resizeEvent(QResizeEvent* event);
 	bool eventFilter(QObject *target, QEvent *event);

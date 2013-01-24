@@ -55,6 +55,7 @@ signals:
 	void PlayerHand(int,QList<CardData>);
 	void PlayerLibrary(int,QList<CardData>);
 	void PlayOrder(QList<int>);
+	void PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>);
 	void GameHasStarted();
 public slots:
 	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}

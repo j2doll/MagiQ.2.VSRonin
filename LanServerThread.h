@@ -4,6 +4,7 @@
 #include <QAbstractSocket>
 #include <QColor>
 #include <QPixmap>
+#include <QMap>
 #include "Deck.h"
 #include "ComunicationConstants.h"
 #ifdef USE_SSL
@@ -39,6 +40,7 @@ signals:
 	void PlayOrder(QList<int>);
 	void Mulligan(int);
 	void HandAccepted(int);
+	void PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

@@ -33,6 +33,10 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	void SetHand(const QList<CardData>& a){Hand.clear(); Hand=a;}
+	void SetHand(){Hand.clear();}
+	void SetHand(const CardData& a){SetHand(); AddHand(a);}
+	void AddHand(const CardData& a){Hand.append(a);}
 	void SetHasAcceptedHand(bool a){HasAcceptedHand=a;}
 	bool GetHasAcceptedHand() const {return HasAcceptedHand;}
 	void SetPlayerID(int a){PlayerID=a;}
@@ -45,6 +49,7 @@ public:
 	void SetLibrary(){Library.clear();}
 	void SetLibrary(const CardDeck& a);
 	void SetLibrary(const QList<CardData>& a){Library.clear(); Library=a;}
+	void AddLibrary(const CardData& a){Library.append(a);}
 	const QList<CardData>& GetLibrary() const {return Library;}
 	void SetSideboard(){Sideboard.clear();}
 	void SetSideboard(const CardDeck& a){SetLibrary(a);}

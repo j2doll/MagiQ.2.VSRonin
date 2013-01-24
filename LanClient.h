@@ -49,6 +49,7 @@ signals:
 	void InvalidDeck();
 	void GameHasStarted();
 	void PlayOrder(QList<int>);
+	void PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>);
 	void MyHand(QList<CardData>);
 	void OtherHand(int whos,int numcards);
 	void MyLibrary(QList<CardData>);

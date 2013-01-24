@@ -23,6 +23,7 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(stop()));
 	connect(this,SIGNAL(finished()),this,SLOT(SendReachedEnd()));
 	connect(this,SIGNAL(PlayOrder(QList<int>)),tcpSocket,SLOT(SendPlayOrder(QList<int>)));
+	connect(this,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)),tcpSocket,SLOT(SendPlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)));
 	connect(this,SIGNAL(PlayerHand(int,QList<CardData>)),tcpSocket,SLOT(SendPlayerHand(int,QList<CardData>)));
 	connect(this,SIGNAL(PlayerLibrary(int,QList<CardData>)),tcpSocket,SLOT(SendPlayerLibrary(int,QList<CardData>)));
 	connect(tcpSocket,SIGNAL(Mulligan(int)),this,SIGNAL(Mulligan(int)));

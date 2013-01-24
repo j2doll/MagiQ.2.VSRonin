@@ -14,9 +14,11 @@ CardData::CardData()
 	,CardBackground(Constants::CardBacksrounds::Colorless)
 	,CardRarity(Constants::CardRarities::Common)
 	,SortingMethod(Random)
+	,CardID(-1)
 {}
 CardData::CardData(const CardData& a)
 	:CardEdition(a.CardEdition)
+	,CardID(a.CardID)
 	,CardPower(a.CardPower)
 	,CardToughness(a.CardToughness)
 	,CardImage(a.CardImage)
@@ -45,6 +47,7 @@ CardData::CardData(const CardData& a)
 }
 const CardData& CardData::operator=(const CardData& a){
 	CardEdition=(a.CardEdition);
+	CardID=a.CardID;
 	CardPower=(a.CardPower);
 	CardToughness=(a.CardToughness);
 	CardImage=(a.CardImage);

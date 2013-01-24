@@ -2,47 +2,49 @@
 #define CAMPODIGIOCO_H
 #include <QWidget>
 #include <QList>
+#include <QMap>
+#include <QPixmap>
+#include "CardData.h"
 class HandLayout;
 class MagiQPlayer;
 class QFrame;
 class QLabel;
 class CardViewer;
+class Card;
 class BattleGround : public QWidget
 {
 	Q_OBJECT
 	Q_PROPERTY(int NumOfPlayers READ GetNumOfPlayers)
 private:
+	const int LibaryCountFontSize;
 //Visual Elements
 	QFrame* Board;
-	QList<QFrame*> HandFrames;
-	QList<HandLayout*> HandsLay;
-	QList<QLabel*> DeckLabels;
-
+	QMap<int,QFrame*> HandFrames;
+	QMap<int,HandLayout*> HandsLay;
+	QMap<int,QLabel*> DeckLabels;
+	QMap<int,QList<CardViewer*>> CardsInHandView;
+	QList<Card*> CardsInHand;
+	Card* GenericCard;
 //Game Properties
-	bool GameStarted;
-	QList<MagiQPlayer*> Players;
-	CardViewer* ScheduledRaise;
+	QMap<int,MagiQPlayer*> Players;
+	QList<int> PlayersOrder;
 //Functions
 	void UpdateAspect();
+	void SortCardsInHand();
 
 	void TestStuff();
-public:
-	BattleGround(QWidget* parent=0);
-	
-	void SetPlayers(const QList<MagiQPlayer*>& a);
-	void SetPlayers();
-	void SetPlayers(const MagiQPlayer& a){SetPlayers(); AddPlayer(a);}
-	void SetPlayer(int PlNum, const MagiQPlayer& a);
-	void AddPlayer(const MagiQPlayer& a);
-
-	int GetNumOfPlayers() const {return Players.size();}
-	bool GetGameStarted() const {return GameStarted;}
-	const QList<MagiQPlayer*>& GetPlayers() const {return Players;}
-	MagiQPlayer* GetPlayer(int index){return Players.value(index,NULL);}
-public slots:
-	void StartGame();
 private slots:
 	void ResetHandOrder();
+public slots:
+	void SetPlayersOrder(QList<int> ord);
+	void SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt);
+	void SetMyHand(QList<CardData> hnd);
+	void SetOtherHand(int whos,int numcards);
+	void SetMyLibrary(QList<CardData> libr);
+	void SetOtherLibrary(int whos,int numcards);
+public:
+	BattleGround(QWidget* parent=0);
+	int GetNumOfPlayers() const {return Players.size();}
 protected:
 	void resizeEvent(QResizeEvent* event);
 };

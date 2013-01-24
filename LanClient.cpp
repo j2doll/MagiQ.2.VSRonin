@@ -47,6 +47,8 @@ void LanClient::IncomingTransmission(){
 	qint32 int1,int2,int3,int4,int5;
 	QList<int> intlists;
 	QList<CardData> cardlists;
+	QMap<int,QString> stringIntMap;
+	QMap<int,QPixmap> pixmapIntMap;
 	forever {
 		if (nextBlockSize == 0) {
 			if (tcpSocket->bytesAvailable() < sizeof(quint32))
@@ -97,6 +99,11 @@ void LanClient::IncomingTransmission(){
 		else if(RequestType==Comunications::TransmissionType::PlayersOrder){
 			incom >> intlists;
 			emit PlayOrder(intlists);
+		}
+		else if(RequestType==Comunications::TransmissionType::PlayesNameAndAvatar){
+			incom >> stringIntMap;
+			incom >> pixmapIntMap;
+			emit PlayersNameAvatar(stringIntMap,pixmapIntMap);
 		}
 		else if(RequestType==Comunications::TransmissionType::YourHand){
 			incom >> cardlists;

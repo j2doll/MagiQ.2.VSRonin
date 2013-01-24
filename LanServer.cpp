@@ -77,6 +77,13 @@ void LanServer::StartMatch(){
 		Randomizer.insert(qrand()%100,socID);
 	PlayersOrder=Randomizer.values();
 	emit PlayOrder(PlayersOrder);
+	QMap<int,QString> PlayerNames;
+	QMap<int,QPixmap> PlayerAvatars;
+	for (QMap<int,MagiQPlayer*>::const_iterator ite=PlayersList.constBegin();ite!=PlayersList.constEnd();ite++){
+		PlayerNames.insert(ite.key(),ite.value()->GetPlayerName());
+		PlayerAvatars.insert(ite.key(),ite.value()->GetAvatar());
+	}
+	emit PlayersNameAvatar(PlayerNames,PlayerAvatars);
 	//Shuffle the libraries, draw 7 card for each player and send them the result 
 	for(QMap<int,MagiQPlayer*>::iterator index=PlayersList.begin();index!=PlayersList.end();index++){
 		index.value()->ShuffleLibrary();
@@ -146,6 +153,7 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(this,SIGNAL(YourNameColor(int,QString,QColor)),TempPoint,SIGNAL(YourNameColor(int,QString,QColor)));
 	connect(this,SIGNAL(InvalidDeck(int)),TempPoint,SIGNAL(InvalidDeck(int)));
 	connect(this,SIGNAL(PlayOrder(QList<int>)),TempPoint,SIGNAL(PlayOrder(QList<int>)));
+	connect(this,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)),TempPoint,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)));
 	connect(this,SIGNAL(PlayerHand(int,QList<CardData>)),TempPoint,SIGNAL(PlayerHand(int,QList<CardData>)));
 	connect(this,SIGNAL(PlayerLibrary(int,QList<CardData>)),TempPoint,SIGNAL(PlayerLibrary(int,QList<CardData>)));
 	connect(TempPoint,SIGNAL(Mulligan(int)),this,SLOT(DoMulligan(int)));

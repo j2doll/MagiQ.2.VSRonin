@@ -183,3 +183,17 @@ void LanServerSocket::SendPlayerLibrary(int SocID,QList<CardData> libr){
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
 }
+void LanServerSocket::SendPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt){
+	if (!(nam.keys().contains(SocketID) && avt.keys().contains(SocketID))) return;
+	nam.insert(-1,nam.value(SocketID));
+	nam.erase(nam.find(SocketID));
+	avt.insert(-1,avt.value(SocketID));
+	avt.erase(avt.find(SocketID));
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::PlayesNameAndAvatar) << nam << avt;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}

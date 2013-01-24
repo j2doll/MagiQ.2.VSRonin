@@ -131,3 +131,28 @@ void ChatWidget::AnotherLeave(QString nam){
 	ChatText->append("<b>"+tr("%1 left the chat").arg(nam)+"</b>");
 	ChatText->ensureCursorVisible();
 }
+void ChatWidget::DisplayNetworkErrors(QAbstractSocket::SocketError socketError){
+	switch (socketError) {
+	case QAbstractSocket::RemoteHostClosedError:
+		ChatText->append("<font color=\"red\"><b>"+tr("Server Closed")+"</b></font>");
+		ChatText->ensureCursorVisible();
+		break;
+	case QAbstractSocket::ConnectionRefusedError:
+	case QAbstractSocket::HostNotFoundError:
+		ChatText->append("<font color=\"red\"><b>"+tr("Cannot Connect to Host")+"</b></font>");
+		ChatText->ensureCursorVisible();
+		break;
+	case QAbstractSocket::SocketAccessError:
+		ChatText->append("<font color=\"red\"><b>"+tr("Cannot Connect to Host. Make sure you can access the network")+"</b></font>");
+		ChatText->ensureCursorVisible();
+		break;
+	case QAbstractSocket::SocketResourceError:
+		ChatText->append("<font color=\"red\"><b>"+tr("Connection Closed. Not enough resources.")+"</b></font>");
+		ChatText->ensureCursorVisible();
+		break;
+	default:
+		ChatText->append("<font color=\"red\"><b>"+tr("Connection Closed. An Error Occurred.")+"</b></font>");
+		ChatText->ensureCursorVisible();
+		break;
+	}
+}

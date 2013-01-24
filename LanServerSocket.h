@@ -37,6 +37,7 @@ public slots:
 	void SendPlayerHand(int SocID,QList<CardData> hand);
 	void SendPlayerLibrary(int SocID,QList<CardData> libr);
 	void SendPlayOrder(QList<int> Order);
+	void SendPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);

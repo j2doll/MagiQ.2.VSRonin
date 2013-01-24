@@ -14,6 +14,7 @@ namespace Comunications{
 		,InvalidDeck
 		,GameStarted
 		,PlayersOrder
+		,PlayesNameAndAvatar
 		,YourHand
 		,YourLibrary
 		,OthersHand

@@ -33,6 +33,7 @@ Card::Card(QWidget* parent)
 	,CardRarity(Constants::CardRarities::Common)
 	,ShowFlavorText(true)
 	,CertifiedCardID(-1)
+	,CardID(-1)
 {
 	PrepareUi();
 	AvailableEditions.append(Constants::Editions::NONE);
@@ -463,6 +464,7 @@ void Card::AddAvailableEditions(const int& a){
 }
 Card& Card::operator=(const Card& a){
 	CardName=a.CardName;
+	CardID=a.CardID;
 	CardColor=a.CardColor;
 	CardCost=a.CardCost;
 	CardCostModifiers=a.CardCostModifiers;
@@ -522,6 +524,7 @@ Card::Card(const Card& a,QWidget* parent):QWidget(parent)
 	,CardRarity(a.CardRarity)
 	,ShowFlavorText(a.ShowFlavorText)
 	,CertifiedCardID(a.CertifiedCardID)
+	,CardID(a.CardID)
 {
 	PrepareUi();
 	if (HasFlipped==Constants::CardFlipMode::HasFlip){
@@ -557,6 +560,7 @@ Card::Card(const CardData& a,QWidget* parent):QWidget(parent)
 	,CardFlavorText(a.GetCardFlavorText())
 	,CardRarity(a.GetCardRarity())
 	,CertifiedCardID(a.GetCertifiedCardID())
+	,CardID(a.GetCardID())
 	,ShowFlavorText(true)
 {
 	PrepareUi();
