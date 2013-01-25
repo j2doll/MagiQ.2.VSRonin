@@ -124,6 +124,13 @@ void LanClient::IncomingTransmission(){
 			incom >> int1 >> int2;
 			emit OtherLibrary(int1,int2);
 		}
+		if(RequestType==Comunications::TransmissionType::WaitingFor){
+			incom >> strings;
+			emit WaitingFor(strings);
+		}
+		if(RequestType==Comunications::TransmissionType::StopWaitingFor){
+			emit StopWaitingFor();
+		}
 ////////////////////////////////////////////////////////////////////////////
 
 		nextBlockSize = 0;

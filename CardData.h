@@ -9,12 +9,15 @@
 #include <QScopedPointer>
 #include <QDataStream>
 #include <QStringList>
+class MagiQPlayer;
 class CardData{
 public:
 	CardData();
 	CardData(const CardData& a);
 	
 	unsigned int GetCardID() const {return CardID;}
+	MagiQPlayer* GetOwner() const {return Owner;}
+	MagiQPlayer* GetController() const {return Controller;}
 	const QString& GetCardName() const {return CardName;}
 	const QList<int>& GetCardColor() const {return CardColor;}
 	const QMap<int,int>& GetCardCost() const {return CardCost;}
@@ -42,12 +45,15 @@ public:
 	enum {Random,ByName,ByManaCost,ByType,ByColor};
 	int GetConvertedManaCost() const;
 	
-	void SetCardID(unsigned int a) const {CardID=a;}
+	
+	void SetCardID(unsigned int a) {CardID=a;}
+	void SetOwner(MagiQPlayer* ow=NULL){Owner=ow;}
+	void SetController(MagiQPlayer* ow=NULL){Controller=ow;}
 	void SetCardName(const QString& a){CardName=a;}
 	void SetCardColor(const int& a){CardColor.clear(); if(a>=Constants::CardColor::Colorless && a<=Constants::CardColor::Green) CardColor.append(a);}
 	void SetCardColor(const QList<int>& a){CardColor.clear(); CardColor=a;}
 	void AddCardColor(const int& a){if(a>=Constants::CardColor::Colorless && a<=Constants::CardColor::Green) CardColor.append(a);}
-	void SetCardCost(int key, int cost);
+	void SetCardCost(int key, int cost){SetCardCost(); AddCardCost(key,cost);}
 	void AddCardCost(int key, int cost);
 	void SetCardCost();
 	void SetCardCost(const QMap<int,int>& a){SetCardCost(); CardCost=a;}
@@ -98,7 +104,11 @@ public:
 	const CardData& operator=(const CardData& a);
 	CardData ToNoImage() const;
 private:
-	mutable unsigned int CardID;
+//Game Properties
+	unsigned int CardID;
+	MagiQPlayer* Owner;
+	MagiQPlayer* Controller;
+//Card Properties
 	QString CardName;
 	QList<int> CardColor;
 	QMap<int,int> CardCost;

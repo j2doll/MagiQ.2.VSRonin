@@ -127,7 +127,7 @@
         <file alias="DownArrow.png">Resources/DownArrow.png</file>
         <file alias="UpArrow.png">Resources/UpArrow.png</file>
     </qresource>
-	<qresource prefix="/Smiles">
+    <qresource prefix="/Smiles">
         <file alias="afraid.png">Resources/Smiles/afraid.png</file>
         <file alias="amorous.png">Resources/Smiles/amorous.png</file>
         <file alias="angel.png">Resources/Smiles/angel.png</file>
@@ -171,5 +171,10 @@
     </qresource>
     <qresource prefix="/Board">
         <file alias="2PlayersBoard.png">Resources/2PlayersBoard.png</file>
+        <file alias="DefaultAvatar.png">Resources/DefaultAvatar.png</file>
+        <file alias="CardsInHand.png">Resources/CardsInHand.png</file>
+        <file alias="Graveyard.png">Resources/Graveyard.png</file>
+        <file alias="Exile.png">Resources/Exile.png</file>
+        <file alias="ManaPool.png">Resources/ManaPool.png</file>
     </qresource>
 </RCC>

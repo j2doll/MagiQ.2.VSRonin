@@ -15,6 +15,8 @@ CardData::CardData()
 	,CardRarity(Constants::CardRarities::Common)
 	,SortingMethod(Random)
 	,CardID(0)
+	,Owner(NULL)
+	,Controller(NULL)
 {}
 CardData::CardData(const CardData& a)
 	:CardEdition(a.CardEdition)
@@ -39,6 +41,8 @@ CardData::CardData(const CardData& a)
 	,AvailableImages(a.AvailableImages)
 	,AvailableBackgrounds(a.AvailableBackgrounds)
 	,Effects(a.Effects)
+	,Owner(a.Owner)
+	,Controller(a.Controller)
 {
 	if(HasFlipped==Constants::CardFlipMode::HasFlip){
 		SetFlippedCard(new CardData(*(a.FlippedCard)));
@@ -48,6 +52,8 @@ CardData::CardData(const CardData& a)
 const CardData& CardData::operator=(const CardData& a){
 	CardEdition=(a.CardEdition);
 	CardID=a.CardID;
+	Owner=(a.Owner);
+	Controller=(a.Controller);
 	CardPower=(a.CardPower);
 	CardToughness=(a.CardToughness);
 	CardImage=(a.CardImage);
@@ -112,6 +118,12 @@ void CardData::SetCardCost(){
 		CardCost.clear();
 	for (int i=Constants::ManaCosts::Colorless;i<Constants::ManaCosts::END;i++)
 		CardCost.insert(i,0);
+}
+void CardData::AddCardCost(int key, int cost){
+	if (key<Constants::ManaCosts::Colorless || key>=Constants::ManaCosts::END){
+		return;
+	}
+	CardCost[key]+=cost;
 }
 void CardData::AddAvailableEditions(const int& a){
 	if (a>=0 && a<Constants::Editions::END){

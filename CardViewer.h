@@ -8,6 +8,8 @@ class QMouseEvent;
 class CardViewer :public QWidget{
 	Q_OBJECT
 	Q_PROPERTY(int CardRotation READ GetCardRotation WRITE SetCardRotation)
+	Q_PROPERTY(bool CanBeZoom READ GetCanBeZoom WRITE SetCanBeZoom)
+	Q_PROPERTY(bool CanBeClick READ GetCanBeClick WRITE SetCanBeClick)
 public:
 	CardViewer(QWidget* parent=0);
 	int GetCardRotation() const {return CardRotation;}
@@ -16,7 +18,13 @@ public:
 	void SetCardToDisplay(Card* c) {CardToDisplay=c;}
 	void SetRepresentNumber(int a=1) {if(a<1) a=1; RepresentNumber=a;}
 	QSize sizeHint() const {return PrefSize;}
+	bool GetCanBeZoom() const {return CanBeZoom;}
+	bool GetCanBeClick() const {return CanBeClick;}
+	void SetCanBeZoom(bool a) {CanBeZoom=a;}
+	void SetCanBeClick(bool a) {CanBeClick=a;}
 private:
+	bool CanBeZoom;
+	bool CanBeClick;
 	int RepresentNumber;
 	int CardRotation;
 	QSize PrefSize;

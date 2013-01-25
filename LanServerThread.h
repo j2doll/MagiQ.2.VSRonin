@@ -41,6 +41,8 @@ signals:
 	void Mulligan(int);
 	void HandAccepted(int);
 	void PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>);
+	void WaitingFor(int,QString);
+	void StopWaitingFor();
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

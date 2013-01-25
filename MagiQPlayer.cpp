@@ -11,6 +11,7 @@ MagiQPlayer::MagiQPlayer(QObject* parent)
 	,PlayerColor(0,0,0)
 	,ReadyToStartMatch(false)
 	,HasAcceptedHand(false)
+	,Avatar(":/Board/DefaultAvatar.png")
 {
 	ResetManaPool();
 }
@@ -63,7 +64,6 @@ MagiQPlayer::MagiQPlayer(const MagiQPlayer& a,QObject* parent)
 	,Graveyard(a.Graveyard)
 	,Exile(a.Exile)
 	,Sideboard(a.Sideboard)
-	,OwnedCards(a.OwnedCards)
 	,ControlledCards(a.ControlledCards)
 {}
 
@@ -80,7 +80,6 @@ const MagiQPlayer& MagiQPlayer::operator=(const MagiQPlayer& a){
 	Graveyard=a.Graveyard;
 	Exile=a.Exile;
 	Sideboard=a.Sideboard;
-	OwnedCards=a.OwnedCards;
 	ControlledCards=a.ControlledCards;
 	return *this;
 }
@@ -96,9 +95,10 @@ void MagiQPlayer::SetPlayerColor(const QString& a){
 	PlayerColor.setNamedColor(a);
 	if(!PlayerColor.isValid()) PlayerColor.setRgb(0,0,0);
 }
+void MagiQPlayer::SetLibrary(){
+	Library.clear();
+}
 void MagiQPlayer::SetLibrary(const QList<CardData>& a){
 	Library.clear(); 
 	Library=a;
-	/*foreach(CardData crd, a)
-		AddLibrary(crd);*/
 }

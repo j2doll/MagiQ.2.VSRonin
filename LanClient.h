@@ -54,6 +54,8 @@ signals:
 	void OtherHand(int whos,int numcards);
 	void MyLibrary(QList<CardData>);
 	void OtherLibrary(int whos,int numcards);
+	void WaitingFor(QString);
+	void StopWaitingFor();
 private slots:
 	void IncomingTransmission();
 public slots:

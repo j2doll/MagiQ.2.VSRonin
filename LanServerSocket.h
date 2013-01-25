@@ -23,6 +23,7 @@ public:
 private:
 	int SocketID;
 	quint32 nextBlockSize;
+	bool IsWaiting;
 private slots:
 	void readClient();
 public slots:
@@ -38,6 +39,8 @@ public slots:
 	void SendPlayerLibrary(int SocID,QList<CardData> libr);
 	void SendPlayOrder(QList<int> Order);
 	void SendPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt);
+	void SendWaitingFor(int socID,QString msg);
+	void SendStopWaitingFor();
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);

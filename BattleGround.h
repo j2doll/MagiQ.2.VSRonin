@@ -12,6 +12,7 @@ class QLabel;
 class CardViewer;
 class Card;
 class QPushButton;
+class PlayerInfoDisplayer;
 class BattleGround : public QWidget
 {
 	Q_OBJECT
@@ -22,6 +23,7 @@ private:
 //Visual Elements
 	QFrame* Board;
 	QMap<int,QFrame*> HandFrames;
+	QMap<int,PlayerInfoDisplayer*> PlayesInfos;
 	QMap<int,HandLayout*> HandsLay;
 	QMap<int,QLabel*> DeckLabels;
 	QMap<int,QList<CardViewer*>> CardsInHandView;
@@ -51,6 +53,8 @@ public slots:
 	void SetOtherHand(int whos,int numcards);
 	void SetMyLibrary(QList<CardData> libr);
 	void SetOtherLibrary(int whos,int numcards);
+	void DispalyWaitingFor(QString a);
+	void HideWaitingFor();
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return Players.size();}

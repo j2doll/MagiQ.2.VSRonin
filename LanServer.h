@@ -58,6 +58,8 @@ signals:
 	void PlayOrder(QList<int>);
 	void PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>);
 	void GameHasStarted();
+	void WaitingFor(int,QString);
+	void StopWaitingFor();
 public slots:
 	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
 private slots:

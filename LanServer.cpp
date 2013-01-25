@@ -47,7 +47,8 @@ void LanServer::EraseThread(int a){
 void LanServer::IsReadyToPlay(int a,bool ready){
 	if (PlayersList.find(a)==PlayersList.end()) return;
 	PlayersList[a]->SetReadyToStartMatch(ready);
-	if (EverybodyReady() && !GameStarted) StartMatch();
+	if (EverybodyReady() && !GameStarted)
+		StartMatch();	
 }
 bool LanServer::EverybodyReady() const{
 	if (PlayersList.size()<MinPlayer) return false;
@@ -66,8 +67,10 @@ void LanServer::DeckSetUp(int socID,CardDeck deck){
 	if (PlayersList.find(socID)==PlayersList.end()) return;
 	if (deck.Legality().contains(DecksFormat)){
 		PlayersList[socID]->SetLibrary(deck);
-		for (QList<CardData>::const_iterator i=PlayersList[socID]->GetLibrary().constBegin();i!=PlayersList[socID]->GetLibrary().constEnd();i++)
+		for (QList<CardData>::iterator i=PlayersList[socID]->GetLibrary().begin();i!=PlayersList[socID]->GetLibrary().end();i++){
 			i->SetCardID(++CardIDCounter);
+			i->SetOwner(PlayersList[socID]);
+		}
 	}
 	else{
 		emit InvalidDeck(socID);
@@ -114,8 +117,12 @@ void LanServer::AcceptedHand(int socID){
 	if (!TempPoint) return;
 	TempPoint->SetHasAcceptedHand(true);
 	if (EverybodyAcceptedHand()){
+		emit StopWaitingFor();
 		TurnOfPlayer=PlayersOrder.at(0);
 		TurnOfGame();
+	}
+	else{
+		emit WaitingFor(socID,tr("Waiting for other players to decide whether to take a mulligan"));
 	}
 }
 void LanServer::TurnOfGame(){
@@ -164,6 +171,8 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(this,SIGNAL(PlayerLibrary(int,QList<CardData>)),TempPoint,SIGNAL(PlayerLibrary(int,QList<CardData>)));
 	connect(TempPoint,SIGNAL(Mulligan(int)),this,SLOT(DoMulligan(int)));
 	connect(TempPoint,SIGNAL(HandAccepted(int)),this,SLOT(AcceptedHand(int)));
+	connect(this,SIGNAL(WaitingFor(int,QString)),TempPoint,SIGNAL(WaitingFor(int,QString)));
+	connect(this,SIGNAL(StopWaitingFor()),TempPoint,SIGNAL(StopWaitingFor()));
 	emit YourNameColor(a,adjName,PlayPoint->GetPlayerColor());
 	SendServerInfos();
 }

@@ -25,7 +25,6 @@ private:
 	QList<CardData> Graveyard;
 	QList<CardData> Exile;
 	QList<CardData> Sideboard;
-	QList<CardData> OwnedCards;
 	QList<CardData> ControlledCards;
 signals:
 	void LifeChanged(int l);
@@ -46,19 +45,18 @@ public:
 	void SetPlayerColor(const QColor& a){PlayerColor=a;}
 	void SetPlayerColor(const QString& a);
 	const QColor& GetPlayerColor() const {return PlayerColor;}
-	void SetLibrary(){Library.clear();}
-	void SetLibrary(const CardDeck& a);
+	void SetLibrary();
 	void SetLibrary(const QList<CardData>& a);
+	void SetLibrary(const CardDeck& a);
+	QList<CardData>& GetLibrary() {return Library;}
 	void AddLibrary(const CardData& a){Library.append(a);}
-	const QList<CardData>& GetLibrary() const {return Library;}
+	void SetSideboard(const QList<CardData>& a){Sideboard.clear(); Sideboard=a;}
 	void SetSideboard(){Sideboard.clear();}
 	void SetSideboard(const CardDeck& a){SetLibrary(a);}
-	void SetSideboard(const QList<CardData>& a){Sideboard.clear(); Sideboard=a;}
 	const QList<CardData>& GetSideboard() const {return Sideboard;}
 	const QList<CardData>& GetHand() const {return Hand;}
 	const QList<CardData>& GetGraveyard() const {return Graveyard;}
 	const QList<CardData>& GetExile() const {return Exile;}
-	const QList<CardData>& GetOwnedCards() const {return OwnedCards;}
 	const QList<CardData>& GetControlledCards() const {return ControlledCards;}
 	void SetPlayerName(const QString& a){PlayerName=a;}
 	const QString& GetPlayerName() const {return PlayerName;}

@@ -21,6 +21,8 @@ namespace Comunications{
 		,OthersLibrary
 		,Mulligan
 		,HandAccepted
+		,WaitingFor
+		,StopWaitingFor
 		,ChatMessage
 	};}
 }

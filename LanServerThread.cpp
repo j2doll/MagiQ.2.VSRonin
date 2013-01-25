@@ -28,4 +28,6 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(this,SIGNAL(PlayerLibrary(int,QList<CardData>)),tcpSocket,SLOT(SendPlayerLibrary(int,QList<CardData>)));
 	connect(tcpSocket,SIGNAL(Mulligan(int)),this,SIGNAL(Mulligan(int)));
 	connect(tcpSocket,SIGNAL(HandAccepted(int)),this,SIGNAL(HandAccepted(int)));
+	connect(this,SIGNAL(WaitingFor(int,QString)),tcpSocket,SLOT(SendWaitingFor(int,QString)));
+	connect(this,SIGNAL(StopWaitingFor()),tcpSocket,SLOT(SendStopWaitingFor()));
 }

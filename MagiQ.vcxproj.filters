@@ -57,6 +57,12 @@
     <Filter Include="Source Files\Servers and Clients">
       <UniqueIdentifier>{81e408e5-8d9d-4ab7-bbfe-b9331672918d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\BattleField">
+      <UniqueIdentifier>{aefa8854-23fa-4a4f-b167-055ebf8bc262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Battlefield">
+      <UniqueIdentifier>{a07abc79-ae5b-4d5d-8a13-f2b4398c2309}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -182,17 +188,11 @@
     <ClCompile Include="EffectData.cpp">
       <Filter>Source Files\Card</Filter>
     </ClCompile>
-    <ClCompile Include="BattleGround.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_BattleGround.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_BattleGround.cpp">
       <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="HandLayout.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CardViewer.cpp">
       <Filter>Source Files\Card</Filter>
@@ -275,6 +275,30 @@
     <ClCompile Include="GeneratedFiles\Release\moc_SmilesSelector.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="BattleGround.cpp">
+      <Filter>Source Files\BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="HandLayout.cpp">
+      <Filter>Source Files\BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInfoDisplayer.cpp">
+      <Filter>Source Files\BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PlayerInfoDisplayer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PlayerInfoDisplayer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="RoundedCornersLabel.cpp">
+      <Filter>Source Files\Utility Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RoundedCornersLabel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RoundedCornersLabel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -295,11 +319,11 @@
     <ClInclude Include="EffectData.h">
       <Filter>Header Files\Card</Filter>
     </ClInclude>
-    <ClInclude Include="HandLayout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ComunicationConstants.h">
       <Filter>Header Files\Servers and Clients</Filter>
+    </ClInclude>
+    <ClInclude Include="HandLayout.h">
+      <Filter>Header Files\Battlefield</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -342,9 +366,6 @@
     <CustomBuild Include="SmileButton.h">
       <Filter>Header Files\Utility Widgets</Filter>
     </CustomBuild>
-    <CustomBuild Include="BattleGround.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="CardViewer.h">
       <Filter>Header Files\Card</Filter>
     </CustomBuild>
@@ -370,6 +391,15 @@
       <Filter>Header Files\Utility Widgets</Filter>
     </CustomBuild>
     <CustomBuild Include="SmilesSelector.h">
+      <Filter>Header Files\Utility Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="BattleGround.h">
+      <Filter>Header Files\Battlefield</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PlayerInfoDisplayer.h">
+      <Filter>Header Files\Battlefield</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RoundedCornersLabel.h">
       <Filter>Header Files\Utility Widgets</Filter>
     </CustomBuild>
   </ItemGroup>

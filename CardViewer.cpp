@@ -12,6 +12,8 @@ CardViewer::CardViewer(QWidget* parent)
 	,CardToDisplay(NULL)
 	,CardRotation(0)
 	,RepresentNumber(1)
+	,CanBeZoom(true)
+	,CanBeClick(false)
 {
 	setMinimumSize(60,84);
 	Displayer=new QLabel(this);
@@ -58,6 +60,10 @@ void CardViewer::TapAnimationStart(){
 	animTap->start(QAbstractAnimation::DeleteWhenStopped);
 }
 void CardViewer::mousePressEvent(QMouseEvent* event){
+	if(!CanBeZoom){
+		emit RequireZoom(NULL);
+		return;
+	}
 	if (event->button() == Qt::RightButton){
 		emit RequireZoom(CardToDisplay);
 	}

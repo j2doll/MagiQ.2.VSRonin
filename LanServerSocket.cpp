@@ -8,6 +8,7 @@ LanServerSocket::LanServerSocket(int soketDescriptor, QObject *parent)
 #endif
 	,SocketID(soketDescriptor)
 	,nextBlockSize(0)
+	,IsWaiting(false)
 {
 	if (!setSocketDescriptor(SocketID))
 		emit error(error());
@@ -193,6 +194,27 @@ void LanServerSocket::SendPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixm
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0) << quint32(Comunications::TransmissionType::PlayesNameAndAvatar) << nam << avt;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendWaitingFor(int socID,QString msg){
+	if (socID!=SocketID) return;
+	IsWaiting=true;
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::WaitingFor) << msg;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendStopWaitingFor(){
+	if(!IsWaiting) return;
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::StopWaitingFor);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);

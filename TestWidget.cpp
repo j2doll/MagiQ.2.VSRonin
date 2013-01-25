@@ -10,19 +10,35 @@ TestWidget::TestWidget(QWidget* parent)
 	board=new BattleGround;
 	board->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
-	CardData Montagna;
-	Montagna.SetCardName("Mountain");
-	Montagna.SetHasManaCost(false);
-	Montagna.SetAvailableBackgrounds(Constants::CardBacksrounds::LandRed);
-	Montagna.SetCardBackground(Constants::CardBacksrounds::LandRed);
-	Montagna.AddAvailableEditions(Constants::Editions::AVR);
-	Montagna.AddCardType(Constants::CardTypes::Basic);
-	Montagna.AddCardType(Constants::CardTypes::Land);
-	Montagna.AddCardSubType(Constants::CardSubTypes::Mountain);
+	CardData Foresta;
+	Foresta.SetCardName("Forest");
+	Foresta.SetHasManaCost(false);
+	Foresta.SetAvailableBackgrounds(Constants::CardBacksrounds::LandGreen);
+	Foresta.SetCardBackground(Constants::CardBacksrounds::LandGreen);
+	Foresta.AddAvailableEditions(Constants::Editions::AVR);
+	Foresta.AddCardType(Constants::CardTypes::Basic);
+	Foresta.AddCardType(Constants::CardTypes::Land);
+	Foresta.AddCardSubType(Constants::CardSubTypes::Forest);
+	CardData Bear;
+	Bear.SetCardName("Grizzly Bears");
+	Bear.AddCardCost(Constants::ManaCosts::G,1);
+	Bear.AddCardCost(Constants::ManaCosts::Colorless,1);
+	Bear.AddCardColor(Constants::CardColor::Green);
+	Bear.SetHasPT(true);
+	Bear.SetCardPower(2);
+	Bear.SetCardToughness(2);
+	Bear.SetAvailableBackgrounds(Constants::CardBacksrounds::Green);
+	Bear.SetCardBackground(Constants::CardBacksrounds::Green);
+	Bear.AddAvailableEditions(Constants::Editions::ISD);
+	Bear.AddCardType(Constants::CardTypes::Creature);
+	Bear.AddCardSubType(Constants::CardSubTypes::Beast);
 	CardDeck Grimorio;
-	for(int i=0;i<60;i++) Grimorio.AddCard(Montagna);
+	for(int i=0;i<30;i++) Grimorio.AddCard(Foresta);
+	for(int i=0;i<30;i++) Grimorio.AddCard(Bear);
 	Client->SetDeck(Grimorio);
+	Client->SetUsername("Tester");
 	WhoCares->SetDeck(Grimorio);
+	WhoCares->SetUsername("Bot");
 
 	IPEditor=new QLineEdit(this);
 	QRegExpValidator* validatore=new QRegExpValidator(QRegExp("^localhost|(([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))$"),IPEditor);
@@ -62,8 +78,13 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(MyLibrary(QList<CardData>)),board,SLOT(SetMyLibrary(QList<CardData>)));
 	connect(Client,SIGNAL(OtherLibrary(int,int)),board,SLOT(SetOtherLibrary(int,int)));
 	connect(Client,SIGNAL(MyHand(QList<CardData>)),board,SLOT(AskMulligan()));
+	connect(Client,SIGNAL(WaitingFor(QString)),board,SLOT(DispalyWaitingFor(QString)));
+	connect(Client,SIGNAL(StopWaitingFor()),board,SLOT(HideWaitingFor()));
 	connect(board,SIGNAL(Mulligan()),Client,SLOT(SendMulligan()));
 	connect(board,SIGNAL(KeepHand()),Client,SLOT(SendHandAccepted()));
+
+	//Test Connections
+	//connect(board,SIGNAL(KeepHand()),WhoCares,SLOT(SendHandAccepted()));
 
 	QGridLayout* MainLay=new QGridLayout(this);
 	MainLay->addWidget(IPEditor,0,0);
