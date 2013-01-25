@@ -11,12 +11,14 @@ class QFrame;
 class QLabel;
 class CardViewer;
 class Card;
+class QPushButton;
 class BattleGround : public QWidget
 {
 	Q_OBJECT
 	Q_PROPERTY(int NumOfPlayers READ GetNumOfPlayers)
 private:
-	const int LibaryCountFontSize;
+	enum{AnimationDuration=500};
+	enum{ZoommedCardWidth=200};
 //Visual Elements
 	QFrame* Board;
 	QMap<int,QFrame*> HandFrames;
@@ -25,17 +27,24 @@ private:
 	QMap<int,QList<CardViewer*>> CardsInHandView;
 	QList<Card*> CardsInHand;
 	Card* GenericCard;
+	Card* ZoomedCard;
+	QFrame* QuestionFrame;
+	QLabel* QuestionText;
+	QPushButton* QuestionButton1;
+	QPushButton* QuestionButton2;
 //Game Properties
 	QMap<int,MagiQPlayer*> Players;
 	QList<int> PlayersOrder;
 //Functions
 	void UpdateAspect();
 	void SortCardsInHand();
-
-	void TestStuff();
 private slots:
 	void ResetHandOrder();
+	void ClearQuestion();
+	void SizePosFrames();
+	void ZoomAnimate(Card* crd);
 public slots:
+	void AskMulligan();
 	void SetPlayersOrder(QList<int> ord);
 	void SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt);
 	void SetMyHand(QList<CardData> hnd);
@@ -47,6 +56,10 @@ public:
 	int GetNumOfPlayers() const {return Players.size();}
 protected:
 	void resizeEvent(QResizeEvent* event);
+signals:
+	void NeedResizeFrames();
+	void Mulligan();
+	void KeepHand();
 };
 #endif
 

@@ -81,7 +81,6 @@ void Card::PrepareUi(){
 	EffectsTable->setSortingEnabled(false);
 	EffectsTable->setSelectionMode(QAbstractItemView::NoSelection);
 	EffectsTable->setFocusPolicy(Qt::NoFocus);
-	setMinimumSize(200,279);
 }
 void Card::resizeEvent(QResizeEvent* event){
 	NameLabel->setGeometry(19*width()/200,16*height()/279,241*width()/200,22*height()/279);

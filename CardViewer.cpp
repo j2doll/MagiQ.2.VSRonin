@@ -57,3 +57,8 @@ void CardViewer::TapAnimationStart(){
 	animTap->setKeyValueAt(1.0,90);
 	animTap->start(QAbstractAnimation::DeleteWhenStopped);
 }
+void CardViewer::mousePressEvent(QMouseEvent* event){
+	if (event->button() == Qt::RightButton){
+		emit RequireZoom(CardToDisplay);
+	}
+}

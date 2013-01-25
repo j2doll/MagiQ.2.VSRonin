@@ -4,6 +4,7 @@
 #include <QSize>
 class Card;
 class QLabel;
+class QMouseEvent;
 class CardViewer :public QWidget{
 	Q_OBJECT
 	Q_PROPERTY(int CardRotation READ GetCardRotation WRITE SetCardRotation)
@@ -24,11 +25,13 @@ private:
 protected:
 	void enterEvent (QEvent* event){emit GainFocus();}
 	void leaveEvent (QEvent* event){emit LeftFocus();}
+	void mousePressEvent(QMouseEvent* event);
 public slots:
 	void UpdateAspect();
 	void TapAnimationStart();
 signals:
 	void LeftFocus();
 	void GainFocus();
+	void RequireZoom(Card*);
 };
 #endif

@@ -168,18 +168,6 @@ SelettoreImmagini::SelettoreImmagini(QWidget* parent, int Orient)
 		"background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1 stop:0 rgba(30, 40, 203, 255), stop:0.4 rgba(74,88,213,255), stop:1 rgba(101, 113, 218, 255));"
 		"}"
 		);
-
-	//Test
-	/*ImpostaPosDidascalia(Sopra);
-	QPixmap Prova(256,256);
-	Prova.fill(QColor(255,0,0,255));
-	AggiungiImmagine(Prova,"Rosso");
-	Prova.fill(QColor(0,255,0,255));
-	AggiungiImmagine(Prova,"Verde");
-	Prova.fill(QColor(0,0,255,255));
-	AggiungiImmagine(Prova,"Blu");
-	Prova.fill(QColor(255,255,255,255));
-	AggiungiImmagine(Prova,"Bianco");*/
 }
 void SelettoreImmagini::ImpostaOrientamento(int a){
 	if (a==Orizzontale && a!=Orientamento){

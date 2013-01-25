@@ -76,7 +76,6 @@ void LanServer::DeckSetUp(int socID,CardDeck deck){
 }
 void LanServer::StartMatch(){
 	GameStarted=true;
-	emit GameHasStarted();
 	//Decide who plays first
 	QMap<int,int> Randomizer;
 	foreach(int socID,PlayersList.keys())
@@ -97,6 +96,7 @@ void LanServer::StartMatch(){
 		emit PlayerLibrary(index.key(),index.value()->GetLibrary());
 		emit PlayerHand(index.key(),index.value()->GetHand());
 	}
+	emit GameHasStarted();
 }
 void LanServer::DoMulligan(int socID){
 	MagiQPlayer* TempPoint=PlayersList.value(socID,NULL);

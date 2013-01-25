@@ -61,6 +61,9 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(OtherHand(int,int)),board,SLOT(SetOtherHand(int,int)));
 	connect(Client,SIGNAL(MyLibrary(QList<CardData>)),board,SLOT(SetMyLibrary(QList<CardData>)));
 	connect(Client,SIGNAL(OtherLibrary(int,int)),board,SLOT(SetOtherLibrary(int,int)));
+	connect(Client,SIGNAL(MyHand(QList<CardData>)),board,SLOT(AskMulligan()));
+	connect(board,SIGNAL(Mulligan()),Client,SLOT(SendMulligan()));
+	connect(board,SIGNAL(KeepHand()),Client,SLOT(SendHandAccepted()));
 
 	QGridLayout* MainLay=new QGridLayout(this);
 	MainLay->addWidget(IPEditor,0,0);

@@ -21,7 +21,7 @@ void HandLayout::setGeometry(const QRect &rect){
 		foreach(QLayoutItem *item,items){
 			item->setGeometry(QRect(CurrentX,effectiveRect.y(),item->minimumSize().width(),effectiveRect.height()));
 			item->widget()->raise();
-			CurrentX+=(effectiveRect.width()-items.last()->minimumSize().width())/(count()-1);
+			if(count()-1!=0) CurrentX+=(effectiveRect.width()-items.last()->minimumSize().width())/(count()-1);
 		}
 	}
 	else{
@@ -34,6 +34,8 @@ void HandLayout::setGeometry(const QRect &rect){
 }
 QSize HandLayout::minimumSize() const{
 	if (items.isEmpty()) return QSize(0,0);
+	int left, top, right, bottom;
+	getContentsMargins(&left, &top, &right, &bottom);
 	int MaxMinWid=items.at(0)->minimumSize().width();
 	int MaxMinHei=items.at(0)->minimumSize().height();
 	for (QList<QLayoutItem*>::const_iterator i=items.begin()+1;i!=items.end();i++){
@@ -41,16 +43,18 @@ QSize HandLayout::minimumSize() const{
 		if ((*i)->minimumSize().height()>MaxMinHei) MaxMinHei=(*i)->minimumSize().height();
 	}
 	return QSize(
-		qMax(MaxMinWid,items.last()->minimumSize().width()+(spacing()*(count()-1)))
-		,MaxMinHei);
+		qMax(MaxMinWid,items.last()->minimumSize().width()+(spacing()*(count()-1)))+left+right
+		,MaxMinHei+top+bottom);
 }
 QSize HandLayout::sizeHint() const{
 	if (items.isEmpty()) return QSize(0,0);
+	int left, top, right, bottom;
+	getContentsMargins(&left, &top, &right, &bottom);
 	int MaxSizeHintHei=items.at(0)->sizeHint().height();
 	int SumSizeWid=items.at(0)->minimumSize().width();
 	for (QList<QLayoutItem*>::const_iterator i=items.begin()+1;i!=items.end();i++){
 		if ((*i)->minimumSize().height()>MaxSizeHintHei) MaxSizeHintHei=(*i)->minimumSize().height();
 		SumSizeWid+=(*i)->minimumSize().width();
 	}
-	return QSize(SumSizeWid+(spacing()*(count()-1)),MaxSizeHintHei);
+	return QSize(SumSizeWid+(spacing()*(count()-1))+left+right,MaxSizeHintHei+top+bottom);
 }
