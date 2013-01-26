@@ -2,6 +2,8 @@
 #define PLAYERINFODISPLAYER_H
 #include <QWidget>
 #include <QPixmap>
+#include <QList>
+class QPropertyAnimation;
 class QFrame;
 class QLabel;
 class QProgressBar;
@@ -22,9 +24,16 @@ private:
 	QLabel* ManaPoolLabel;
 
 	MagiQPlayer* InfosToDisplay;
+
+	enum{LifeAnimationDuration=500};
+	QList<QPropertyAnimation*> Animations;
+	int CurrentLife;
+private slots:
+	void AnimateLifeBar(int NewLife);
+	void NextAnimation();
 public:
 	PlayerInfoDisplayer(QWidget* parent=0);
-	void SetInfosToDisplay(MagiQPlayer* a=NULL){InfosToDisplay=a;}
+	void SetInfosToDisplay(MagiQPlayer* a=NULL);
 	MagiQPlayer* GetInfosToDisplay() const {return InfosToDisplay;}
 	void UpdateAspect();
 	int GetLifeLevel() const;

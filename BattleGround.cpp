@@ -218,6 +218,7 @@ void BattleGround::DispalyWaitingFor(QString a){
 	QuestionFrame->show();
 	QuestionButton1->hide();
 	QuestionButton2->hide();
+	Players[-1]->SetLife(50);
 	emit NeedResizeFrames();
 }
 void BattleGround::HideWaitingFor(){
@@ -242,6 +243,5 @@ void BattleGround::ZoomAnimate(Card* crd){
 	AnimSize->setKeyValueAt(0.0,QSize(0,0));
 	AnimSize->setKeyValueAt(1.0,QSize(ZoommedCardWidth,HeiForWid));
 	Animations->addAnimation(AnimSize);
-	//connect(Animazioni,SIGNAL(finished()),this,SLOT(Successiva()));
 	Animations->start(QAbstractAnimation::DeleteWhenStopped);
 }

@@ -5,12 +5,14 @@
 #include <QVBoxLayout>
 #include <QBitmap>
 #include <QProgressBar>
+#include <QPropertyAnimation>
 #include "MagiQPlayer.h"
 #include "StyleSheets.h"
 #include "RoundedCornersLabel.h"
 PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	:QWidget(parent)
 	,InfosToDisplay(NULL)
+	,CurrentLife(0)
 {
 	BackGround=new QFrame(this);
 	BackGround->setObjectName("BackGround");
@@ -20,7 +22,6 @@ PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	NameLabel->setAlignment(Qt::AlignCenter);
 	AvatarLabel=new RoundedCornersLabel(this);
 	AvatarLabel->setObjectName("AvatarLabel");
-	AvatarLabel->setScaledContents(true);
 	AvatarLabel->SetRadious(12);
 
 	HandSizeLabel=new QLabel(this);
@@ -54,6 +55,7 @@ PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	LifeBar->setOrientation(Qt::Vertical);
 	LifeBar->setToolTip(tr("Life"));
 	LifeBar->setMaximum(20);
+	LifeBar->setMinimum(0);
 	LifeBar->setTextVisible(false);
 	LifeLay->addWidget(LifeBar);
 
@@ -72,19 +74,15 @@ void PlayerInfoDisplayer::UpdateAspect(){
 		HandSizeLabel->setText(QString("%1").arg(InfosToDisplay->GetHand().size()));
 		GraveyardLabel->setText(QString("%1").arg(InfosToDisplay->GetGraveyard().size()));
 		ExileLabel->setText(QString("%1").arg(InfosToDisplay->GetExile().size()));
+		CurrentLife=LifeLabel->text().toInt();
 		LifeLabel->setText(QString("%1").arg(InfosToDisplay->GetLife()));
-		int Lifer=InfosToDisplay->GetLife();
-		while (Lifer>20) Lifer-=20;
-		LifeBar->setValue(Lifer);
 		AvatarLabel->SetImageToShow(InfosToDisplay->GetAvatar());
 	}
 	else{
 		HandSizeLabel->setText(QString(""));
 		GraveyardLabel->setText(QString(""));
 		ExileLabel->setText(QString(""));
-		QPixmap VoidPix(90,90);
-		VoidPix.fill(Qt::gray);
-		AvatarLabel->setPixmap(VoidPix);
+		AvatarLabel->SetImageToShow(QPixmap());
 	}
 	setStyleSheet(StyleSheets::PlayerInfoCSS);
 }
@@ -105,10 +103,54 @@ void PlayerInfoDisplayer::resizeEvent(QResizeEvent* event){
 int PlayerInfoDisplayer::GetLifeLevel() const{
 	if (!InfosToDisplay) return 0;
 	int Result=0;
-	int Lifer=InfosToDisplay->GetLife();
+	int Lifer=CurrentLife;
 	while (Lifer>20){
 		Lifer-=20;
 		Result++;
 	}
 	return Result;
+}
+void PlayerInfoDisplayer::NextAnimation(){
+	int TempCurr=CurrentLife;
+	int TempNew=InfosToDisplay ? InfosToDisplay->GetLife() : 0;
+	while (TempCurr>20) {TempCurr-=20; TempNew-=20;}
+	if (TempNew>20) CurrentLife+=20-TempCurr;
+	if (!Animations.isEmpty())
+		Animations.takeAt(0)->start(QAbstractAnimation::DeleteWhenStopped);
+	setStyleSheet(StyleSheets::PlayerInfoCSS);
+}
+void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
+	if (!Animations.isEmpty()) return;
+	int TempCurr=CurrentLife;
+	int TempNew=NewLife;
+	while (TempCurr>20) {TempCurr-=20; TempNew-=20;}
+	while (TempNew>20){
+		Animations.append(new QPropertyAnimation(LifeBar,"value",this));
+		Animations.last()->setDuration(LifeAnimationDuration);
+		Animations.last()->setEasingCurve(QEasingCurve::Linear);
+		Animations.last()->setKeyValueAt(0.0,TempCurr);
+		Animations.last()->setKeyValueAt(1.0,20);
+		connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()));
+		TempNew-=20;
+		TempCurr=0;
+	}
+	Animations.append(new QPropertyAnimation(LifeBar,"value",this));
+	Animations.last()->setDuration(LifeAnimationDuration);
+	Animations.last()->setEasingCurve(QEasingCurve::Linear);
+	Animations.last()->setKeyValueAt(0.0,TempCurr);
+	Animations.last()->setKeyValueAt(1.0,TempNew);
+	connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()));
+
+	if (!Animations.isEmpty())
+		Animations.takeAt(0)->start(QAbstractAnimation::DeleteWhenStopped);
+}
+void PlayerInfoDisplayer::SetInfosToDisplay(MagiQPlayer* a){
+	InfosToDisplay=a;
+	if (!InfosToDisplay) return;
+	CurrentLife=InfosToDisplay->GetLife();
+	if (CurrentLife<0) CurrentLife=0;
+	while(CurrentLife>20) CurrentLife-=20;
+	LifeBar->setValue(CurrentLife);
+	CurrentLife=InfosToDisplay->GetLife();
+	connect(InfosToDisplay,SIGNAL(LifeChanged(int)),this,SLOT(AnimateLifeBar(int)),Qt::UniqueConnection);
 }

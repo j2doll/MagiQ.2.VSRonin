@@ -268,6 +268,31 @@ namespace StyleSheets{
 				"font-weight: bold;"
 				"color: rgb(255,255,255);"
 			"}"
+			"PlayerInfoDisplayer #LifeBar{"
+				"border: 2px solid black;"
+				"border-radius: 5px;"
+				// Life greather than 50
+				"background-color: rgb(255,215,0);"
+			"}"
+			"PlayerInfoDisplayer #LifeBar::chunk{"
+				"border-radius: 5px;"
+				// Life greather than 50
+				"background-color: rgb(0114,54);"
+			"}"
+			//Life lower or equal than 20
+			"PlayerInfoDisplayer[LifeLevel=\"0\"] #LifeBar{" 
+				"background-color: rgb(111,111,111);"
+			"}"
+			"PlayerInfoDisplayer[LifeLevel=\"0\"] #LifeBar::chunk{"
+				"background-color: rgb(0,174,239);"
+			"}"
+			//Life between 20 and 40
+			"PlayerInfoDisplayer[LifeLevel=\"1\"] #LifeBar{" 
+				"background-color: rgb(0,174,239);"
+			"}"
+			"PlayerInfoDisplayer[LifeLevel=\"1\"] #LifeBar::chunk{"
+				"background-color: rgb(255,215,0);"
+			"}"
 		);
 		const QString ChatCSS(
 			"ChatWidget #MessageText{"
