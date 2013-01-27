@@ -129,6 +129,7 @@ void BattleGround::UpdateAspect(){
 	foreach(PlayerInfoDisplayer* inf,PlayesInfos)
 		inf->UpdateAspect();
 	emit NeedResizeFrames();
+	QuestionFrame->raise();
 	setStyleSheet(StyleSheets::BoardCSS);
 }
 void BattleGround::SortCardsInHand(){
@@ -218,7 +219,6 @@ void BattleGround::DispalyWaitingFor(QString a){
 	QuestionFrame->show();
 	QuestionButton1->hide();
 	QuestionButton2->hide();
-	Players[-1]->SetLife(50);
 	emit NeedResizeFrames();
 }
 void BattleGround::HideWaitingFor(){

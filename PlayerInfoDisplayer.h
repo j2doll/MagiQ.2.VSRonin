@@ -21,13 +21,20 @@ private:
 	QLabel* ExileLabel;
 	QLabel* LifeLabel;
 	QProgressBar* LifeBar;
-	QLabel* ManaPoolLabel;
+	QFrame* ManaPoolFrame;
+	QLabel* WManaPoolLabel;
+	QLabel* UManaPoolLabel;
+	QLabel* BManaPoolLabel;
+	QLabel* RManaPoolLabel;
+	QLabel* GManaPoolLabel;
+	QLabel* CManaPoolLabel;
 
 	MagiQPlayer* InfosToDisplay;
 
-	enum{LifeAnimationDuration=500};
+	enum{LifeAnimationDuration=2500};
 	QList<QPropertyAnimation*> Animations;
 	int CurrentLife;
+	int TargetLife;
 private slots:
 	void AnimateLifeBar(int NewLife);
 	void NextAnimation();
@@ -35,8 +42,9 @@ public:
 	PlayerInfoDisplayer(QWidget* parent=0);
 	void SetInfosToDisplay(MagiQPlayer* a=NULL);
 	MagiQPlayer* GetInfosToDisplay() const {return InfosToDisplay;}
-	void UpdateAspect();
 	int GetLifeLevel() const;
+public slots:
+	void UpdateAspect();
 protected:
 	void resizeEvent(QResizeEvent* event);
 };

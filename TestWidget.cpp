@@ -37,8 +37,10 @@ TestWidget::TestWidget(QWidget* parent)
 	for(int i=0;i<30;i++) Grimorio.AddCard(Bear);
 	Client->SetDeck(Grimorio);
 	Client->SetUsername("Tester");
+	Client->SetAvatar(QPixmap(":/Board/DefaultAvatar.png"));
 	WhoCares->SetDeck(Grimorio);
 	WhoCares->SetUsername("Bot");
+	WhoCares->SetAvatar(QPixmap(":/Board/DefaultAvatar.png"));
 
 	IPEditor=new QLineEdit(this);
 	QRegExpValidator* validatore=new QRegExpValidator(QRegExp("^localhost|(([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))$"),IPEditor);
@@ -73,6 +75,7 @@ TestWidget::TestWidget(QWidget* parent)
 	//BattleGroundConnection
 	connect(Client,SIGNAL(PlayOrder(QList<int>)),board,SLOT(SetPlayersOrder(QList<int>)));
 	connect(Client,SIGNAL(PlayOrder(QList<int>)),board,SLOT(show()));
+	connect(Client,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)),board,SLOT(SetPlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)));
 	connect(Client,SIGNAL(MyHand(QList<CardData>)),board,SLOT(SetMyHand(QList<CardData>)));
 	connect(Client,SIGNAL(OtherHand(int,int)),board,SLOT(SetOtherHand(int,int)));
 	connect(Client,SIGNAL(MyLibrary(QList<CardData>)),board,SLOT(SetMyLibrary(QList<CardData>)));
