@@ -162,6 +162,7 @@ void BattleGround::SetPlayersOrder(QList<int> ord){
 		PlayesInfos[PlayID]=new PlayerInfoDisplayer(this);
 		PlayesInfos[PlayID]->SetInfosToDisplay(Players[PlayID]);
 	}
+Players[-1]->SetLife(10);
 }
 void BattleGround::SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt){
 	for (QMap<int,QString>::const_iterator i=nam.constBegin();i!=nam.constEnd();i++)
@@ -219,6 +220,7 @@ void BattleGround::DispalyWaitingFor(QString a){
 	QuestionFrame->show();
 	QuestionButton1->hide();
 	QuestionButton2->hide();
+Players[-1]->SetLife(12);
 	emit NeedResizeFrames();
 }
 void BattleGround::HideWaitingFor(){

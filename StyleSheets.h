@@ -313,13 +313,13 @@ namespace StyleSheets{
 			"PlayerInfoDisplayer #LifeBar{"
 				"border: 2px solid black;"
 				"border-radius: 5px;"
-				// Life greather than 50
+				// Life greather than 60
 				"background-color: rgb(255,215,0);"
 			"}"
 			"PlayerInfoDisplayer #LifeBar::chunk{"
 				"border-top-left-radius: 5px;"
 				"border-top-right-radius: 5px;"
-				// Life greather than 50
+				// Life greather than 60
 				"background-color: rgb(0,114,54);"
 			"}"
 			//Life lower or equal than 20
@@ -336,6 +336,10 @@ namespace StyleSheets{
 			"PlayerInfoDisplayer[LifeLevel=\"1\"] #LifeBar::chunk{"
 				"background-color: rgb(255,215,0);"
 			"}"
+			/*"PlayerInfoDisplayer #LifeBar[value=\"20\"]::chunk{"
+				"border-top-left-radius: 0px;"
+				"border-top-right-radius: 0px;"
+			"}"*/
 		);
 		const QString ChatCSS(
 			"ChatWidget #MessageText{"

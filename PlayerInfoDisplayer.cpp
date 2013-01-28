@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QBitmap>
 #include <QProgressBar>
+#include <QMouseEvent>
 #include <QPropertyAnimation>
 #include "MagiQPlayer.h"
 #include "StyleSheets.h"
@@ -34,10 +35,12 @@ PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	GraveyardLabel->setObjectName("GraveyardLabel");
 	GraveyardLabel->setAlignment(Qt::AlignCenter);
 	GraveyardLabel->setToolTip(tr("Graveyard"));
+	GraveyardLabel->installEventFilter(this);
 	ExileLabel=new QLabel(this);
 	ExileLabel->setObjectName("ExileLabel");
 	ExileLabel->setAlignment(Qt::AlignCenter);
 	ExileLabel->setToolTip(tr("Exile"));
+	ExileLabel->installEventFilter(this);
 	ManaPoolFrame=new QFrame(this);
 	ManaPoolFrame->setObjectName("ManaPoolLabel");
 	ManaPoolFrame->setToolTip(tr("Mana Pool"));
@@ -45,27 +48,32 @@ PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	WManaPoolLabel->setObjectName("WManaPoolLabel");
 	WManaPoolLabel->setAlignment(Qt::AlignCenter);
 	WManaPoolLabel->setToolTip(tr("White Mana"));
+	WManaPoolLabel->installEventFilter(this);
 	UManaPoolLabel=new QLabel(ManaPoolFrame);
 	UManaPoolLabel->setObjectName("UManaPoolLabel");
 	UManaPoolLabel->setAlignment(Qt::AlignCenter);
 	UManaPoolLabel->setToolTip(tr("Blue Mana"));
+	UManaPoolLabel->installEventFilter(this);
 	BManaPoolLabel=new QLabel(ManaPoolFrame);
 	BManaPoolLabel->setObjectName("BManaPoolLabel");
 	BManaPoolLabel->setAlignment(Qt::AlignCenter);
 	BManaPoolLabel->setToolTip(tr("Black Mana"));
+	BManaPoolLabel->installEventFilter(this);
 	RManaPoolLabel=new QLabel(ManaPoolFrame);
 	RManaPoolLabel->setObjectName("RManaPoolLabel");
 	RManaPoolLabel->setAlignment(Qt::AlignCenter);
 	RManaPoolLabel->setToolTip(tr("Red Mana"));
+	RManaPoolLabel->installEventFilter(this);
 	GManaPoolLabel=new QLabel(ManaPoolFrame);
 	GManaPoolLabel->setObjectName("GManaPoolLabel");
 	GManaPoolLabel->setAlignment(Qt::AlignCenter);
 	GManaPoolLabel->setToolTip(tr("Green Mana"));
+	GManaPoolLabel->installEventFilter(this);
 	CManaPoolLabel=new QLabel(ManaPoolFrame);
 	CManaPoolLabel->setObjectName("CManaPoolLabel");
 	CManaPoolLabel->setAlignment(Qt::AlignCenter);
 	CManaPoolLabel->setToolTip(tr("Colorless Mana"));
-
+	CManaPoolLabel->installEventFilter(this);
 
 	QVBoxLayout* LifeLay=new QVBoxLayout;
 	LifeLay->setMargin(0);
@@ -101,15 +109,23 @@ void PlayerInfoDisplayer::UpdateAspect(){
 		HandSizeLabel->setText(QString("%1").arg(InfosToDisplay->GetHand().size()));
 		GraveyardLabel->setText(QString("%1").arg(InfosToDisplay->GetGraveyard().size()));
 		ExileLabel->setText(QString("%1").arg(InfosToDisplay->GetExile().size()));
-		CurrentLife=LifeLabel->text().toInt();
-		LifeLabel->setText(QString("%1").arg(InfosToDisplay->GetLife()));
 		AvatarLabel->SetImageToShow(InfosToDisplay->GetAvatar());
+		LifeLabel->setText(QString("%1").arg(InfosToDisplay->GetLife()));
+		WManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::W,0)));
+		UManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::U,0)));
+		BManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::B,0)));
+		RManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::R,0)));
+		GManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::G,0)));
+		CManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::Colorless,0)));
 	}
 	else{
 		HandSizeLabel->setText(QString(""));
 		GraveyardLabel->setText(QString(""));
 		ExileLabel->setText(QString(""));
 		AvatarLabel->SetImageToShow(QPixmap());
+		CurrentLife=0;
+		LifeLabel->setText("0");
+		LifeBar->setValue(0);
 	}
 	setStyleSheet(StyleSheets::PlayerInfoCSS);
 }
@@ -152,12 +168,26 @@ int PlayerInfoDisplayer::GetLifeLevel() const{
 void PlayerInfoDisplayer::NextAnimation(){
 	if (!Animations.isEmpty()){
 		QPropertyAnimation* tempPoint=Animations.takeAt(0);
-		CurrentLife+=tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt();
-		tempPoint->start(QAbstractAnimation::DeleteWhenStopped);
+		if (
+			(CurrentLife>=60 && CurrentLife+tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt()>=60)
+			||
+			(CurrentLife<=0 && CurrentLife+tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt()<=0)
+		)
+		{
+			CurrentLife+=tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt();
+			tempPoint->deleteLater();
+			return NextAnimation();
+		}
+		else {
+			CurrentLife+=tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt();
+			LifeBar->setValue(tempPoint->keyValueAt(0.0).toInt());
+			tempPoint->start(QAbstractAnimation::DeleteWhenStopped);
+		}
 	}
 	setStyleSheet(StyleSheets::PlayerInfoCSS);
 }
 void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
+	QPropertyAnimation* tempPoint;
 	int TempCurr=CurrentLife;
 	int TempNew=NewLife;
 	if (!Animations.isEmpty()){
@@ -166,7 +196,6 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 			while (TempCurr>20) {TempCurr-=20; TempNew-=20;}
 			while (TempNew>20){
 				Animations.append(new QPropertyAnimation(LifeBar,"value",this));
-				Animations.last()->setDuration(LifeAnimationDuration);
 				Animations.last()->setEasingCurve(QEasingCurve::Linear);
 				Animations.last()->setKeyValueAt(0.0,TempCurr);
 				Animations.last()->setKeyValueAt(1.0,20);
@@ -175,18 +204,15 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 				TempCurr=0;
 			}
 			Animations.append(new QPropertyAnimation(LifeBar,"value",this));
-			Animations.last()->setDuration(LifeAnimationDuration);
 			Animations.last()->setEasingCurve(QEasingCurve::Linear);
 			Animations.last()->setKeyValueAt(0.0,TempCurr);
 			Animations.last()->setKeyValueAt(1.0,TempNew);
 			connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
-			return;
 		}
 		else if (TargetLife>NewLife){
 			while (TempCurr>20) {TempCurr-=20; TempNew-=20;}
 			while (TempNew<0){
 				Animations.append(new QPropertyAnimation(LifeBar,"value",this));
-				Animations.last()->setDuration(LifeAnimationDuration);
 				Animations.last()->setEasingCurve(QEasingCurve::Linear);
 				Animations.last()->setKeyValueAt(0.0,TempCurr);
 				Animations.last()->setKeyValueAt(1.0,0);
@@ -195,20 +221,19 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 				TempCurr=20;
 			}
 			Animations.append(new QPropertyAnimation(LifeBar,"value",this));
-			Animations.last()->setDuration(LifeAnimationDuration);
 			Animations.last()->setEasingCurve(QEasingCurve::Linear);
 			Animations.last()->setKeyValueAt(0.0,TempCurr);
 			Animations.last()->setKeyValueAt(1.0,TempNew);
 			connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
-			return;
 		}
-		else return;
+		foreach(tempPoint,Animations)
+			tempPoint->setDuration(LifeAnimationDuration/Animations.size());
+		return;
 	}
 	if (CurrentLife<NewLife){
 		while (TempCurr>20) {TempCurr-=20; TempNew-=20;}
 		while (TempNew>20){
 			Animations.append(new QPropertyAnimation(LifeBar,"value",this));
-			Animations.last()->setDuration(LifeAnimationDuration);
 			Animations.last()->setEasingCurve(QEasingCurve::Linear);
 			Animations.last()->setKeyValueAt(0.0,TempCurr);
 			Animations.last()->setKeyValueAt(1.0,20);
@@ -217,7 +242,6 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 			TempCurr=0;
 		}
 		Animations.append(new QPropertyAnimation(LifeBar,"value",this));
-		Animations.last()->setDuration(LifeAnimationDuration);
 		Animations.last()->setEasingCurve(QEasingCurve::Linear);
 		Animations.last()->setKeyValueAt(0.0,TempCurr);
 		Animations.last()->setKeyValueAt(1.0,TempNew);
@@ -227,7 +251,6 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 		while (TempCurr>20) {TempCurr-=20; TempNew-=20;}
 		while (TempNew<0){
 			Animations.append(new QPropertyAnimation(LifeBar,"value",this));
-			Animations.last()->setDuration(LifeAnimationDuration);
 			Animations.last()->setEasingCurve(QEasingCurve::Linear);
 			Animations.last()->setKeyValueAt(0.0,TempCurr);
 			Animations.last()->setKeyValueAt(1.0,0);
@@ -236,7 +259,6 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 			TempCurr=20;
 		}
 		Animations.append(new QPropertyAnimation(LifeBar,"value",this));
-		Animations.last()->setDuration(LifeAnimationDuration);
 		Animations.last()->setEasingCurve(QEasingCurve::Linear);
 		Animations.last()->setKeyValueAt(0.0,TempCurr);
 		Animations.last()->setKeyValueAt(1.0,TempNew);
@@ -244,8 +266,13 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 	}
 	else return;
 
-	if (!Animations.isEmpty())
-		Animations.takeAt(0)->start(QAbstractAnimation::DeleteWhenStopped);
+	foreach(tempPoint,Animations)
+		tempPoint->setDuration(LifeAnimationDuration/Animations.size());
+	if (!Animations.isEmpty()){
+		tempPoint=Animations.takeAt(0);
+		CurrentLife=tempPoint->keyValueAt(1.0).toInt();
+		tempPoint->start(QAbstractAnimation::DeleteWhenStopped);
+	}
 }
 void PlayerInfoDisplayer::SetInfosToDisplay(MagiQPlayer* a){
 	InfosToDisplay=a;
@@ -257,4 +284,21 @@ void PlayerInfoDisplayer::SetInfosToDisplay(MagiQPlayer* a){
 	CurrentLife=InfosToDisplay->GetLife();
 	connect(InfosToDisplay,SIGNAL(LifeChanged(int)),this,SLOT(AnimateLifeBar(int)),Qt::UniqueConnection);
 	connect(InfosToDisplay,SIGNAL(LifeChanged(int)),this,SLOT(UpdateAspect()));
+}
+bool PlayerInfoDisplayer::eventFilter(QObject *target, QEvent *event){
+	if (event->type()==QEvent::MouseButtonPress)
+	{
+		QMouseEvent* mouseevent=static_cast<QMouseEvent*>(event);
+		if (mouseevent->button()==Qt::LeftButton){
+			if(target==WManaPoolLabel){emit WManaPoolClicked();}
+			if(target==UManaPoolLabel){emit UManaPoolClicked();}
+			if(target==BManaPoolLabel){emit BManaPoolClicked();}
+			if(target==RManaPoolLabel){emit RManaPoolClicked();}
+			if(target==GManaPoolLabel){emit GManaPoolClicked();}
+			if(target==CManaPoolLabel){emit CManaPoolClicked();}
+			if(target==ExileLabel){emit ExileClicked();}
+			if(target==GraveyardLabel){emit GraveyardClicked();}
+		}
+	}
+	return QWidget::eventFilter(target,event);
 }

@@ -31,7 +31,7 @@ private:
 
 	MagiQPlayer* InfosToDisplay;
 
-	enum{LifeAnimationDuration=2500};
+	enum{LifeAnimationDuration=1000};
 	QList<QPropertyAnimation*> Animations;
 	int CurrentLife;
 	int TargetLife;
@@ -47,5 +47,15 @@ public slots:
 	void UpdateAspect();
 protected:
 	void resizeEvent(QResizeEvent* event);
+	bool eventFilter(QObject *target, QEvent *event);
+signals:
+	void WManaPoolClicked();
+	void UManaPoolClicked();
+	void BManaPoolClicked();
+	void RManaPoolClicked();
+	void GManaPoolClicked();
+	void CManaPoolClicked();
+	void GraveyardClicked();
+	void ExileClicked();
 };
 #endif
