@@ -31,14 +31,16 @@ void MagiQPlayer::ShuffleLibrary(){
 		card.SetSortingMethod(CardData::Random);
 	qSort(Library.begin(),Library.end());
 }
-void MagiQPlayer::DrawCard(){
+const CardData& MagiQPlayer::DrawCard(){
 	if (Library.isEmpty()){
 		emit NoMoreCardsToDraw();
-		return;
+		return Hand.last();
 	}
 	Hand.append(Library.takeFirst());
+	const CardData& Result(Hand.last());
 	emit CardDrawn();
 	SortHand();
+	return Result;
 }
 
 void MagiQPlayer::SortHand(){

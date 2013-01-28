@@ -1,5 +1,6 @@
 #include "LanServer.h"
 #include <QTime>
+#include <QTimer>
 LanServer::LanServer(QObject* parent)
 	:QTcpServer(parent)
 	,PortToListen(Comunications::DefaultTCPport)
@@ -9,11 +10,23 @@ LanServer::LanServer(QObject* parent)
 	,MaxPlayer(4)
 	,ServerName("MagiQ Server")
 	,GameStarted(false)
-	,TurnNumber(0)
-	,TurnOfPlayer(-1)
+	,TurnNumber(-1)
 	,CardIDCounter(0)
+	,PhaseTimeLimit(3000)
+	,ResponseTimeLimit(5000)
+	,TurnTimeLimit(300000)
+	,Precombat(true)
 {
 	qsrand(QTime::currentTime().msec());
+	PhaseTimer=new QTimer(this);
+	PhaseTimer->setSingleShot(true);
+	PhaseTimer->setInterval(PhaseTimeLimit);
+	ResponseTimer=new QTimer(this);
+	ResponseTimer->setSingleShot(true);
+	ResponseTimer->setInterval(ResponseTimeLimit);
+	TurnTimer=new QTimer(this);
+	TurnTimer->setSingleShot(true);
+	TurnTimer->setInterval(TurnTimeLimit);
 }
 void LanServer::incomingConnection(int socketDescriptor){
 	if (GameStarted) return;
@@ -118,15 +131,51 @@ void LanServer::AcceptedHand(int socID){
 	TempPoint->SetHasAcceptedHand(true);
 	if (EverybodyAcceptedHand()){
 		emit StopWaitingFor();
-		TurnOfPlayer=PlayersOrder.at(0);
-		TurnOfGame();
+		return NextTurn();
 	}
 	else{
 		emit WaitingFor(socID,tr("Waiting for other players to decide whether to take a mulligan"));
 	}
 }
-void LanServer::TurnOfGame(){
+void LanServer::SetCurrentPhase(int a){
+	if (a<Constants::Phases::Untap || a>Constants::Phases::TurnEnd) return;
+	CurrentPhase=a;
+	emit CurrentPhaseChanged(CurrentPhase);
+}
+void LanServer::NextTurn(){
 	++TurnNumber;
+	Precombat=true;
+	QList<int> UntappedCards;
+	int WhosTurn=PlayersOrder.value(TurnNumber%PlayersOrder.size());
+	SetCurrentPhase(Constants::Phases::Untap);
+	for(QList<CardData>::const_iterator i=PlayersList.value(WhosTurn)->GetControlledCards().constBegin();i!=PlayersList.value(WhosTurn)->GetControlledCards().constEnd();i++){
+		if (i->GetTapped()) UntappedCards.append(i->GetCardID());
+		i->SetTapped(false);
+	}
+	PhaseTimer->disconnect();
+	connect(PhaseTimer,SIGNAL(timeout()),this,SLOT(UpkeepStep()));
+	PhaseTimer->start();
+}
+void LanServer::UpkeepStep(){
+	SetCurrentPhase(Constants::Phases::Upkeep);
+	PhaseTimer->disconnect();
+	connect(PhaseTimer,SIGNAL(timeout()),this,SLOT(DrawStep()));
+	PhaseTimer->start();
+}
+void LanServer::DrawStep(){
+	SetCurrentPhase(Constants::Phases::Draw);
+	int WhosTurn=PlayersOrder.value(TurnNumber%PlayersOrder.size());
+	//if (TurnNumber!=0){
+		CardData CardToSend(PlayersList.value(WhosTurn)->DrawCard());
+		emit CardDrawn(WhosTurn,CardToSend);
+	//}
+	PhaseTimer->disconnect();
+	connect(PhaseTimer,SIGNAL(timeout()),this,SLOT(MainStep()));
+	PhaseTimer->start();
+}
+void LanServer::MainStep(){
+	if (Precombat) SetCurrentPhase(Constants::Phases::PreCombatMain);
+	else SetCurrentPhase(Constants::Phases::PostCombatMain);
 }
 void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	if (GameStarted) return;
@@ -173,6 +222,9 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(TempPoint,SIGNAL(HandAccepted(int)),this,SLOT(AcceptedHand(int)));
 	connect(this,SIGNAL(WaitingFor(int,QString)),TempPoint,SIGNAL(WaitingFor(int,QString)));
 	connect(this,SIGNAL(StopWaitingFor()),TempPoint,SIGNAL(StopWaitingFor()));
+	connect(this,SIGNAL(CurrentPhaseChanged(int)),TempPoint,SIGNAL(CurrentPhaseChanged(int)));
+	connect(this,SIGNAL(CardsToUntap(QList<int>)),TempPoint,SIGNAL(CardsToUntap(QList<int>)));
+	connect(this,SIGNAL(CardDrawn(int,CardData)),TempPoint,SIGNAL(CardDrawn(int,CardData)));
 	emit YourNameColor(a,adjName,PlayPoint->GetPlayerColor());
 	SendServerInfos();
 }

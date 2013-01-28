@@ -5,6 +5,7 @@
 class Card;
 class QLabel;
 class QMouseEvent;
+class QFrame;
 class CardViewer :public QWidget{
 	Q_OBJECT
 	Q_PROPERTY(int CardRotation READ GetCardRotation WRITE SetCardRotation)
@@ -22,6 +23,7 @@ public:
 	bool GetCanBeClick() const {return CanBeClick;}
 	void SetCanBeZoom(bool a) {CanBeZoom=a;}
 	void SetCanBeClick(bool a) {CanBeClick=a;}
+	void SetShadable(bool a);
 private:
 	bool CanBeZoom;
 	bool CanBeClick;
@@ -30,10 +32,12 @@ private:
 	QSize PrefSize;
 	Card* CardToDisplay;
 	QLabel* Displayer;
+	QFrame* Shader;
 protected:
 	void enterEvent (QEvent* event){emit GainFocus();}
 	void leaveEvent (QEvent* event){emit LeftFocus();}
 	void mousePressEvent(QMouseEvent* event);
+	void resizeEvent(QResizeEvent* event);
 public slots:
 	void UpdateAspect();
 	void TapAnimationStart();

@@ -85,9 +85,13 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(StopWaitingFor()),board,SLOT(HideWaitingFor()));
 	connect(board,SIGNAL(Mulligan()),Client,SLOT(SendMulligan()));
 	connect(board,SIGNAL(KeepHand()),Client,SLOT(SendHandAccepted()));
+	connect(Client,SIGNAL(CurrentPhaseChanged(int)),board,SLOT(SetCurrentPhase(int)));
+	connect(Client,SIGNAL(CardsToUntap(QList<int>)),board,SLOT(UntapCards(QList<int>)));
+	connect(Client,SIGNAL(CardDrawn(CardData)),board,SLOT(DrawCard(CardData)));
+	connect(Client,SIGNAL(OtherDrawn(int)),board,SLOT(OtherDraw(int)));
 
 	//Test Connections
-	//connect(board,SIGNAL(KeepHand()),WhoCares,SLOT(SendHandAccepted()));
+	connect(board,SIGNAL(KeepHand()),WhoCares,SLOT(SendHandAccepted()));
 
 	QGridLayout* MainLay=new QGridLayout(this);
 	MainLay->addWidget(IPEditor,0,0);

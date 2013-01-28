@@ -7,6 +7,8 @@
 #include "StyleSheets.h"
 #include <QPropertyAnimation>
 #include <QMouseEvent>
+#include <QFrame>
+#include <QBitmap>
 CardViewer::CardViewer(QWidget* parent)
 	:QWidget(parent)
 	,CardToDisplay(NULL)
@@ -23,6 +25,9 @@ CardViewer::CardViewer(QWidget* parent)
 	MainLay->setSpacing(0);
 	MainLay->setMargin(0);
 	MainLay->addWidget(Displayer);
+	Shader=new QFrame(this);
+	Shader->setObjectName("Shader");
+	Shader->raise();
 }
 void CardViewer::SetCardRotation(int a){
 	while (a<0) a+=360;
@@ -33,23 +38,30 @@ void CardViewer::SetCardRotation(int a){
 void CardViewer::UpdateAspect(){
 	QPixmap ImageToDispaly;
 	if (CardToDisplay){
-		bool rehide=CardToDisplay->isHidden();
-		CardToDisplay->show();
 		ImageToDispaly=QPixmap::grabWidget(CardToDisplay);
-		if (rehide) CardToDisplay->hide();
+		setToolTip(CardToDisplay->GetCardName());
 	}
-	else ImageToDispaly.load(":/CardImage/CBase.png");
-	QTransform Transformer;
-	//Transformer.translate(ImageToDispaly.rect().center().x(),ImageToDispaly.rect().center().y());
-	Transformer.rotate(CardRotation);
-	ImageToDispaly=ImageToDispaly.transformed(Transformer);
-	if (RepresentNumber>1){
-		QPainter NumberPaint(&ImageToDispaly);
-		NumberPaint.setFont(QFont("Arial",height()/10,QFont::Bold));
-		NumberPaint.drawText(ImageToDispaly.rect(),Qt::AlignLeft,QString("%1").arg(RepresentNumber));
+	else{
+		ImageToDispaly.load(":/CardImage/CBase.png");
+		setToolTip("");
 	}
-	PrefSize=ImageToDispaly.size();
-	Displayer->setPixmap(ImageToDispaly);
+	if (!ImageToDispaly.isNull()){
+		QTransform Transformer;
+		Transformer.rotate(CardRotation);
+		ImageToDispaly=ImageToDispaly.transformed(Transformer);
+		if (RepresentNumber>1){
+			QPainter NumberPaint(&ImageToDispaly);
+			NumberPaint.setFont(QFont("Arial",height()/10,QFont::Bold));
+			NumberPaint.drawText(ImageToDispaly.rect(),Qt::AlignLeft,QString("%1").arg(RepresentNumber));
+		}
+		PrefSize=ImageToDispaly.size();
+		Displayer->setPixmap(ImageToDispaly);
+		Shader->setMask(ImageToDispaly.scaled(Displayer->size()).mask());
+	}
+	setStyleSheet(StyleSheets::CardViewerCSS);
+}
+void CardViewer::resizeEvent(QResizeEvent* event){
+	Shader->setGeometry(0,0,width(),height());
 }
 void CardViewer::TapAnimationStart(){
 	QPropertyAnimation* animTap= new QPropertyAnimation(this,"CardRotation",parent());
@@ -67,4 +79,8 @@ void CardViewer::mousePressEvent(QMouseEvent* event){
 	if (event->button() == Qt::RightButton){
 		emit RequireZoom(CardToDisplay);
 	}
+}
+void CardViewer::SetShadable(bool a){
+	if (a) Shader->show();
+	else Shader->hide();
 }

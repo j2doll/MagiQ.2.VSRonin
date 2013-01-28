@@ -76,7 +76,7 @@ public:
 	void SetManaPool(const QMap<int,int>& a) {ManaPool=a;}
 	const QMap<int,int>& GetManaPool() const {return ManaPool;}
 	void ShuffleLibrary();
-	void DrawCard();
+	const CardData& DrawCard();
 	void SortHand();
 	void DiscardRandom(){Graveyard.append(Hand.takeAt(qrand()%Hand.size()));}
 	void HandToBottomLibrary(){while(!Hand.isEmpty()) Library.append(Hand.takeAt(0));}

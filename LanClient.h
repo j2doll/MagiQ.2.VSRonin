@@ -56,6 +56,10 @@ signals:
 	void OtherLibrary(int whos,int numcards);
 	void WaitingFor(QString);
 	void StopWaitingFor();
+	void CurrentPhaseChanged(int);
+	void CardsToUntap(QList<int>);
+	void CardDrawn(CardData);
+	void OtherDrawn(int);
 private slots:
 	void IncomingTransmission();
 public slots:

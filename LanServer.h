@@ -8,12 +8,12 @@
 #include "ComunicationConstants.h"
 #include "CostantsDefinition.h"
 #include "MagiQPlayer.h"
+class QTimer;
 class LanServer : public QTcpServer{
 	Q_OBJECT
 private:
 	unsigned int CardIDCounter;
 	int TurnNumber;
-	int TurnOfPlayer;
 	bool GameStarted;
 	int PortToListen;
 	QString ServerName;
@@ -26,11 +26,20 @@ private:
 	bool EverybodyReady() const;
 	bool EverybodyAcceptedHand() const;
 	void StartMatch();
-	void TurnOfGame();
+	int CurrentPhase;
+	bool Precombat;
 	QList<int> PlayersOrder;
+	void SetCurrentPhase(int a);
+	QTimer* PhaseTimer;
+	int PhaseTimeLimit;
+	QTimer* ResponseTimer;
+	int ResponseTimeLimit;
+	QTimer* TurnTimer;
+	int TurnTimeLimit;
 protected:
 	void incomingConnection(int socketDescriptor);
 public:
+	int GetCurrentPhase() const {return CurrentPhase;}
 	int GetPortToListen() const {return PortToListen;}
 	void SetPortToListen(int a) {PortToListen=a;}
 	LanServer(QObject* parent=0);
@@ -60,6 +69,9 @@ signals:
 	void GameHasStarted();
 	void WaitingFor(int,QString);
 	void StopWaitingFor();
+	void CurrentPhaseChanged(int);
+	void CardsToUntap(QList<int>);
+	void CardDrawn(int,CardData);
 public slots:
 	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
 private slots:
@@ -71,5 +83,9 @@ private slots:
 	void DeckSetUp(int socID,CardDeck deck);
 	void DoMulligan(int socID);
 	void AcceptedHand(int SocID);
+	void NextTurn();
+	void UpkeepStep();
+	void DrawStep();
+	void MainStep();
 };
 #endif

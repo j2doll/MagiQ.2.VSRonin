@@ -13,6 +13,8 @@ class CardViewer;
 class Card;
 class QPushButton;
 class PlayerInfoDisplayer;
+class QTimer;
+class PhasesDisplayer;
 class BattleGround : public QWidget
 {
 	Q_OBJECT
@@ -20,12 +22,14 @@ class BattleGround : public QWidget
 private:
 	enum{AnimationDuration=500};
 	enum{ZoommedCardWidth=200};
+	enum{TimerUpdateIntervall=100};
 //Visual Elements
 	QFrame* Board;
 	QMap<int,QFrame*> HandFrames;
 	QMap<int,PlayerInfoDisplayer*> PlayesInfos;
 	QMap<int,HandLayout*> HandsLay;
 	QMap<int,QLabel*> DeckLabels;
+	QMap<int,QLabel*> GraveyardLabels;
 	QMap<int,QList<CardViewer*>> CardsInHandView;
 	QList<Card*> CardsInHand;
 	Card* GenericCard;
@@ -34,9 +38,21 @@ private:
 	QLabel* QuestionText;
 	QPushButton* QuestionButton1;
 	QPushButton* QuestionButton2;
+	PhasesDisplayer* PhaseDisp;
 //Game Properties
+	QList<Card*> AllCards;
 	QMap<int,MagiQPlayer*> Players;
 	QList<int> PlayersOrder;
+	int CurrentPhase;
+	QTimer* PhaseTimer;
+	int PhaseTimeLimit;
+	int CurrentPhaseTime;
+	QTimer* ResponseTimer;
+	int ResponseTimeLimit;
+	int CurrentResponseTime;
+	QTimer* TurnTimer;
+	int TurnTimeLimit;
+	int CurrentTurnTime;
 //Functions
 	void UpdateAspect();
 	void SortCardsInHand();
@@ -45,6 +61,8 @@ private slots:
 	void ClearQuestion();
 	void SizePosFrames();
 	void ZoomAnimate(Card* crd);
+	void TurnTimeUpdate();
+	void PhaseTimeUpdate();
 public slots:
 	void AskMulligan();
 	void SetPlayersOrder(QList<int> ord);
@@ -55,6 +73,10 @@ public slots:
 	void SetOtherLibrary(int whos,int numcards);
 	void DispalyWaitingFor(QString a);
 	void HideWaitingFor();
+	void UntapCards(QList<int> crds);
+	void SetCurrentPhase(int ph);
+	void DrawCard(CardData crd);
+	void OtherDraw(int who);
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return Players.size();}

@@ -404,6 +404,51 @@ namespace Constants{
 			,Age
 		};
 	}
+	namespace Phases{enum{
+		Untap
+		,Upkeep
+		,Draw
+		,PreCombatMain
+		,BeginOfCombat
+		,DeclareAttackers
+		,DeclareBlockers
+		,CombatDamage
+		,EndOfCombat
+		,PostCombatMain
+		,EndOfTurn
+		,Cleanup
+		,TurnEnd
+	};}
+	const QString PhasesNames[]={
+		QObject::tr("Untap")
+		,QObject::tr("Upkeep")
+		,QObject::tr("Draw")
+		,QObject::tr("Pre-Combat Main")
+		,QObject::tr("Begin of Combat")
+		,QObject::tr("Declare Attackers")
+		,QObject::tr("Declare Blockers")
+		,QObject::tr("Combat Damage")
+		,QObject::tr("End of Combat")
+		,QObject::tr("Post-Combat Main")
+		,QObject::tr("End of Turn")
+		,QObject::tr("Cleanup")
+		,QObject::tr("Turn End")
+	};
+	const QString PhaseImages[]={
+		":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+		,":/Phases/Untap.png"
+	};
 	namespace GameMode{enum{FreeForAll,TwoHeadedGiant,Commander,Archenemy,Planechase,END};}
 	namespace Legality{enum{Any,Legacy,Modern,Standard,Extended,Commander,END};}
 	namespace CardFlipMode{enum{AllreadyFlipped=-1,NoFlip=0,HasFlip=1};}

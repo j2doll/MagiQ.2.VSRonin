@@ -164,7 +164,7 @@ void LanServerSocket::SendPlayerHand(int SocID,QList<CardData> hand){
 		out << quint32(0) << quint32(Comunications::TransmissionType::YourHand) << hand;
 	}
 	else{
-		out << quint32(0) << quint32(Comunications::TransmissionType::OthersHand) << SocID << hand.size();
+		out << quint32(0) << quint32(Comunications::TransmissionType::OthersHand) << qint32(SocID) << hand.size();
 	}
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
@@ -178,7 +178,7 @@ void LanServerSocket::SendPlayerLibrary(int SocID,QList<CardData> libr){
 		out << quint32(0) << quint32(Comunications::TransmissionType::YourLibrary) << libr;
 	}
 	else{
-		out << quint32(0) << quint32(Comunications::TransmissionType::OthersLibrary) << SocID << libr.size();
+		out << quint32(0) << quint32(Comunications::TransmissionType::OthersLibrary) << qint32(SocID) << libr.size();
 	}
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
@@ -215,6 +215,36 @@ void LanServerSocket::SendStopWaitingFor(){
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0) << quint32(Comunications::TransmissionType::StopWaitingFor);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendCurrentPhaseChanged(int newphase){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::PhaseChanged) << qint32(newphase);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendCardsToUntap(QList<int> crds){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::UntapCards) << crds;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendCardDrawn(int socID,CardData crd){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	if (socID==SocketID)
+		out << quint32(0) << quint32(Comunications::TransmissionType::YouDrawnCard) << crd;
+	else
+		out << quint32(0) << quint32(Comunications::TransmissionType::OtherDrawnCard) << qint32(socID);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);

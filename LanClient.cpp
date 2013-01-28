@@ -49,6 +49,7 @@ void LanClient::IncomingTransmission(){
 	QList<CardData> cardlists;
 	QMap<int,QString> stringIntMap;
 	QMap<int,QPixmap> pixmapIntMap;
+	CardData card;
 	forever {
 		if (nextBlockSize == 0) {
 			if (tcpSocket->bytesAvailable() < sizeof(quint32))
@@ -124,12 +125,28 @@ void LanClient::IncomingTransmission(){
 			incom >> int1 >> int2;
 			emit OtherLibrary(int1,int2);
 		}
-		if(RequestType==Comunications::TransmissionType::WaitingFor){
+		else if(RequestType==Comunications::TransmissionType::WaitingFor){
 			incom >> strings;
 			emit WaitingFor(strings);
 		}
-		if(RequestType==Comunications::TransmissionType::StopWaitingFor){
+		else if(RequestType==Comunications::TransmissionType::StopWaitingFor){
 			emit StopWaitingFor();
+		}
+		else if(RequestType==Comunications::TransmissionType::PhaseChanged){
+			incom >> int1;
+			emit CurrentPhaseChanged(int1);
+		}
+		else if(RequestType==Comunications::TransmissionType::UntapCards){
+			incom >> intlists;
+			emit CardsToUntap(intlists);
+		}
+		else if(RequestType==Comunications::TransmissionType::YouDrawnCard){
+			incom >> card;
+			emit CardDrawn(card);
+		}
+		else if(RequestType==Comunications::TransmissionType::OtherDrawnCard){
+			incom >> int1;
+			emit OtherDrawn(int1);
 		}
 ////////////////////////////////////////////////////////////////////////////
 

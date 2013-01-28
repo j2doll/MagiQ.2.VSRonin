@@ -43,6 +43,9 @@ signals:
 	void PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>);
 	void WaitingFor(int,QString);
 	void StopWaitingFor();
+	void CurrentPhaseChanged(int);
+	void CardsToUntap(QList<int>);
+	void CardDrawn(int,CardData);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

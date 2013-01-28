@@ -299,6 +299,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_RoundedCornersLabel.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="PhasesDisplayer.cpp">
+      <Filter>Source Files\BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PhasesDisplayer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PhasesDisplayer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -401,6 +410,9 @@
     </CustomBuild>
     <CustomBuild Include="RoundedCornersLabel.h">
       <Filter>Header Files\Utility Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PhasesDisplayer.h">
+      <Filter>Header Files\Battlefield</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

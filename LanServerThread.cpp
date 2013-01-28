@@ -30,4 +30,7 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(tcpSocket,SIGNAL(HandAccepted(int)),this,SIGNAL(HandAccepted(int)));
 	connect(this,SIGNAL(WaitingFor(int,QString)),tcpSocket,SLOT(SendWaitingFor(int,QString)));
 	connect(this,SIGNAL(StopWaitingFor()),tcpSocket,SLOT(SendStopWaitingFor()));
+	connect(this,SIGNAL(CurrentPhaseChanged(int)),tcpSocket,SLOT(SendCurrentPhaseChanged(int)));
+	connect(this,SIGNAL(CardsToUntap(QList<int>)),tcpSocket,SLOT(SendCardsToUntap(QList<int>)));
+	connect(this,SIGNAL(CardDrawn(int,CardData)),tcpSocket,SLOT(SendCardDrawn(int,CardData)));
 }

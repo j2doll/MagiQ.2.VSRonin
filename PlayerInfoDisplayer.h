@@ -32,6 +32,7 @@ private:
 	MagiQPlayer* InfosToDisplay;
 
 	enum{LifeAnimationDuration=1000};
+	enum{LifeBarMultiply=100}; //The higher, the smoother the animation is
 	QList<QPropertyAnimation*> Animations;
 	int CurrentLife;
 	int TargetLife;

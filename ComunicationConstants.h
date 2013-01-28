@@ -23,6 +23,10 @@ namespace Comunications{
 		,HandAccepted
 		,WaitingFor
 		,StopWaitingFor
+		,PhaseChanged
+		,UntapCards
+		,YouDrawnCard
+		,OtherDrawnCard
 		,ChatMessage
 	};}
 }

@@ -17,6 +17,7 @@ CardData::CardData()
 	,CardID(0)
 	,Owner(NULL)
 	,Controller(NULL)
+	,Tapped(false)
 {}
 CardData::CardData(const CardData& a)
 	:CardEdition(a.CardEdition)
@@ -43,6 +44,7 @@ CardData::CardData(const CardData& a)
 	,Effects(a.Effects)
 	,Owner(a.Owner)
 	,Controller(a.Controller)
+	,Tapped(a.Tapped)
 {
 	if(HasFlipped==Constants::CardFlipMode::HasFlip){
 		SetFlippedCard(new CardData(*(a.FlippedCard)));
@@ -54,6 +56,7 @@ const CardData& CardData::operator=(const CardData& a){
 	CardID=a.CardID;
 	Owner=(a.Owner);
 	Controller=(a.Controller);
+	Tapped=a.Tapped;
 	CardPower=(a.CardPower);
 	CardToughness=(a.CardToughness);
 	CardImage=(a.CardImage);

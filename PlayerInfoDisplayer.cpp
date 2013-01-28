@@ -87,7 +87,7 @@ PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	LifeBar->setObjectName("LifeBar");
 	LifeBar->setOrientation(Qt::Vertical);
 	LifeBar->setToolTip(tr("Life"));
-	LifeBar->setMaximum(20);
+	LifeBar->setMaximum(20*LifeBarMultiply);
 	LifeBar->setMinimum(0);
 	LifeBar->setTextVisible(false);
 	LifeLay->addWidget(LifeBar);
@@ -169,17 +169,17 @@ void PlayerInfoDisplayer::NextAnimation(){
 	if (!Animations.isEmpty()){
 		QPropertyAnimation* tempPoint=Animations.takeAt(0);
 		if (
-			(CurrentLife>=60 && CurrentLife+tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt()>=60)
+			(CurrentLife>=60 && CurrentLife+(tempPoint->keyValueAt(1.0).toInt()/LifeBarMultiply)-(tempPoint->keyValueAt(0.0).toInt()/LifeBarMultiply)>=60)
 			||
-			(CurrentLife<=0 && CurrentLife+tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt()<=0)
+			(CurrentLife<=0 && CurrentLife+(tempPoint->keyValueAt(1.0).toInt()/LifeBarMultiply)-(tempPoint->keyValueAt(0.0).toInt()/LifeBarMultiply)<=0)
 		)
 		{
-			CurrentLife+=tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt();
+			CurrentLife+=(tempPoint->keyValueAt(1.0).toInt()/LifeBarMultiply)-(tempPoint->keyValueAt(0.0).toInt()/LifeBarMultiply);
 			tempPoint->deleteLater();
 			return NextAnimation();
 		}
 		else {
-			CurrentLife+=tempPoint->keyValueAt(1.0).toInt()-tempPoint->keyValueAt(0.0).toInt();
+			CurrentLife+=(tempPoint->keyValueAt(1.0).toInt()/LifeBarMultiply)-(tempPoint->keyValueAt(0.0).toInt()/LifeBarMultiply);
 			LifeBar->setValue(tempPoint->keyValueAt(0.0).toInt());
 			tempPoint->start(QAbstractAnimation::DeleteWhenStopped);
 		}
@@ -197,16 +197,16 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 			while (TempNew>20){
 				Animations.append(new QPropertyAnimation(LifeBar,"value",this));
 				Animations.last()->setEasingCurve(QEasingCurve::Linear);
-				Animations.last()->setKeyValueAt(0.0,TempCurr);
-				Animations.last()->setKeyValueAt(1.0,20);
+				Animations.last()->setKeyValueAt(0.0,TempCurr*LifeBarMultiply);
+				Animations.last()->setKeyValueAt(1.0,20*LifeBarMultiply);
 				connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
 				TempNew-=20;
 				TempCurr=0;
 			}
 			Animations.append(new QPropertyAnimation(LifeBar,"value",this));
 			Animations.last()->setEasingCurve(QEasingCurve::Linear);
-			Animations.last()->setKeyValueAt(0.0,TempCurr);
-			Animations.last()->setKeyValueAt(1.0,TempNew);
+			Animations.last()->setKeyValueAt(0.0,TempCurr*LifeBarMultiply);
+			Animations.last()->setKeyValueAt(1.0,TempNew*LifeBarMultiply);
 			connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
 		}
 		else if (TargetLife>NewLife){
@@ -214,16 +214,16 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 			while (TempNew<0){
 				Animations.append(new QPropertyAnimation(LifeBar,"value",this));
 				Animations.last()->setEasingCurve(QEasingCurve::Linear);
-				Animations.last()->setKeyValueAt(0.0,TempCurr);
-				Animations.last()->setKeyValueAt(1.0,0);
+				Animations.last()->setKeyValueAt(0.0,TempCurr*LifeBarMultiply);
+				Animations.last()->setKeyValueAt(1.0,0*LifeBarMultiply);
 				connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
 				TempNew+=20;
 				TempCurr=20;
 			}
 			Animations.append(new QPropertyAnimation(LifeBar,"value",this));
 			Animations.last()->setEasingCurve(QEasingCurve::Linear);
-			Animations.last()->setKeyValueAt(0.0,TempCurr);
-			Animations.last()->setKeyValueAt(1.0,TempNew);
+			Animations.last()->setKeyValueAt(0.0,TempCurr*LifeBarMultiply);
+			Animations.last()->setKeyValueAt(1.0,TempNew*LifeBarMultiply);
 			connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
 		}
 		foreach(tempPoint,Animations)
@@ -235,16 +235,16 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 		while (TempNew>20){
 			Animations.append(new QPropertyAnimation(LifeBar,"value",this));
 			Animations.last()->setEasingCurve(QEasingCurve::Linear);
-			Animations.last()->setKeyValueAt(0.0,TempCurr);
-			Animations.last()->setKeyValueAt(1.0,20);
+			Animations.last()->setKeyValueAt(0.0,TempCurr*LifeBarMultiply);
+			Animations.last()->setKeyValueAt(1.0,20*LifeBarMultiply);
 			connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
 			TempNew-=20;
 			TempCurr=0;
 		}
 		Animations.append(new QPropertyAnimation(LifeBar,"value",this));
 		Animations.last()->setEasingCurve(QEasingCurve::Linear);
-		Animations.last()->setKeyValueAt(0.0,TempCurr);
-		Animations.last()->setKeyValueAt(1.0,TempNew);
+		Animations.last()->setKeyValueAt(0.0,TempCurr*LifeBarMultiply);
+		Animations.last()->setKeyValueAt(1.0,TempNew*LifeBarMultiply);
 		connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
 	}
 	else if (CurrentLife>NewLife){
@@ -252,7 +252,7 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 		while (TempNew<0){
 			Animations.append(new QPropertyAnimation(LifeBar,"value",this));
 			Animations.last()->setEasingCurve(QEasingCurve::Linear);
-			Animations.last()->setKeyValueAt(0.0,TempCurr);
+			Animations.last()->setKeyValueAt(0.0,TempCurr*LifeBarMultiply);
 			Animations.last()->setKeyValueAt(1.0,0);
 			connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
 			TempNew+=20;
@@ -260,8 +260,8 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 		}
 		Animations.append(new QPropertyAnimation(LifeBar,"value",this));
 		Animations.last()->setEasingCurve(QEasingCurve::Linear);
-		Animations.last()->setKeyValueAt(0.0,TempCurr);
-		Animations.last()->setKeyValueAt(1.0,TempNew);
+		Animations.last()->setKeyValueAt(0.0,TempCurr*LifeBarMultiply);
+		Animations.last()->setKeyValueAt(1.0,TempNew*LifeBarMultiply);
 		connect(Animations.last(),SIGNAL(finished()),this,SLOT(NextAnimation()),Qt::QueuedConnection);
 	}
 	else return;
@@ -270,7 +270,7 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 		tempPoint->setDuration(LifeAnimationDuration/Animations.size());
 	if (!Animations.isEmpty()){
 		tempPoint=Animations.takeAt(0);
-		CurrentLife=tempPoint->keyValueAt(1.0).toInt();
+		CurrentLife=tempPoint->keyValueAt(1.0).toInt()/LifeBarMultiply;
 		tempPoint->start(QAbstractAnimation::DeleteWhenStopped);
 	}
 }
@@ -280,7 +280,7 @@ void PlayerInfoDisplayer::SetInfosToDisplay(MagiQPlayer* a){
 	CurrentLife=InfosToDisplay->GetLife();
 	if (CurrentLife<0) CurrentLife=0;
 	while(CurrentLife>20) CurrentLife-=20;
-	LifeBar->setValue(CurrentLife);
+	LifeBar->setValue(CurrentLife*LifeBarMultiply);
 	CurrentLife=InfosToDisplay->GetLife();
 	connect(InfosToDisplay,SIGNAL(LifeChanged(int)),this,SLOT(AnimateLifeBar(int)),Qt::UniqueConnection);
 	connect(InfosToDisplay,SIGNAL(LifeChanged(int)),this,SLOT(UpdateAspect()));

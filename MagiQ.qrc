@@ -177,4 +177,7 @@
         <file alias="Exile.png">Resources/Exile.png</file>
         <file alias="ManaPool.png">Resources/ManaPool.png</file>
     </qresource>
+    <qresource prefix="/Phases">
+        <file alias="Untap.png">Resources/Phases/Untap.png</file>
+    </qresource>
 </RCC>

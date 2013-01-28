@@ -41,6 +41,9 @@ public slots:
 	void SendPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt);
 	void SendWaitingFor(int socID,QString msg);
 	void SendStopWaitingFor();
+	void SendCurrentPhaseChanged(int newphase);
+	void SendCardsToUntap(QList<int> crds);
+	void SendCardDrawn(int socID,CardData crd);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);
