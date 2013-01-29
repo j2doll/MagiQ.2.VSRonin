@@ -11,6 +11,7 @@ MagiQPlayer::MagiQPlayer(QObject* parent)
 	,PlayerColor(0,0,0)
 	,ReadyToStartMatch(false)
 	,HasAcceptedHand(false)
+	,HasFinishedTimer(false)
 	,Avatar(":/Board/DefaultAvatar.png")
 {
 	ResetManaPool();
@@ -37,18 +38,16 @@ const CardData& MagiQPlayer::DrawCard(){
 		return Hand.last();
 	}
 	Hand.append(Library.takeFirst());
-	const CardData& Result(Hand.last());
 	emit CardDrawn();
-	SortHand();
-	return Result;
+	return Hand.last();
 }
 
 void MagiQPlayer::SortHand(){
-	foreach(CardData card,Hand)
-		card.SetSortingMethod(SecondaryOrdering);
+	for (QList<CardData>::const_iterator i=Hand.constBegin();i!=Hand.constEnd();i++)
+		i->SetSortingMethod(SecondaryOrdering);
 	qSort(Hand.begin(),Hand.end());
-	foreach(CardData card,Hand)
-		card.SetSortingMethod(PrimaryOrdering);
+	for (QList<CardData>::const_iterator i=Hand.constBegin();i!=Hand.constEnd();i++)
+		i->SetSortingMethod(PrimaryOrdering);
 	qStableSort(Hand.begin(),Hand.end());
 	emit RequireUpdateAspect();
 }

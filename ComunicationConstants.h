@@ -27,6 +27,13 @@ namespace Comunications{
 		,UntapCards
 		,YouDrawnCard
 		,OtherDrawnCard
+		,TimerFinished
+		,TimerStopped
+		,TimerResumed
+		,StopTurnTimer
+		,ResumeTurnTimer
+		,StopTimers
+		,ResumeTimers
 		,ChatMessage
 	};}
 }

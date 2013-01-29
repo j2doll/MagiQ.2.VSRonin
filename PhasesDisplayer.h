@@ -13,6 +13,7 @@ private:
 	QFrame* Displayer;
 	QLabel* CurrentPhaseIcon;
 	QLabel* NextPhaseIcon;
+	QLabel* PausedLabel;
 	QFrame* Background;
 	int CurrentPhase;
 public:
@@ -24,6 +25,7 @@ public:
 	void SetPhaseTime();
 	void SetTurnTime();
 	void SetPhase(int a);
+	void PausePhaseTimer();
 protected:
 	void resizeEvent(QResizeEvent* event);
 private slots:

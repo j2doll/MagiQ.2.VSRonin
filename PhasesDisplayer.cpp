@@ -32,6 +32,15 @@ PhasesDisplayer::PhasesDisplayer(QWidget* parent)
 	PhaseTimer->setToolTip(tr("Phase Time"));
 	PhaseTimer->setTextVisible(false);
 	PhaseTimer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
+	QGridLayout* PhaseTimerLay=new QGridLayout(PhaseTimer);
+	PhaseTimerLay->setMargin(2);
+	PhaseTimerLay->setSpacing(0);
+	PausedLabel=new QLabel(PhaseTimer);
+	PausedLabel->setObjectName("PausedLabel");
+	PausedLabel->setAlignment(Qt::AlignCenter);
+	PausedLabel->setText(tr("Timer Stopped"));
+	PhaseTimerLay->addWidget(PausedLabel);
+	PausedLabel->hide();
 	TurnTimer=new QProgressBar(this);
 	TurnTimer->setObjectName("TurnTimer");
 	TurnTimer->setMinimum(0);
@@ -85,7 +94,8 @@ void PhasesDisplayer::AnimationFinished(){
 }
 void PhasesDisplayer::SetPhaseTimeLimit(int a) {PhaseTimer->setMaximum(a);}
 void PhasesDisplayer::SetTurnTimeLimit(int a) {TurnTimer->setMaximum(a);}
-void PhasesDisplayer::SetPhaseTime(int a){PhaseTimer->setValue(PhaseTimer->maximum()-a);}
+void PhasesDisplayer::SetPhaseTime(int a){PausedLabel->hide(); PhaseTimer->setValue(PhaseTimer->maximum()-a);}
 void PhasesDisplayer::SetTurnTime(int a){TurnTimer->setValue(TurnTimer->maximum()-a);}
-void PhasesDisplayer::SetPhaseTime(){PhaseTimer->setValue(0);}
+void PhasesDisplayer::SetPhaseTime(){PausedLabel->hide(); PhaseTimer->setValue(0);}
 void PhasesDisplayer::SetTurnTime(){TurnTimer->setValue(0);}
+void PhasesDisplayer::PausePhaseTimer(){PausedLabel->show(); PhaseTimer->setValue(0);}

@@ -31,6 +31,7 @@ private:
 	QMap<int,QLabel*> DeckLabels;
 	QMap<int,QLabel*> GraveyardLabels;
 	QMap<int,QList<CardViewer*>> CardsInHandView;
+	CardViewer* AnimationCard;
 	QList<Card*> CardsInHand;
 	Card* GenericCard;
 	Card* ZoomedCard;
@@ -54,9 +55,10 @@ private:
 	int TurnTimeLimit;
 	int CurrentTurnTime;
 //Functions
-	void UpdateAspect();
 	void SortCardsInHand();
+	void AnimateDraw(int whos);
 private slots:
+	void UpdateAspect();
 	void ResetHandOrder();
 	void ClearQuestion();
 	void SizePosFrames();
@@ -77,6 +79,9 @@ public slots:
 	void SetCurrentPhase(int ph);
 	void DrawCard(CardData crd);
 	void OtherDraw(int who);
+	void StopTimer();
+	void StopTurnTimer();
+	void ResumeTurnTimer();
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return Players.size();}
@@ -86,6 +91,9 @@ signals:
 	void NeedResizeFrames();
 	void Mulligan();
 	void KeepHand();
+	void TimerFinished();
+	void TimerStopped();
+	void TimerResumed();
 };
 #endif
 

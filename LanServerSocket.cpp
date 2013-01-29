@@ -57,6 +57,15 @@ void LanServerSocket::readClient(){
 		else if(RequestType==Comunications::TransmissionType::HandAccepted){
 			emit HandAccepted(SocketID);
 		}
+		else if(RequestType==Comunications::TransmissionType::TimerFinished){
+			emit TimerFinished(SocketID);
+		}
+		else if(RequestType==Comunications::TransmissionType::TimerStopped){
+			emit TimerStopped(SocketID);
+		}
+		else if(RequestType==Comunications::TransmissionType::TimerResumed){
+			emit TimerResumed(SocketID);
+		}
 ///////////////////////////////////////////////////////////////////////////
 
 		nextBlockSize = 0;
@@ -245,6 +254,33 @@ void LanServerSocket::SendCardDrawn(int socID,CardData crd){
 		out << quint32(0) << quint32(Comunications::TransmissionType::YouDrawnCard) << crd;
 	else
 		out << quint32(0) << quint32(Comunications::TransmissionType::OtherDrawnCard) << qint32(socID);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendStopTimers(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::StopTimers);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendStopTurnTimer(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::StopTurnTimer);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendResumeTurnTimer(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::ResumeTurnTimer);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);

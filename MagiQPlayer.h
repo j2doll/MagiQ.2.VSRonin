@@ -10,6 +10,7 @@ class MagiQPlayer : public QObject{
 	Q_OBJECT
 private:
 	bool HasAcceptedHand;
+	bool HasFinishedTimer;
 	int PlayerID;
 	bool ReadyToStartMatch;
 	QPixmap Avatar;
@@ -32,6 +33,8 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	void SetHasFinishedTimer(bool a){HasFinishedTimer=a;}
+	bool GetHasFinishedTimer() const {return HasFinishedTimer;}
 	void SetHand(const QList<CardData>& a){Hand.clear(); Hand=a;}
 	void SetHand(){Hand.clear();}
 	void SetHand(const CardData& a){SetHand(); AddHand(a);}

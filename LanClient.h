@@ -60,6 +60,9 @@ signals:
 	void CardsToUntap(QList<int>);
 	void CardDrawn(CardData);
 	void OtherDrawn(int);
+	void StopTimer();
+	void StopTurnTimer();
+	void ResumeTurnTimer();
 private slots:
 	void IncomingTransmission();
 public slots:
@@ -71,5 +74,9 @@ public slots:
 	void SendReady();
 	void SendMulligan();
 	void SendHandAccepted();
+	void SendFinishedTimer();
+	void SendStoppedTimer();
+	void SendResumeTimer();
+
 };
 #endif

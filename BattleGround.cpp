@@ -68,11 +68,25 @@ BattleGround::BattleGround(QWidget* parent)
 	PhaseDisp->SetPhase(CurrentPhase);
 	PhaseDisp->hide();
 
+	AnimationCard=new CardViewer(this);
+	AnimationCard->SetCanBeZoom(false);
+	AnimationCard->SetShadable(false);
+	AnimationCard->hide();
+
 	connect(this,SIGNAL(NeedResizeFrames()),this,SLOT(SizePosFrames()),Qt::QueuedConnection);
 	UpdateAspect();
 }
-void BattleGround::TurnTimeUpdate(){CurrentTurnTime+=TimerUpdateIntervall; PhaseDisp->SetTurnTime(CurrentTurnTime); /*TODO if(CurrentTurnTime>=TurnTimeLimit)*/}
-void BattleGround::PhaseTimeUpdate(){CurrentPhaseTime+=TimerUpdateIntervall; PhaseDisp->SetPhaseTime(CurrentPhaseTime); /*TODO if(CurrentPhaseTime>=PhaseTimeLimit)*/}
+void BattleGround::TurnTimeUpdate(){
+	CurrentTurnTime+=TimerUpdateIntervall; 
+	PhaseDisp->SetTurnTime(CurrentTurnTime); 
+	/*TODO if(CurrentTurnTime>=TurnTimeLimit)*/
+}
+void BattleGround::PhaseTimeUpdate(){
+	CurrentPhaseTime+=TimerUpdateIntervall;
+	PhaseDisp->SetPhaseTime(CurrentPhaseTime);
+	if(CurrentPhaseTime>=PhaseTimeLimit)
+		emit TimerFinished();
+}
 void BattleGround::resizeEvent(QResizeEvent* event){
 	if (!isVisible()) return;
 	emit NeedResizeFrames();
@@ -82,7 +96,7 @@ void BattleGround::SizePosFrames(){
 	int NextIndex=-1;
 	switch (Players.size()){
 	case 2:
-		PhaseDisp->setGeometry(125*width()/1024,359*height()/768,100*width()/1024,50*height()/768);
+		PhaseDisp->setGeometry(125*width()/1024,359*height()/768,150*width()/1024,50*height()/768);
 		QuestionFrame->setGeometry((width()-QuestionFrame->sizeHint().width())/2,30*height()/768,QuestionFrame->sizeHint().width(),QuestionFrame->sizeHint().height());
 		DeckLabels.value(NextIndex)->setGeometry(915*width()/1024,418*height()/768,60*width()/1024,83*height()/768);
 		GraveyardLabels.value(NextIndex)->setGeometry(915*width()/1024,538*height()/768,60*width()/1024,83*height()/768);
@@ -135,8 +149,8 @@ void BattleGround::UpdateAspect(){
 		}
 		int HeiForWid=(279*ZoommedCardWidth)/200;
 		GenericCard->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
-		foreach(Card* crd,CardsInHand)
-			crd->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
+		for(QList<Card*>::iterator crd=CardsInHand.begin();crd!=CardsInHand.end();crd++)
+			(*crd)->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
 		while(index.value()->GetHand().size()>CardsInHandView.value(index.key()).size()){
 			CardsInHandView[index.key()].append(new CardViewer(this));
 			CardViewer* TempViewer=CardsInHandView[index.key()].last();
@@ -150,15 +164,15 @@ void BattleGround::UpdateAspect(){
 		}
 		for (int j=0;j<index.value()->GetHand().size();j++){
 			if (index.key()==-1){
-				CardsInHandView[-1].at(j)->SetCardToDisplay(CardsInHand.value(j));
-				CardsInHandView[-1].at(j)->SetCanBeZoom(true);
+				CardsInHandView[-1].value(j)->SetCardToDisplay(CardsInHand.value(j));
+				CardsInHandView[-1].value(j)->SetCanBeZoom(true);
 			}
 			else{
-				CardsInHandView[index.key()].at(j)->SetCardToDisplay(GenericCard);
-				CardsInHandView[index.key()].at(j)->SetCanBeZoom(false);
-				CardsInHandView[index.key()].at(j)->SetShadable(false);
+				CardsInHandView[index.key()].value(j)->SetCardToDisplay(GenericCard);
+				CardsInHandView[index.key()].value(j)->SetCanBeZoom(false);
+				CardsInHandView[index.key()].value(j)->SetShadable(false);
 			}
-			CardsInHandView[index.key()].at(j)->UpdateAspect();
+			CardsInHandView[index.key()].value(j)->UpdateAspect();
 		}
 	}
 	foreach(PlayerInfoDisplayer* inf,PlayesInfos)
@@ -294,13 +308,13 @@ void BattleGround::SetCurrentPhase(int ph){
 	if(PhaseDisp->isHidden()) PhaseDisp->show();
 	PhaseTimer->stop();
 	CurrentPhaseTime=0;
-	CurrentPhase=ph;
-	PhaseDisp->SetPhase(CurrentPhase);
-	if(ph==Constants::Phases::Untap){
+	if(ph==Constants::Phases::Untap && ph!=CurrentPhase){
 		TurnTimer->stop();
 		CurrentTurnTime=0;
 		TurnTimer->start();
 	}
+	CurrentPhase=ph;
+	PhaseDisp->SetPhase(CurrentPhase);
 	if (
 		CurrentPhase!=Constants::Phases::PreCombatMain
 		&& CurrentPhase!=Constants::Phases::PostCombatMain
@@ -316,9 +330,40 @@ void BattleGround::DrawCard(CardData crd){
 	AllCards.append(CardsInHand.last());
 	CardsInHand.last()->UpdateAspect();
 	CardsInHand.last()->hide();
-	UpdateAspect();
+	AnimateDraw(-1);
 }
 void BattleGround::OtherDraw(int who){
+	if (!PlayersOrder.contains(who)) return;
 	Players[who]->AddHand(CardData());
-	UpdateAspect();
+	AnimateDraw(who);
 }
+void BattleGround::AnimateDraw(int whos){
+	if (!PlayersOrder.contains(whos)) return;
+	int HeiForWid=(279*ZoommedCardWidth)/200;
+	GenericCard->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
+	AnimationCard->SetCardToDisplay(GenericCard);
+	AnimationCard->UpdateAspect();
+	AnimationCard->resize(DeckLabels[whos]->size());
+	AnimationCard->show();
+	QPropertyAnimation* AnimDraw=new QPropertyAnimation(AnimationCard,"pos",this);
+	AnimDraw->setDuration(AnimationDuration);
+	AnimDraw->setEasingCurve(QEasingCurve::InCubic);
+	AnimDraw->setKeyValueAt(0.0,DeckLabels[whos]->pos());
+	switch (Players.size()){
+	case 2:
+		AnimDraw->setKeyValueAt(1.0,QPoint(
+			HandFrames[whos]->pos().x()+(HandFrames[whos]->width()/2),
+			whos==-1 ? height()+AnimationCard->height()+10 : -AnimationCard->height()-10
+			));
+		break;
+	}
+	connect(AnimDraw,SIGNAL(finished()),AnimationCard,SLOT(hide()));
+	connect(AnimDraw,SIGNAL(finished()),this,SLOT(UpdateAspect()));
+	AnimDraw->start(QAbstractAnimation::DeleteWhenStopped);
+}
+void BattleGround::StopTimer(){
+	PhaseTimer->stop();
+	PhaseDisp->PausePhaseTimer();
+}
+void BattleGround::StopTurnTimer(){TurnTimer->stop();}
+void BattleGround::ResumeTurnTimer(){TurnTimer->start();}

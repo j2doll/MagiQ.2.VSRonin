@@ -97,8 +97,8 @@ bool CardData::operator<(const CardData& a) const{
 		return false;
 	case ByColor:
 		for (int i=0;i<=Constants::CardColor::Green;i++){
-			if (CardType.contains(i)) return true;
-			if (a.CardType.contains(i)) return false;
+			if (CardColor.contains(i)) return true;
+			if (a.CardColor.contains(i)) return false;
 		}
 		return false;
 	case Random:

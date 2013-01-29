@@ -179,5 +179,8 @@
     </qresource>
     <qresource prefix="/Phases">
         <file alias="Untap.png">Resources/Phases/Untap.png</file>
+        <file alias="Draw.png">Resources/Phases/Draw.png</file>
+        <file alias="Main.png">Resources/Phases/Main.png</file>
+        <file alias="Upkeep.png">Resources/Phases/Upkeep.png</file>
     </qresource>
 </RCC>

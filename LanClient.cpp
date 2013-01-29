@@ -148,6 +148,15 @@ void LanClient::IncomingTransmission(){
 			incom >> int1;
 			emit OtherDrawn(int1);
 		}
+		else if(RequestType==Comunications::TransmissionType::StopTimers){
+			emit StopTimer();
+		}
+		else if(RequestType==Comunications::TransmissionType::StopTurnTimer){
+			emit StopTurnTimer();
+		}
+		else if(RequestType==Comunications::TransmissionType::ResumeTurnTimer){
+			emit ResumeTurnTimer();
+		}
 ////////////////////////////////////////////////////////////////////////////
 
 		nextBlockSize = 0;
@@ -203,6 +212,33 @@ void LanClient::SendHandAccepted(){
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0) << quint32(Comunications::TransmissionType::HandAccepted);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	tcpSocket->write(block);
+}
+void LanClient::SendFinishedTimer(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::TimerFinished);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	tcpSocket->write(block);
+}
+void LanClient::SendStoppedTimer(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::TimerStopped);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	tcpSocket->write(block);
+}
+void LanClient::SendResumeTimer(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::TimerResumed);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	tcpSocket->write(block);

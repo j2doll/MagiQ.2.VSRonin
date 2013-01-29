@@ -25,17 +25,18 @@ private:
 	QMap<int,MagiQPlayer*> PlayersList;
 	bool EverybodyReady() const;
 	bool EverybodyAcceptedHand() const;
+	bool EverybodyFinishedTimer() const;
 	void StartMatch();
 	int CurrentPhase;
+	int NextPhase;
 	bool Precombat;
 	QList<int> PlayersOrder;
 	void SetCurrentPhase(int a);
-	QTimer* PhaseTimer;
 	int PhaseTimeLimit;
-	QTimer* ResponseTimer;
 	int ResponseTimeLimit;
-	QTimer* TurnTimer;
 	int TurnTimeLimit;
+	int WhoStoppedTheTimer;
+	bool PhaseTimerRunning;
 protected:
 	void incomingConnection(int socketDescriptor);
 public:
@@ -72,6 +73,10 @@ signals:
 	void CurrentPhaseChanged(int);
 	void CardsToUntap(QList<int>);
 	void CardDrawn(int,CardData);
+	void StopTimers();
+	void ResumeTimers();
+	void StopTurnTimer();
+	void ResumeTurnTimer();
 public slots:
 	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
 private slots:
@@ -87,5 +92,8 @@ private slots:
 	void UpkeepStep();
 	void DrawStep();
 	void MainStep();
+	void TimerFinished(int SocID);
+	void TimerStopped(int SocID);
+	void ResumeTimer(int SocID);
 };
 #endif

@@ -251,12 +251,16 @@ namespace StyleSheets{
 		);
 		const QString PhasesDisplayerCSS(
 			"PhasesDisplayer #Background{"
-				"border: 3px solid #333;"
-				"border-radius: 12px;"
+				"border: 1px solid #333;"
+				"border-radius: 8px;"
 				"background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
 					"stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,"
 					"stop: 0.39999 #717171, stop: 0.4 #626262,"
 					"stop: 0.9 #4c4c4c, stop: 1 #333333);"
+			"}"
+			"PhasesDisplayer #PausedLabel{"
+				"color: rgb(109,207,246);"
+				"font: bold;"
 			"}"
 			"PhasesDisplayer #PhaseTimer{"
 				"border: 2px solid black;"

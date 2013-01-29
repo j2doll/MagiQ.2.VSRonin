@@ -62,6 +62,14 @@ TestWidget::TestWidget(QWidget* parent)
 
 	chat=new ChatWidget(this);
 
+	QGridLayout* MainLay=new QGridLayout(this);
+	MainLay->addWidget(IPEditor,0,0);
+	MainLay->addWidget(ConnectButton,1,0);
+	MainLay->addWidget(JoinButton,2,0);
+	MainLay->addWidget(ReadyButton,3,0);
+	MainLay->addWidget(DisconnectButton,4,0);
+	MainLay->addWidget(chat,0,1,5,1);
+
 	//Chat Connections
 	connect(chat,SIGNAL(OutgoingMessage(QString)),Client,SLOT(SendChatMessage(QString)));
 	connect(Client,SIGNAL(ChatMessageRecieved(QString)),chat,SLOT(IncomingMesage(QString)));
@@ -89,17 +97,26 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(CardsToUntap(QList<int>)),board,SLOT(UntapCards(QList<int>)));
 	connect(Client,SIGNAL(CardDrawn(CardData)),board,SLOT(DrawCard(CardData)));
 	connect(Client,SIGNAL(OtherDrawn(int)),board,SLOT(OtherDraw(int)));
+	connect(board,SIGNAL(TimerFinished()),Client,SLOT(SendFinishedTimer()));
+	connect(board,SIGNAL(TimerStopped()),Client,SLOT(SendStoppedTimer()));
+	connect(board,SIGNAL(TimerResumed()),Client,SLOT(SendResumeTimer()));
+	connect(Client,SIGNAL(StopTimer()),board,SLOT(StopTimer()));
+	connect(Client,SIGNAL(StopTurnTimer()),board,SLOT(StopTurnTimer()));
+	connect(Client,SIGNAL(ResumeTurnTimer()),board,SLOT(ResumeTurnTimer()));
 
 	//Test Connections
 	connect(board,SIGNAL(KeepHand()),WhoCares,SLOT(SendHandAccepted()));
-
-	QGridLayout* MainLay=new QGridLayout(this);
-	MainLay->addWidget(IPEditor,0,0);
-	MainLay->addWidget(ConnectButton,1,0);
-	MainLay->addWidget(JoinButton,2,0);
-	MainLay->addWidget(ReadyButton,3,0);
-	MainLay->addWidget(DisconnectButton,4,0);
-	MainLay->addWidget(chat,0,1,5,1);
+	connect(board,SIGNAL(TimerFinished()),WhoCares,SLOT(SendFinishedTimer()));
+	QPushButton* PauseTimerButton=new QPushButton(this);
+	PauseTimerButton->setObjectName("PauseTimerButton");
+	PauseTimerButton->setText("Pause Timer");
+	connect(PauseTimerButton,SIGNAL(clicked()),WhoCares,SLOT(SendStoppedTimer()));
+	QPushButton* ResumeTimerButton=new QPushButton(this);
+	ResumeTimerButton->setObjectName("PauseTimerButton");
+	ResumeTimerButton->setText("Resume Timer");
+	connect(ResumeTimerButton,SIGNAL(clicked()),WhoCares,SLOT(SendResumeTimer()));
+	MainLay->addWidget(PauseTimerButton,0,2);
+	MainLay->addWidget(ResumeTimerButton,1,2);
 
 	WhoCares->ConnectToHost();
 	WhoCares->SendJoinRequest();

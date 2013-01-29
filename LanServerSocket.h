@@ -44,6 +44,9 @@ public slots:
 	void SendCurrentPhaseChanged(int newphase);
 	void SendCardsToUntap(QList<int> crds);
 	void SendCardDrawn(int socID,CardData crd);
+	void SendStopTimers();
+	void SendStopTurnTimer();
+	void SendResumeTurnTimer();
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);
@@ -51,5 +54,8 @@ signals:
 	void DeckSetUp(int,CardDeck);
 	void Mulligan(int);
 	void HandAccepted(int);
+	void TimerFinished(int);
+	void TimerStopped(int);
+	void TimerResumed(int);
 };
 #endif

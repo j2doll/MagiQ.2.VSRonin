@@ -418,5 +418,6 @@
   <ItemGroup>
     <None Include="LICENSE" />
     <None Include="README.markdown" />
+    <None Include="Credits.txt" />
   </ItemGroup>
 </Project>

@@ -538,6 +538,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Credits.txt" />
     <None Include="LICENSE" />
     <None Include="README.markdown">
       <DeploymentContent>true</DeploymentContent>

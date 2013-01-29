@@ -46,6 +46,12 @@ signals:
 	void CurrentPhaseChanged(int);
 	void CardsToUntap(QList<int>);
 	void CardDrawn(int,CardData);
+	void TimerFinished(int);
+	void TimerStopped(int);
+	void StopTimers();
+	void TimerResumed(int);
+	void StopTurnTimer();
+	void ResumeTurnTimer();
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif
