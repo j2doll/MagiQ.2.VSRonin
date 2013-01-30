@@ -19,6 +19,7 @@ public:
 	MagiQPlayer* GetOwner() const {return Owner;}
 	MagiQPlayer* GetController() const {return Controller;}
 	bool GetTapped() const {return Tapped;}
+	bool GetIsNull() const {return IsNull;}
 	const QString& GetCardName() const {return CardName;}
 	const QList<int>& GetCardColor() const {return CardColor;}
 	const QMap<int,int>& GetCardCost() const {return CardCost;}
@@ -51,6 +52,7 @@ public:
 	void SetOwner(MagiQPlayer* ow=NULL){Owner=ow;}
 	void SetController(MagiQPlayer* ow=NULL){Controller=ow;}
 	void SetTapped(bool a) const {Tapped=a;}
+	void SetIsNull(bool a) {IsNull=a;}
 	void SetCardName(const QString& a){CardName=a;}
 	void SetCardColor(const int& a){CardColor.clear(); if(a>=Constants::CardColor::Colorless && a<=Constants::CardColor::Green) CardColor.append(a);}
 	void SetCardColor(const QList<int>& a){CardColor.clear(); CardColor=a;}
@@ -111,6 +113,7 @@ private:
 	MagiQPlayer* Owner;
 	MagiQPlayer* Controller;
 	mutable bool Tapped;
+	bool IsNull;
 //Card Properties
 	QString CardName;
 	QList<int> CardColor;

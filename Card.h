@@ -72,12 +72,15 @@ private:
 	bool Tapped;
 	QMap<int,int> Counters;
 	bool ShowFlavorText;
+	bool IsNull;
 
 // Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
 	void PrepareUi();
 public:
+	void SetIsNull(bool a) {IsNull=a;}
+	bool GetIsNull() const {return IsNull;}
 	unsigned int GetCardID() const {return CardID;}
 	void SetCardID(unsigned int a) const {CardID=a;}
 	int GetCertifiedCardID() const {return CertifiedCardID;}
@@ -182,6 +185,7 @@ public:
 	void SetHasPT(bool a){HasPT=a;}
 	bool GetCertified() const {return Certified;}
 	void SetCertified(bool a){Certified=a;}
+	CardData ExtractData() const;
 public slots:
 	void UpdateAspect();
 protected:

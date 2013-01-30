@@ -32,7 +32,7 @@ private:
 	QMap<int,QLabel*> GraveyardLabels;
 	QMap<int,QList<CardViewer*>> CardsInHandView;
 	CardViewer* AnimationCard;
-	QList<Card*> CardsInHand;
+	QMap<int,QList<Card*>> CardsInHand;
 	Card* GenericCard;
 	Card* ZoomedCard;
 	QFrame* QuestionFrame;

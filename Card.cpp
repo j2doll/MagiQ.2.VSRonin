@@ -34,6 +34,7 @@ Card::Card(QWidget* parent)
 	,ShowFlavorText(true)
 	,CertifiedCardID(-1)
 	,CardID(0)
+	,IsNull(false)
 {
 	PrepareUi();
 	AvailableEditions.append(Constants::Editions::NONE);
@@ -466,6 +467,7 @@ void Card::AddAvailableEditions(const int& a){
 	}
 }
 Card& Card::operator=(const Card& a){
+	IsNull=a.IsNull;
 	CardName=a.CardName;
 	CardID=a.CardID;
 	CardColor=a.CardColor;
@@ -528,6 +530,7 @@ Card::Card(const Card& a,QWidget* parent):QWidget(parent)
 	,ShowFlavorText(a.ShowFlavorText)
 	,CertifiedCardID(a.CertifiedCardID)
 	,CardID(a.CardID)
+	,IsNull(a.IsNull)
 {
 	PrepareUi();
 	if (HasFlipped==Constants::CardFlipMode::HasFlip){
@@ -564,6 +567,7 @@ Card::Card(const CardData& a,QWidget* parent):QWidget(parent)
 	,CardRarity(a.GetCardRarity())
 	,CertifiedCardID(a.GetCertifiedCardID())
 	,CardID(a.GetCardID())
+	,IsNull(a.GetIsNull())
 	,ShowFlavorText(true)
 {
 	PrepareUi();
@@ -599,3 +603,34 @@ void Card::SetEffects(const QList<Effect*>& a){
 void Card::AddEffect(Effect& a){
 	Effects.append(new Effect(a,this));
 }
+CardData Card::ExtractData() const{
+	CardData Result;
+	Result.SetCardEdition(CardEdition);
+	Result.SetCardPower(CardPower);
+	Result.SetCardToughness(CardToughness);
+	Result.SetCardImage(CardImage);
+	Result.SetHasPT(HasPT);
+	Result.SetCertified(Certified);
+	Result.SetCertifiedCardID(CertifiedCardID);
+	Result.SetCardName(CardName);
+	Result.SetHasFlipped(HasFlipped);
+	Result.SetHasManaCost(HasManaCost);
+	Result.SetCardColor(CardColor);
+	Result.SetCardCost(CardCost);
+	Result.SetCardType(CardType);
+	Result.SetCardSubType(CardSubType);
+	Result.SetAvailableEditions(AvailableEditions);
+	Result.SetAvailableBackgrounds(AvailableBackgrounds);
+	Result.SetAvailableImages(AvailableImages);
+	Result.SetCardBackground(CardBackground);
+	Result.SetCardFlavorText(CardFlavorText);
+	Result.SetCardrarity(CardRarity);
+	Result.SetCertifiedCardID(CertifiedCardID);
+	Result.SetCardID(CardID);
+	Result.SetIsNull(IsNull);
+	if(HasFlipped==Constants::CardFlipMode::HasFlip)
+		Result.SetFlippedCard(&(FlippedCard->ExtractData()));
+	//TODO add effects
+	return Result;
+}
+

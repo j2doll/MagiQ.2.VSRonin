@@ -18,6 +18,7 @@ CardData::CardData()
 	,Owner(NULL)
 	,Controller(NULL)
 	,Tapped(false)
+	,IsNull(false)
 {}
 CardData::CardData(const CardData& a)
 	:CardEdition(a.CardEdition)
@@ -45,6 +46,7 @@ CardData::CardData(const CardData& a)
 	,Owner(a.Owner)
 	,Controller(a.Controller)
 	,Tapped(a.Tapped)
+	,IsNull(a.IsNull)
 {
 	if(HasFlipped==Constants::CardFlipMode::HasFlip){
 		SetFlippedCard(new CardData(*(a.FlippedCard)));
@@ -54,6 +56,7 @@ CardData::CardData(const CardData& a)
 const CardData& CardData::operator=(const CardData& a){
 	CardEdition=(a.CardEdition);
 	CardID=a.CardID;
+	IsNull=a.IsNull;
 	Owner=(a.Owner);
 	Controller=(a.Controller);
 	Tapped=a.Tapped;
@@ -84,6 +87,7 @@ const CardData& CardData::operator=(const CardData& a){
 	return *this;
 }
 bool CardData::operator<(const CardData& a) const{
+	if (a.GetIsNull()) return !IsNull;
 	switch(SortingMethod){
 	case ByName:
 		return CardName<a.CardName;
