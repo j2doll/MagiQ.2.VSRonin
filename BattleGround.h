@@ -82,6 +82,8 @@ public slots:
 	void StopTimer();
 	void StopTurnTimer();
 	void ResumeTurnTimer();
+	void ResumeStackTimer();
+	void EffectAddedToStack(quint32 crd,EffectData eff);
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return Players.size();}

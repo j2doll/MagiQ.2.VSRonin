@@ -1,6 +1,6 @@
 #include "LanServer.h"
+#include "EffectsConstants.h"
 #include <QTime>
-#include <QTimer>
 LanServer::LanServer(QObject* parent)
 	:QTcpServer(parent)
 	,PortToListen(Comunications::DefaultTCPport)
@@ -12,12 +12,14 @@ LanServer::LanServer(QObject* parent)
 	,GameStarted(false)
 	,TurnNumber(-1)
 	,CardIDCounter(0)
+	,EffectsIDCounter(0)
 	,PhaseTimeLimit(3000)
 	,ResponseTimeLimit(5000)
 	,TurnTimeLimit(300000)
 	,Precombat(true)
 	,WhoStoppedTheTimer(-1)
 	,PhaseTimerRunning(false)
+	,StackTimerRunning(false)
 {
 #ifdef _DEBUG
 	qsrand(2);
@@ -85,6 +87,7 @@ void LanServer::DeckSetUp(int socID,CardDeck deck){
 	if (deck.Legality().contains(DecksFormat)){
 		PlayersList[socID]->SetLibrary(deck);
 		for (QList<CardData>::iterator i=PlayersList[socID]->GetLibrary().begin();i!=PlayersList[socID]->GetLibrary().end();i++){
+			for (int j=0;j<i->GetEffects().size();j++) i->SetEffectID(j,++EffectsIDCounter);
 			i->SetCardID(++CardIDCounter);
 			i->SetOwner(PlayersList[socID]);
 		}
@@ -171,14 +174,13 @@ void LanServer::DrawStep(){
 	SetCurrentPhase(Constants::Phases::Draw);
 	NextPhase=Constants::Phases::PreCombatMain;
 	int WhosTurn=PlayersOrder.value(TurnNumber%PlayersOrder.size());
-	////////////////////////////////////////////////////////////////////////
-	//This should go to the stack
-	////////////////////////////////////////////////////////////////////////
 	//if (TurnNumber!=0){
-		CardData CardToSend(PlayersList.value(WhosTurn)->DrawCard());
-		emit CardDrawn(WhosTurn,CardToSend);
+		EffectData* DrawEffect=new EffectData;
+		DrawEffect->SetSelectedTargets(EffectsConstants::Targets::Player,PlayersList.value(WhosTurn)->GetPlayerID());
+		DrawEffect->SetVariableValues(1);
+		DrawEffect->SetEffectBody(EffectsConstants::Effects::DrawCards);
+		AddToStack(DrawEffect);
 	//}
-	////////////////////////////////////////////////////////////////////////
 }
 void LanServer::MainStep(){
 	PhaseTimerRunning=false;
@@ -193,25 +195,37 @@ void LanServer::MainStep(){
 }
 void LanServer::TimerFinished(int SocID){
 	MagiQPlayer* TempPoint=PlayersList.value(SocID,NULL);
-	if (!TempPoint) return;
+	if (!TempPoint || (!PhaseTimerRunning && !StackTimerRunning)) return;
 	TempPoint->SetHasFinishedTimer(true);
 	if (EverybodyFinishedTimer()){
 		foreach(MagiQPlayer* plr,PlayersList)
 			plr->SetHasFinishedTimer(false);
-		PhaseTimerRunning=false;
-		switch(NextPhase){
+		if(StackTimerRunning){
+			ResolveEffect(EffectsStack.pop());
+			if (!EffectsStack.isEmpty()){
+				emit ResumeStackTimer();
+			}
+			StackTimerRunning=!EffectsStack.isEmpty();
+		}
+		else if (PhaseTimerRunning){
+			PhaseTimerRunning=false;
+			switch(NextPhase){
 			case Constants::Phases::Upkeep: return UpkeepStep();
 			case Constants::Phases::Draw: return DrawStep();
 			case Constants::Phases::PreCombatMain:
 			case Constants::Phases::PostCombatMain:	return MainStep();
 			case Constants::Phases::Untap:
 			default: return NextTurn();
+			}
 		}
 	}
 }
 void LanServer::TimerStopped(int SocID){
-	if (!PlayersOrder.contains(SocID) || WhoStoppedTheTimer!=-1 || !PhaseTimerRunning) return;
-	PhaseTimerRunning=false;
+	if (!PlayersOrder.contains(SocID) || WhoStoppedTheTimer!=-1) return;
+	TimerTypeStopped=PhaseTimerRunning;
+	if (PhaseTimerRunning) PhaseTimerRunning=false;
+	else if (StackTimerRunning) StackTimerRunning=false;
+	else return;
 	emit StopTimers();
 	if (SocID!=PlayersOrder.value(TurnNumber%PlayersOrder.size()))
 		emit StopTurnTimer();
@@ -220,11 +234,38 @@ void LanServer::TimerStopped(int SocID){
 		plr->SetHasFinishedTimer(false);
 }
 void LanServer::ResumeTimer(int SocID){
-	if (WhoStoppedTheTimer!=SocID || WhoStoppedTheTimer==-1 || PhaseTimerRunning) return;
-	PhaseTimerRunning=true;
+	if (WhoStoppedTheTimer!=SocID || WhoStoppedTheTimer==-1 || PhaseTimerRunning || StackTimerRunning) return;
+	PhaseTimerRunning=TimerTypeStopped;
+	StackTimerRunning=!TimerTypeStopped;
 	if (WhoStoppedTheTimer!=PlayersOrder.value(TurnNumber%PlayersOrder.size())) emit ResumeTurnTimer();
 	WhoStoppedTheTimer=-1;
-	SetCurrentPhase(CurrentPhase);
+	if(PhaseTimerRunning) SetCurrentPhase(CurrentPhase);
+	else emit ResumeStackTimer();
+}
+void LanServer::AddToStack(EffectData* eff){
+	foreach(EffectData* effp,EffectsStack){
+		if (effp->GetEffectID()==eff->GetEffectID()) return;
+	}
+	EffectsStack.push(eff);
+	StackTimerRunning=true;
+	CardData* tmpcrd=EffectsStack.top()->GetCardAttached();
+	emit EffectAddedToStack(tmpcrd ? tmpcrd->GetCardID():0,*(EffectsStack.top()));
+}
+void LanServer::ResolveEffect(EffectData* eff){
+	if (!eff) return;
+	//TODO Check if countered
+	switch(eff->GetEffectBody()){
+	case EffectsConstants::Effects::DrawCards:
+		const QList<int> TmpList=eff->GetSelectedTargets().values(EffectsConstants::Targets::Player);
+		for(int drw=0;drw<TmpList.size();drw++){
+			for (int j=0;j<eff->GetVariableValues().value(drw,0);j++){
+				CardData CardToSend=PlayersList.value(TmpList.at(drw))->DrawCard();
+				emit CardDrawn(TmpList.at(drw),CardToSend);
+			}
+		}
+		break;
+	}
+	if (!eff->GetCardAttached()) delete eff;
 }
 void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	if (GameStarted) return;
@@ -280,6 +321,8 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(this,SIGNAL(StopTimers()),TempPoint,SIGNAL(StopTimers()));
 	connect(this,SIGNAL(StopTurnTimer()),TempPoint,SIGNAL(StopTurnTimer()));
 	connect(this,SIGNAL(ResumeTurnTimer()),TempPoint,SIGNAL(ResumeTurnTimer()));
+	connect(this,SIGNAL(ResumeStackTimer()),TempPoint,SIGNAL(ResumeStackTimer()));
+	connect(this,SIGNAL(EffectAddedToStack(quint32,EffectData)),TempPoint,SIGNAL(EffectAddedToStack(quint32,EffectData)));
 	emit YourNameColor(a,adjName,PlayPoint->GetPlayerColor());
 	SendServerInfos();
 }

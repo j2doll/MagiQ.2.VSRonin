@@ -32,8 +32,10 @@ namespace Comunications{
 		,TimerResumed
 		,StopTurnTimer
 		,ResumeTurnTimer
+		,ResumeStackTimer
 		,StopTimers
 		,ResumeTimers
+		,EffectAddedStack
 		,ChatMessage
 	};}
 }

@@ -45,11 +45,13 @@ void LanClient::IncomingTransmission(){
 	QString strings;
 	QColor colors;
 	qint32 int1,int2,int3,int4,int5;
+	quint32 UnsInt1;
 	QList<int> intlists;
 	QList<CardData> cardlists;
 	QMap<int,QString> stringIntMap;
 	QMap<int,QPixmap> pixmapIntMap;
 	CardData card;
+	EffectData effect;
 	forever {
 		if (nextBlockSize == 0) {
 			if (tcpSocket->bytesAvailable() < sizeof(quint32))
@@ -156,6 +158,14 @@ void LanClient::IncomingTransmission(){
 		}
 		else if(RequestType==Comunications::TransmissionType::ResumeTurnTimer){
 			emit ResumeTurnTimer();
+		}
+		else if(RequestType==Comunications::TransmissionType::ResumeStackTimer){
+			emit ResumeStackTimer();
+		}
+		else if(RequestType==Comunications::TransmissionType::EffectAddedStack){
+			incom >> UnsInt1;
+			incom >> effect;
+			emit EffectAddedToStack(UnsInt1,effect);
 		}
 ////////////////////////////////////////////////////////////////////////////
 

@@ -103,6 +103,8 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(StopTimer()),board,SLOT(StopTimer()));
 	connect(Client,SIGNAL(StopTurnTimer()),board,SLOT(StopTurnTimer()));
 	connect(Client,SIGNAL(ResumeTurnTimer()),board,SLOT(ResumeTurnTimer()));
+	connect(Client,SIGNAL(ResumeStackTimer()),board,SLOT(ResumeStackTimer()));
+	connect(Client,SIGNAL(EffectAddedToStack(quint32,EffectData)),board,SLOT(EffectAddedToStack(quint32,EffectData)));
 
 	//Test Connections
 	connect(board,SIGNAL(KeepHand()),WhoCares,SLOT(SendHandAccepted()));

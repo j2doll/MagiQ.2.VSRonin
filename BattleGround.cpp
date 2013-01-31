@@ -82,10 +82,27 @@ void BattleGround::TurnTimeUpdate(){
 	/*TODO if(CurrentTurnTime>=TurnTimeLimit)*/
 }
 void BattleGround::PhaseTimeUpdate(){
-	CurrentPhaseTime+=TimerUpdateIntervall;
-	PhaseDisp->SetPhaseTime(CurrentPhaseTime);
-	if(CurrentPhaseTime>=PhaseTimeLimit)
-		emit TimerFinished();
+	if (ResponseTimer->isActive()){
+		CurrentResponseTime+=TimerUpdateIntervall;
+		PhaseDisp->SetPhaseTime(CurrentResponseTime);
+		if(CurrentResponseTime>=ResponseTimeLimit){
+			ResponseTimer->stop();
+			CurrentPhaseTime=0;
+			PhaseDisp->SetStackTimerActivated(false);
+			PhaseDisp->SetPhaseTimeLimit(PhaseTimeLimit);
+			disconnect(ResponseTimer,SIGNAL(timeout()),this,SLOT(PhaseTimeUpdate()));
+			connect(PhaseTimer,SIGNAL(timeout()),this,SLOT(PhaseTimeUpdate()));
+			emit TimerFinished();
+		}
+	}
+	else{
+		CurrentPhaseTime+=TimerUpdateIntervall;
+		PhaseDisp->SetPhaseTime(CurrentPhaseTime);
+		if(CurrentPhaseTime>=PhaseTimeLimit){
+			PhaseTimer->stop();
+			emit TimerFinished();
+		}
+	}
 }
 void BattleGround::resizeEvent(QResizeEvent* event){
 	if (!isVisible()) return;
@@ -346,6 +363,18 @@ void BattleGround::SetCurrentPhase(int ph){
 		PhaseTimer->start();
 	else PhaseDisp->SetPhaseTime();
 }
+void BattleGround::ResumeStackTimer(){
+	disconnect(PhaseTimer,SIGNAL(timeout()),this,SLOT(PhaseTimeUpdate()));
+	connect(ResponseTimer,SIGNAL(timeout()),this,SLOT(PhaseTimeUpdate()));
+	CurrentResponseTime=0;
+	PhaseDisp->SetStackTimerActivated(true);
+	PhaseDisp->SetPhaseTimeLimit(ResponseTimeLimit);
+	ResponseTimer->start();
+}
+void BattleGround::EffectAddedToStack(quint32 crd,EffectData eff){
+	//TODO Visualize it
+	ResumeStackTimer();
+}
 void BattleGround::DrawCard(CardData crd){
 	Players[-1]->AddHand(crd);
 	CardsInHand[-1].append(new Card(crd,this));
@@ -389,6 +418,7 @@ void BattleGround::AnimateDraw(int whos){
 	AnimDraw->start(QAbstractAnimation::DeleteWhenStopped);
 }
 void BattleGround::StopTimer(){
+	ResponseTimer->stop();
 	PhaseTimer->stop();
 	PhaseDisp->PausePhaseTimer();
 }

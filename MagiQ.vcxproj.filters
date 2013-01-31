@@ -325,14 +325,14 @@
     <ClInclude Include="CardData.h">
       <Filter>Header Files\Card</Filter>
     </ClInclude>
-    <ClInclude Include="EffectData.h">
-      <Filter>Header Files\Card</Filter>
-    </ClInclude>
     <ClInclude Include="ComunicationConstants.h">
       <Filter>Header Files\Servers and Clients</Filter>
     </ClInclude>
     <ClInclude Include="HandLayout.h">
       <Filter>Header Files\Battlefield</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectData.h">
+      <Filter>Header Files\Card</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

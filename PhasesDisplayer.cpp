@@ -10,6 +10,7 @@
 PhasesDisplayer::PhasesDisplayer(QWidget* parent)
 	:QWidget(parent)
 	,CurrentPhase(Constants::Phases::Untap)
+	,StackTimerActivated(false)
 {
 	Background=new QFrame(this);
 	Background->setObjectName("Background");
@@ -99,3 +100,4 @@ void PhasesDisplayer::SetTurnTime(int a){TurnTimer->setValue(TurnTimer->maximum(
 void PhasesDisplayer::SetPhaseTime(){PausedLabel->hide(); PhaseTimer->setValue(0);}
 void PhasesDisplayer::SetTurnTime(){TurnTimer->setValue(0);}
 void PhasesDisplayer::PausePhaseTimer(){PausedLabel->show(); PhaseTimer->setValue(0);}
+void PhasesDisplayer::SetStackTimerActivated(bool a){StackTimerActivated=a; setStyleSheet(StyleSheets::PhasesDisplayerCSS);}

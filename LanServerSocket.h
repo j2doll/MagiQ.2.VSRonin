@@ -47,6 +47,8 @@ public slots:
 	void SendStopTimers();
 	void SendStopTurnTimer();
 	void SendResumeTurnTimer();
+	void SendResumeStackTimer();
+	void SendEffectAddedToStack(quint32 crd,const EffectData& eff);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);

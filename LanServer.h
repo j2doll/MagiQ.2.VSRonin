@@ -8,11 +8,13 @@
 #include "ComunicationConstants.h"
 #include "CostantsDefinition.h"
 #include "MagiQPlayer.h"
+#include <QStack>
 class QTimer;
 class LanServer : public QTcpServer{
 	Q_OBJECT
 private:
 	unsigned int CardIDCounter;
+	unsigned int EffectsIDCounter;
 	int TurnNumber;
 	bool GameStarted;
 	int PortToListen;
@@ -37,6 +39,11 @@ private:
 	int TurnTimeLimit;
 	int WhoStoppedTheTimer;
 	bool PhaseTimerRunning;
+	bool StackTimerRunning;
+	bool TimerTypeStopped; //true=Phase, false=Stack
+	QStack<EffectData*> EffectsStack;
+	void AddToStack(EffectData* eff);
+	void ResolveEffect(EffectData* eff);
 protected:
 	void incomingConnection(int socketDescriptor);
 public:
@@ -77,6 +84,8 @@ signals:
 	void ResumeTimers();
 	void StopTurnTimer();
 	void ResumeTurnTimer();
+	void ResumeStackTimer();
+	void EffectAddedToStack(quint32,const EffectData&);
 public slots:
 	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
 private slots:

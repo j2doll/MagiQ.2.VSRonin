@@ -63,6 +63,8 @@ signals:
 	void StopTimer();
 	void StopTurnTimer();
 	void ResumeTurnTimer();
+	void ResumeStackTimer();
+	void EffectAddedToStack(quint32,EffectData);
 private slots:
 	void IncomingTransmission();
 public slots:

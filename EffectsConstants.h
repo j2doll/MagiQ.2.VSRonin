@@ -103,6 +103,7 @@ namespace EffectsConstants{
 			,AddBToManaPool
 			,AddRToManaPool
 			,AddGToManaPool
+			,DrawCards
 			,END
 		};
 	}
@@ -112,6 +113,7 @@ namespace EffectsConstants{
 		,QObject::tr("Add Black to your mana pool")
 		,QObject::tr("Add Red to your mana pool")
 		,QObject::tr("Add Green to your mana pool")
+		,QObject::tr("Draw %1 Card(s)")
 	};
 }
 namespace Symbols{

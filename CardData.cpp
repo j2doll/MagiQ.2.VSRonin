@@ -269,3 +269,13 @@ CardData CardData::ToNoImage() const {
 	Result.SetImagesTitles();
 	return Result;
 }
+void CardData::SetEffectID(int index,int ID){
+	if (index<0 || index>Effects.size()) return;
+	Effects[index].SetEffectID(ID);
+}
+void CardData::SetEffects(const QList<EffectData>& a){
+	Effects.clear(); 
+	Effects=a;
+	for (QList<EffectData>::iterator i=Effects.begin();i!=Effects.end();i++)
+		i->SetCardAttached(this);
+}

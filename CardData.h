@@ -99,14 +99,15 @@ public:
 	void SetHasFlipped(int a){if (a>=Constants::CardFlipMode::AllreadyFlipped && a<=Constants::CardFlipMode::HasFlip) HasFlipped=a;};
 	void SetFlippedCard(CardData* a){FlippedCard.reset(a);}
 	void SetEffects(){Effects.clear();}
-	void SetEffects(const QList<EffectData>& a){Effects.clear(); Effects=a;}
+	void SetEffects(const QList<EffectData>& a);
 	void SetEffects(const EffectData& a){SetEffects(); AddEffect(a);}
-	void AddEffect(const EffectData& a){Effects.append(a);}
-	void SetSortingMethod(int a) const {if(a>=Random && a<=ByColor) SortingMethod=a;}
+	void AddEffect(const EffectData& a){Effects.append(a); Effects.last().SetCardAttached(this);}
+	void SetEffectID(int index,int ID);
 	
 	bool operator<(const CardData& a) const;
 	const CardData& operator=(const CardData& a);
 	CardData ToNoImage() const;
+	void SetSortingMethod(int a) const {if(a>=Random && a<=ByColor) SortingMethod=a;}
 private:
 //Game Properties
 	unsigned int CardID;

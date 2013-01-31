@@ -52,6 +52,8 @@ signals:
 	void TimerResumed(int);
 	void StopTurnTimer();
 	void ResumeTurnTimer();
+	void ResumeStackTimer();
+	void EffectAddedToStack(quint32,const EffectData&);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif
