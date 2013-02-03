@@ -84,3 +84,8 @@ void CardViewer::SetShadable(bool a){
 	if (a) Shader->show();
 	else Shader->hide();
 }
+void CardViewer::mouseDoubleClickEvent(QMouseEvent* e){
+	if (e->button() == Qt::LeftButton){
+		emit DoubleClicked();
+	}
+}

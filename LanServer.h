@@ -45,6 +45,10 @@ private:
 	QStack<EffectData*> EffectsStack;
 	void AddToStack(EffectData* eff);
 	void ResolveEffect(EffectData* eff);
+	void CheckPlayableCards();
+	QMap<int,int> ManaAvailable(int PlayerCode) const;
+	bool CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai);
+	bool CanPlayCard(const CardData& crd, int PlayerCode){return CanPlayCard(crd,PlayerCode,ManaAvailable(PlayerCode));}
 protected:
 	void incomingConnection(int socketDescriptor);
 public:
@@ -88,8 +92,9 @@ signals:
 	void ResumeStackTimer();
 	void EffectAddedToStack(quint32,const EffectData&);
 	void EffectResolved();
+	void PlayableCards(int,QList<int>);
 public slots:
-	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
+	void StartListening();
 private slots:
 	void EraseThread(int a);
 	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersList.size());}

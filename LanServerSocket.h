@@ -50,6 +50,7 @@ public slots:
 	void SendResumeStackTimer();
 	void SendEffectAddedToStack(quint32 crd,const EffectData& eff);
 	void SendEffectResolved();
+	void SendPlayableCards(int socID,QList<int> IDs);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);

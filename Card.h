@@ -73,12 +73,15 @@ private:
 	QMap<int,int> Counters;
 	bool ShowFlavorText;
 	bool IsNull;
+	bool Activable;
 
 // Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
 	void PrepareUi();
 public:
+	bool GetActivable() const {return Activable;}
+	void SetActivable(bool a){Activable=a;}
 	void SetIsNull(bool a) {IsNull=a;}
 	bool GetIsNull() const {return IsNull;}
 	unsigned int GetCardID() const {return CardID;}

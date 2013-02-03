@@ -37,6 +37,7 @@ namespace Comunications{
 		,ResumeTimers
 		,EffectAddedStack
 		,EffectResolved
+		,PlayableCards
 		,ChatMessage
 	};}
 }

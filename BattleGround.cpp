@@ -187,6 +187,7 @@ void BattleGround::UpdateAspect(){
 					CardsInHandView[index.key()].value(j,NULL)->SetCardToDisplay(CardsInHand[index.key()].value(j));
 					CardsInHandView[index.key()].value(j,NULL)->SetCanBeZoom(true);
 					CardsInHandView[index.key()].value(j,NULL)->SetShadable(true);
+					CardsInHandView[index.key()].value(j,NULL)->SetCanBeClick(CardsInHand[index.key()].value(j,NULL)->GetActivable());
 				}
 				else{
 					CardsInHandView[index.key()].value(j)->SetCardToDisplay(GenericCard);
@@ -424,3 +425,9 @@ void BattleGround::StopTimer(){
 }
 void BattleGround::StopTurnTimer(){TurnTimer->stop();}
 void BattleGround::ResumeTurnTimer(){TurnTimer->start();}
+void BattleGround::SetPlayableCards(QList<int> IDs){
+	for(QList<Card*>::iterator i=AllCards.begin();i!=AllCards.end();i++){
+		(*i)->SetActivable(IDs.contains((*i)->GetCardID()));
+	}
+	UpdateAspect();
+}

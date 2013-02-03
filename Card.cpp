@@ -35,6 +35,7 @@ Card::Card(QWidget* parent)
 	,CertifiedCardID(-1)
 	,CardID(0)
 	,IsNull(false)
+	,Activable(false)
 {
 	PrepareUi();
 	AvailableEditions.append(Constants::Editions::NONE);
@@ -467,6 +468,7 @@ void Card::AddAvailableEditions(const int& a){
 	}
 }
 Card& Card::operator=(const Card& a){
+	Activable=a.Activable;
 	IsNull=a.IsNull;
 	CardName=a.CardName;
 	CardID=a.CardID;
@@ -531,6 +533,7 @@ Card::Card(const Card& a,QWidget* parent):QWidget(parent)
 	,CertifiedCardID(a.CertifiedCardID)
 	,CardID(a.CardID)
 	,IsNull(a.IsNull)
+	,Activable(a.Activable)
 {
 	PrepareUi();
 	if (HasFlipped==Constants::CardFlipMode::HasFlip){
@@ -568,6 +571,7 @@ Card::Card(const CardData& a,QWidget* parent):QWidget(parent)
 	,CertifiedCardID(a.GetCertifiedCardID())
 	,CardID(a.GetCardID())
 	,IsNull(a.GetIsNull())
+	,Activable(a.GetActivable())
 	,ShowFlavorText(true)
 {
 	PrepareUi();
@@ -628,6 +632,7 @@ CardData Card::ExtractData() const{
 	Result.SetCertifiedCardID(CertifiedCardID);
 	Result.SetCardID(CardID);
 	Result.SetIsNull(IsNull);
+	Result.SetActivable(Activable);
 	if(HasFlipped==Constants::CardFlipMode::HasFlip)
 		Result.SetFlippedCard(&(FlippedCard->ExtractData()));
 	//TODO add effects

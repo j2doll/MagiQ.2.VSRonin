@@ -33,6 +33,7 @@ void LanClient::SetHostIP(const QString& a){
 QString LanClient::GetSocketErrorString() const{return tcpSocket->errorString();}
 void LanClient::disconnectFromHost(){tcpSocket->disconnectFromHost();}
 void LanClient::ConnectToHost(){
+	if(tcpSocket->state()==QAbstractSocket::ConnectedState) return;
 	tcpSocket->connectToHost(HostIP,ListenPort);
 #ifdef USE_SSL
 	tcpSocket->startClientEncryption();
@@ -169,6 +170,10 @@ void LanClient::IncomingTransmission(){
 		}
 		else if(RequestType==Comunications::TransmissionType::EffectResolved){
 			emit EffectResolved();
+		}
+		else if(RequestType==Comunications::TransmissionType::PlayableCards){
+			incom >> intlists;
+			emit PlayableCards(intlists);
 		}
 ////////////////////////////////////////////////////////////////////////////
 

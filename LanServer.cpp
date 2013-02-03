@@ -29,6 +29,11 @@ LanServer::LanServer(QObject* parent)
 	qsrand(QTime::currentTime().msec());
 #endif
 }
+void LanServer::StartListening(){
+	if (isListening()) return;
+	if (!listen(QHostAddress::Any, PortToListen))
+		emit CantBindPort();
+}
 void LanServer::incomingConnection(int socketDescriptor){
 	if (GameStarted) return;
 	if (clients.value(socketDescriptor,NULL))
@@ -194,6 +199,7 @@ void LanServer::MainStep(){
 		SetCurrentPhase(Constants::Phases::PostCombatMain);
 		NextPhase=Constants::Phases::EndOfTurn;
 	}
+	CheckPlayableCards();
 }
 void LanServer::TimerFinished(int SocID){
 	MagiQPlayer* TempPoint=PlayersList.value(SocID,NULL);
@@ -246,6 +252,65 @@ void LanServer::ResumeTimer(int SocID){
 	TimerTypeStopped=NoneT;
 	if(PhaseTimerRunning) SetCurrentPhase(CurrentPhase);
 	if(StackTimerRunning) emit ResumeStackTimer();
+}
+QMap<int,int> LanServer::ManaAvailable(int PlayerCode) const{
+	if(!PlayersList.contains(PlayerCode)) return QMap<int,int>();
+	QMap<int,int> Result(PlayersList.value(PlayerCode)->GetManaPool());
+	for(QList<CardData>::const_iterator crd=PlayersList.value(PlayerCode)->GetControlledCards().constBegin();crd!=PlayersList.value(PlayerCode)->GetControlledCards().constEnd();crd++){
+		if(crd->GetSummoningSickness()) continue;
+		for(QList<EffectData>::const_iterator eff=crd->GetEffects().constBegin();eff!=crd->GetEffects().constEnd();eff++){
+			if(!eff->GetManaEffect()) continue;
+			switch(eff->GetEffectBody()){
+			case EffectsConstants::Effects::AddWToManaPool: Result[Constants::ManaCosts::W]+=eff->GetVariableValues().at(0); break;
+			case EffectsConstants::Effects::AddUToManaPool: Result[Constants::ManaCosts::U]+=eff->GetVariableValues().at(0); break;
+			case EffectsConstants::Effects::AddBToManaPool: Result[Constants::ManaCosts::B]+=eff->GetVariableValues().at(0); break;
+			case EffectsConstants::Effects::AddRToManaPool: Result[Constants::ManaCosts::R]+=eff->GetVariableValues().at(0); break;
+			case EffectsConstants::Effects::AddGToManaPool: Result[Constants::ManaCosts::G]+=eff->GetVariableValues().at(0); break;
+				//TODO Add the others
+			}
+		}
+	}
+}
+bool LanServer::CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai){
+	//TODO implement
+	return false;
+}
+void LanServer::CheckPlayableCards(){
+	QList<int> PlayableCardsIDs;
+	QMap<int,int> AvaiMana;
+	foreach(int plid,PlayersOrder){
+		PlayableCardsIDs.clear();
+		AvaiMana.clear();
+		AvaiMana=ManaAvailable(plid);
+		if(plid==PlayersOrder.value(TurnNumber%PlayersOrder.size())){ //Player whos current turn
+			switch(CurrentPhase){
+			case Constants::Phases::TurnEnd: break;
+			case Constants::Phases::PreCombatMain:
+			case Constants::Phases::PostCombatMain: 
+				//Check Hand
+				for(QList<CardData>::const_iterator crd=PlayersList.value(plid)->GetHand().constBegin();crd!=PlayersList.value(plid)->GetHand().constEnd();crd++){
+					if (crd->GetCardType().contains(Constants::CardTypes::Land)){
+						if(PlayersList.value(plid)->GetCanPlayMana()) PlayableCardsIDs.append(crd->GetCardID());
+					}
+					else{
+						if(CanPlayCard(*crd,plid,AvaiMana)) PlayableCardsIDs.append(crd->GetCardID());
+					}
+				}
+				break;
+			case Constants::Phases::DeclareAttackers:
+			case Constants::Phases::DeclareBlockers:
+				if(!(PhaseTimerRunning || TimerTypeStopped==PhaseT || TimerTypeStopped==BothT)) break;
+			default:
+				for(QList<CardData>::const_iterator crd=PlayersList.value(plid)->GetHand().constBegin();crd!=PlayersList.value(plid)->GetHand().constEnd();crd++){
+					if (crd->GetCardType().contains(Constants::CardTypes::Instant)){
+						//TODO Flash
+						if(CanPlayCard(*crd,plid,AvaiMana)) PlayableCardsIDs.append(crd->GetCardID());
+					}
+				}
+			}
+		}
+		emit PlayableCards(plid,PlayableCardsIDs);
+	}
 }
 void LanServer::AddToStack(EffectData* eff){
 	foreach(EffectData* effp,EffectsStack){
@@ -330,6 +395,7 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(this,SIGNAL(ResumeStackTimer()),TempPoint,SIGNAL(ResumeStackTimer()));
 	connect(this,SIGNAL(EffectAddedToStack(quint32,const EffectData&)),TempPoint,SIGNAL(EffectAddedToStack(quint32,const EffectData&)));
 	connect(this,SIGNAL(EffectResolved()),TempPoint,SIGNAL(EffectResolved()));
+	connect(this,SIGNAL(PlayableCards(int,QList<int>)),TempPoint,SIGNAL(PlayableCards(int,QList<int>)));
 	emit YourNameColor(a,adjName,PlayPoint->GetPlayerColor());
 	SendServerInfos();
 }

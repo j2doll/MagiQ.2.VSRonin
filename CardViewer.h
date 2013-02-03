@@ -37,6 +37,7 @@ protected:
 	void enterEvent (QEvent* event){emit GainFocus();}
 	void leaveEvent (QEvent* event){emit LeftFocus();}
 	void mousePressEvent(QMouseEvent* event);
+	void mouseDoubleClickEvent(QMouseEvent* e);
 	void resizeEvent(QResizeEvent* event);
 public slots:
 	void UpdateAspect();
@@ -45,5 +46,6 @@ signals:
 	void LeftFocus();
 	void GainFocus();
 	void RequireZoom(Card*);
+	void DoubleClicked();
 };
 #endif

@@ -55,6 +55,7 @@ signals:
 	void ResumeStackTimer();
 	void EffectAddedToStack(quint32,const EffectData&);
 	void EffectResolved();
+	void PlayableCards(int,QList<int>);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

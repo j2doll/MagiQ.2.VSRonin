@@ -84,6 +84,7 @@ public slots:
 	void ResumeTurnTimer();
 	void ResumeStackTimer();
 	void EffectAddedToStack(quint32 crd,EffectData eff);
+	void SetPlayableCards(QList<int> IDs);
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return Players.size();}
