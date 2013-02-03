@@ -86,6 +86,7 @@ signals:
 	void ResumeTurnTimer();
 	void ResumeStackTimer();
 	void EffectAddedToStack(quint32,const EffectData&);
+	void EffectResolved();
 public slots:
 	void StartListening(){if (!listen(QHostAddress::Any, PortToListen))emit CantBindPort();}
 private slots:

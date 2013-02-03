@@ -41,4 +41,5 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(this,SIGNAL(ResumeTurnTimer()),tcpSocket,SLOT(SendResumeTurnTimer()));
 	connect(this,SIGNAL(ResumeStackTimer()),tcpSocket,SLOT(SendResumeStackTimer()));
 	connect(this,SIGNAL(EffectAddedToStack(quint32,const EffectData&)),tcpSocket,SLOT(SendEffectAddedToStack(quint32,const EffectData&)));
+	connect(this,SIGNAL(EffectResolved()),tcpSocket,SLOT(SendEffectResolved()));
 }

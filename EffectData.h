@@ -45,6 +45,7 @@ public:
 	void SetSelectedTargets(const QMultiMap<int,int>& a){SelectedTargets.clear(); SelectedTargets=a;}
 	void AddSelectedTarget(int key, int val){SelectedTargets.insert(key,val);}
 	void ReplaceSelectedTarget(int key, int val){SelectedTargets.replace(key,val);}
+	void ReplaceSpecificSelectedTarget(int key, int oldval, int newval);
 	void SetSelectedTargets(int key, int val){SetSelectedTargets(); AddSelectedTarget(key,val);}
 	void SetTriggers(const QList<int>& a){Triggers.clear(); Triggers=a;}
 	void SetTriggers(){Triggers.clear();}

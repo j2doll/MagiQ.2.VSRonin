@@ -36,6 +36,7 @@ namespace Comunications{
 		,StopTimers
 		,ResumeTimers
 		,EffectAddedStack
+		,EffectResolved
 		,ChatMessage
 	};}
 }

@@ -295,10 +295,23 @@ void LanServerSocket::SendResumeStackTimer(){
 	write(block);
 }
 void LanServerSocket::SendEffectAddedToStack(quint32 crd,const EffectData& eff){
+	EffectData EffToSend(eff);
+	if (EffToSend.GetSelectedTargets().contains(EffectsConstants::Targets::Player)){
+		EffToSend.ReplaceSpecificSelectedTarget(EffectsConstants::Targets::Player,SocketID,-1);
+	}
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
-	out << quint32(0) << quint32(Comunications::TransmissionType::EffectAddedStack) << crd << eff;
+	out << quint32(0) << quint32(Comunications::TransmissionType::EffectAddedStack) << crd << EffToSend;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendEffectResolved(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::EffectResolved);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);

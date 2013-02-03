@@ -308,6 +308,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PhasesDisplayer.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="StackDisplayer.cpp">
+      <Filter>Source Files\BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_StackDisplayer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_StackDisplayer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -412,6 +421,9 @@
       <Filter>Header Files\Utility Widgets</Filter>
     </CustomBuild>
     <CustomBuild Include="PhasesDisplayer.h">
+      <Filter>Header Files\Battlefield</Filter>
+    </CustomBuild>
+    <CustomBuild Include="StackDisplayer.h">
       <Filter>Header Files\Battlefield</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include "BattleGround.h"
 #include "ChatWidget.h"
 #include "CardData.h"
+#include "StackDisplayer.h"
 #include <QList>
 class TestWidget : public QWidget{
 	Q_OBJECT
@@ -19,6 +20,8 @@ private:
 	LanClient* Client;
 	ChatWidget* chat;
 	BattleGround* board;
+	QFrame* BattleFrame;
+	StackDispalyer* StackDisp;
 public:
 	TestWidget(QWidget* parent=0);
 };

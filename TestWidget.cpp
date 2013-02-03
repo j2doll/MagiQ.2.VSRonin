@@ -7,8 +7,17 @@ TestWidget::TestWidget(QWidget* parent)
 	Server->StartListening();
 	Client=new LanClient(this);
 	LanClient* WhoCares=new LanClient(this);
-	board=new BattleGround;
+
+	BattleFrame=new QFrame;
+	QHBoxLayout* BattleFrameLay=new QHBoxLayout(BattleFrame);
+	BattleFrameLay->setMargin(0);
+	BattleFrameLay->setSpacing(0);
+	board=new BattleGround(BattleFrame);
 	board->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	BattleFrameLay->addWidget(board);
+	StackDisp=new StackDispalyer(BattleFrame);
+	BattleFrameLay->addWidget(StackDisp);
+
 
 	CardData Foresta;
 	Foresta.SetCardName("Forest");
@@ -82,7 +91,6 @@ TestWidget::TestWidget(QWidget* parent)
 
 	//BattleGroundConnection
 	connect(Client,SIGNAL(PlayOrder(QList<int>)),board,SLOT(SetPlayersOrder(QList<int>)));
-	connect(Client,SIGNAL(PlayOrder(QList<int>)),board,SLOT(show()));
 	connect(Client,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)),board,SLOT(SetPlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)));
 	connect(Client,SIGNAL(MyHand(QList<CardData>)),board,SLOT(SetMyHand(QList<CardData>)));
 	connect(Client,SIGNAL(OtherHand(int,int)),board,SLOT(SetOtherHand(int,int)));
@@ -104,9 +112,14 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(StopTurnTimer()),board,SLOT(StopTurnTimer()));
 	connect(Client,SIGNAL(ResumeTurnTimer()),board,SLOT(ResumeTurnTimer()));
 	connect(Client,SIGNAL(ResumeStackTimer()),board,SLOT(ResumeStackTimer()));
-	connect(Client,SIGNAL(EffectAddedToStack(quint32,EffectData)),board,SLOT(EffectAddedToStack(quint32,EffectData)));
+	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),board,SLOT(ResumeStackTimer()));
+
+	//StackDisplayerConnections
+	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),StackDisp,SLOT(AddEffect(EffectData)));
+	connect(Client,SIGNAL(EffectResolved()),StackDisp,SLOT(Resolve()));
 
 	//Test Connections
+	connect(Client,SIGNAL(PlayOrder(QList<int>)),BattleFrame,SLOT(show()));
 	connect(board,SIGNAL(KeepHand()),WhoCares,SLOT(SendHandAccepted()));
 	connect(board,SIGNAL(TimerFinished()),WhoCares,SLOT(SendFinishedTimer()));
 	QPushButton* PauseTimerButton=new QPushButton(this);

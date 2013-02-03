@@ -165,7 +165,10 @@ void LanClient::IncomingTransmission(){
 		else if(RequestType==Comunications::TransmissionType::EffectAddedStack){
 			incom >> UnsInt1;
 			incom >> effect;
-			emit EffectAddedToStack(UnsInt1,effect);
+			emit EffectAddedToStack(effect,UnsInt1);
+		}
+		else if(RequestType==Comunications::TransmissionType::EffectResolved){
+			emit EffectResolved();
 		}
 ////////////////////////////////////////////////////////////////////////////
 

@@ -81,3 +81,8 @@ QDataStream &operator>>(QDataStream &input, EffectData &effect){
 	input >> IntLists; effect.SetVariableValues(IntLists);
 	return input;
 }
+void EffectData::ReplaceSpecificSelectedTarget(int key, int oldval, int newval){
+	for(QMultiMap<int,int>::iterator i=SelectedTargets.begin();i!=SelectedTargets.end();i++){
+		if(i.key()==key && i.value()==oldval) i.value()=newval;
+	}
+}

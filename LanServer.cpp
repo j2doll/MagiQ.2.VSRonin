@@ -179,6 +179,7 @@ void LanServer::DrawStep(){
 		DrawEffect->SetSelectedTargets(EffectsConstants::Targets::Player,PlayersList.value(WhosTurn)->GetPlayerID());
 		DrawEffect->SetVariableValues(1);
 		DrawEffect->SetEffectBody(EffectsConstants::Effects::DrawCards);
+		DrawEffect->SetEffectText(tr("%1 draws a card").arg(PlayersList.value(WhosTurn)->GetPlayerName()));
 		AddToStack(DrawEffect);
 	//}
 }
@@ -253,6 +254,7 @@ void LanServer::AddToStack(EffectData* eff){
 }
 void LanServer::ResolveEffect(EffectData* eff){
 	if (!eff) return;
+	emit EffectResolved();
 	//TODO Check if countered
 	switch(eff->GetEffectBody()){
 	case EffectsConstants::Effects::DrawCards:
@@ -265,7 +267,7 @@ void LanServer::ResolveEffect(EffectData* eff){
 		}
 		break;
 	}
-	if (!eff->GetCardAttached()) delete eff;
+	if (eff->GetEffectID()==0) delete eff;
 }
 void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	if (GameStarted) return;
@@ -322,7 +324,8 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(this,SIGNAL(StopTurnTimer()),TempPoint,SIGNAL(StopTurnTimer()));
 	connect(this,SIGNAL(ResumeTurnTimer()),TempPoint,SIGNAL(ResumeTurnTimer()));
 	connect(this,SIGNAL(ResumeStackTimer()),TempPoint,SIGNAL(ResumeStackTimer()));
-	connect(this,SIGNAL(EffectAddedToStack(quint32,EffectData)),TempPoint,SIGNAL(EffectAddedToStack(quint32,EffectData)));
+	connect(this,SIGNAL(EffectAddedToStack(quint32,const EffectData&)),TempPoint,SIGNAL(EffectAddedToStack(quint32,const EffectData&)));
+	connect(this,SIGNAL(EffectResolved()),TempPoint,SIGNAL(EffectResolved()));
 	emit YourNameColor(a,adjName,PlayPoint->GetPlayerColor());
 	SendServerInfos();
 }
