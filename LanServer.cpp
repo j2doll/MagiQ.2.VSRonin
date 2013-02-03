@@ -20,6 +20,7 @@ LanServer::LanServer(QObject* parent)
 	,WhoStoppedTheTimer(-1)
 	,PhaseTimerRunning(false)
 	,StackTimerRunning(false)
+	,TimerTypeStopped(NoneT)
 {
 #ifdef _DEBUG
 	qsrand(2);
@@ -223,25 +224,28 @@ void LanServer::TimerFinished(int SocID){
 }
 void LanServer::TimerStopped(int SocID){
 	if (!PlayersOrder.contains(SocID) || WhoStoppedTheTimer!=-1) return;
-	TimerTypeStopped=PhaseTimerRunning;
-	if (PhaseTimerRunning) PhaseTimerRunning=false;
-	else if (StackTimerRunning) StackTimerRunning=false;
-	else return;
+	if (PhaseTimerRunning && StackTimerRunning) TimerTypeStopped=BothT;
+	else if(PhaseTimerRunning) TimerTypeStopped=PhaseT;
+	else if(StackTimerRunning) TimerTypeStopped=StackT;
+	else {TimerTypeStopped=NoneT; return;}
 	emit StopTimers();
 	if (SocID!=PlayersOrder.value(TurnNumber%PlayersOrder.size()))
 		emit StopTurnTimer();
+	PhaseTimerRunning=false;
+	StackTimerRunning=false;
 	WhoStoppedTheTimer=SocID;
 	foreach(MagiQPlayer* plr,PlayersList)
 		plr->SetHasFinishedTimer(false);
 }
 void LanServer::ResumeTimer(int SocID){
-	if (WhoStoppedTheTimer!=SocID || WhoStoppedTheTimer==-1 || PhaseTimerRunning || StackTimerRunning) return;
-	PhaseTimerRunning=TimerTypeStopped;
-	StackTimerRunning=!TimerTypeStopped;
+	if (WhoStoppedTheTimer!=SocID || WhoStoppedTheTimer==-1 || TimerTypeStopped==NoneT) return;
+	PhaseTimerRunning=TimerTypeStopped==PhaseT || TimerTypeStopped==BothT;
+	StackTimerRunning=TimerTypeStopped==StackT || TimerTypeStopped==BothT;
 	if (WhoStoppedTheTimer!=PlayersOrder.value(TurnNumber%PlayersOrder.size())) emit ResumeTurnTimer();
 	WhoStoppedTheTimer=-1;
+	TimerTypeStopped=NoneT;
 	if(PhaseTimerRunning) SetCurrentPhase(CurrentPhase);
-	else emit ResumeStackTimer();
+	if(StackTimerRunning) emit ResumeStackTimer();
 }
 void LanServer::AddToStack(EffectData* eff){
 	foreach(EffectData* effp,EffectsStack){

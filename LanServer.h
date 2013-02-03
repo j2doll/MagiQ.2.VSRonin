@@ -40,7 +40,8 @@ private:
 	int WhoStoppedTheTimer;
 	bool PhaseTimerRunning;
 	bool StackTimerRunning;
-	bool TimerTypeStopped; //true=Phase, false=Stack
+	int TimerTypeStopped;
+	enum{NoneT,PhaseT,StackT,BothT};
 	QStack<EffectData*> EffectsStack;
 	void AddToStack(EffectData* eff);
 	void ResolveEffect(EffectData* eff);
