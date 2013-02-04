@@ -270,8 +270,20 @@ QMap<int,int> LanServer::ManaAvailable(int PlayerCode) const{
 			}
 		}
 	}
+	return Result;
+}
+void LanServer::WantsToPlayCard(int who,int CrdID){
+	CardData TheCard=PlayersList[who]->RemoveFromHand(CrdID);
+	if (TheCard.GetCardID()==0) return;
+	if (!CanPlayCard(TheCard,who)) return; //Double check, erase to speed up
+	PlayersList[who]->AddControlledCard(TheCard);
+	if(!TheCard.GetCardType().contains(Constants::CardTypes::Land)) StackTimerRunning=true;
+	else PlayersList[who]->SetCanPlayMana(false);
+	emit PlayedCard(who,PlayersList[who]->GetControlledCards().last());
+	CheckPlayableCards();
 }
 bool LanServer::CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai){
+	if (crd.GetCardType().contains(Constants::CardTypes::Land) && !crd.GetHasManaCost() && PlayersList.value(PlayerCode)->GetCanPlayMana()) return true;
 	//TODO implement
 	return false;
 }
@@ -289,12 +301,7 @@ void LanServer::CheckPlayableCards(){
 			case Constants::Phases::PostCombatMain: 
 				//Check Hand
 				for(QList<CardData>::const_iterator crd=PlayersList.value(plid)->GetHand().constBegin();crd!=PlayersList.value(plid)->GetHand().constEnd();crd++){
-					if (crd->GetCardType().contains(Constants::CardTypes::Land)){
-						if(PlayersList.value(plid)->GetCanPlayMana()) PlayableCardsIDs.append(crd->GetCardID());
-					}
-					else{
-						if(CanPlayCard(*crd,plid,AvaiMana)) PlayableCardsIDs.append(crd->GetCardID());
-					}
+					if(CanPlayCard(*crd,plid,AvaiMana)) PlayableCardsIDs.append(crd->GetCardID());
 				}
 				break;
 			case Constants::Phases::DeclareAttackers:
@@ -396,6 +403,8 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(this,SIGNAL(EffectAddedToStack(quint32,const EffectData&)),TempPoint,SIGNAL(EffectAddedToStack(quint32,const EffectData&)));
 	connect(this,SIGNAL(EffectResolved()),TempPoint,SIGNAL(EffectResolved()));
 	connect(this,SIGNAL(PlayableCards(int,QList<int>)),TempPoint,SIGNAL(PlayableCards(int,QList<int>)));
+	connect(TempPoint,SIGNAL(WantPlayCard(int,int)),this,SLOT(WantsToPlayCard(int,int)));
+	connect(this,SIGNAL(PlayedCard(int,const CardData&)),TempPoint,SIGNAL(PlayedCard(int,const CardData&)));
 	emit YourNameColor(a,adjName,PlayPoint->GetPlayerColor());
 	SendServerInfos();
 }

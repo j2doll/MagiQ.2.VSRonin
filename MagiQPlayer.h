@@ -33,6 +33,11 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	void SetControlledCards() {ControlledCards.clear();}
+	void SetControlledCards(const QList<CardData>& a){ControlledCards.clear(); ControlledCards=a;}
+	void AddControlledCard(const CardData& a){ControlledCards.append(a);}
+	void SetControlledCards(const CardData& a){SetControlledCards(); AddControlledCard(a);}
+	CardData RemoveFromHand(int CardID);
 	void SetHasFinishedTimer(bool a){HasFinishedTimer=a;}
 	bool GetHasFinishedTimer() const {return HasFinishedTimer;}
 	void SetHand(const QList<CardData>& a){Hand.clear(); Hand=a;}

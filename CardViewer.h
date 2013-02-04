@@ -46,6 +46,6 @@ signals:
 	void LeftFocus();
 	void GainFocus();
 	void RequireZoom(Card*);
-	void DoubleClicked();
+	void DoubleClicked(int);
 };
 #endif

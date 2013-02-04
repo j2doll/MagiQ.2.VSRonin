@@ -25,6 +25,7 @@ void LanServerSocket::readClient(){
 	bool booleans;
 	CardDeck deck;
 	QPixmap images;
+	qint32 Numbers;
 	forever {
 		if (nextBlockSize == 0) {
 			if (bytesAvailable() < sizeof(quint32))
@@ -65,6 +66,10 @@ void LanServerSocket::readClient(){
 		}
 		else if(RequestType==Comunications::TransmissionType::TimerResumed){
 			emit TimerResumed(SocketID);
+		}
+		else if(RequestType==Comunications::TransmissionType::WantToPlayCard){
+			incom >> Numbers;
+			emit WantPlayCard(SocketID,Numbers);
 		}
 ///////////////////////////////////////////////////////////////////////////
 
@@ -322,6 +327,16 @@ void LanServerSocket::SendPlayableCards(int socID,QList<int> IDs){
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0) << quint32(Comunications::TransmissionType::PlayableCards) << IDs;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendPlayedCard(int who,const CardData& crd){
+	if (who==SocketID) who=-1;
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::PlayedCard) << qint32(who) << crd;
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);

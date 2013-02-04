@@ -93,6 +93,7 @@ signals:
 	void EffectAddedToStack(quint32,const EffectData&);
 	void EffectResolved();
 	void PlayableCards(int,QList<int>);
+	void PlayedCard(int Who,const CardData& crd);
 public slots:
 	void StartListening();
 private slots:
@@ -111,5 +112,6 @@ private slots:
 	void TimerFinished(int SocID);
 	void TimerStopped(int SocID);
 	void ResumeTimer(int SocID);
+	void WantsToPlayCard(int who,int CrdID);
 };
 #endif

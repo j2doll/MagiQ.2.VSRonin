@@ -175,6 +175,11 @@ void LanClient::IncomingTransmission(){
 			incom >> intlists;
 			emit PlayableCards(intlists);
 		}
+		else if(RequestType==Comunications::TransmissionType::PlayedCard){
+			incom >> int1;
+			incom >> card;
+			emit PlayedCard(int1,card);
+		}
 ////////////////////////////////////////////////////////////////////////////
 
 		nextBlockSize = 0;
@@ -257,6 +262,15 @@ void LanClient::SendResumeTimer(){
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0) << quint32(Comunications::TransmissionType::TimerResumed);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	tcpSocket->write(block);
+}
+void LanClient::SendWantToPlayCard(int CardID){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::WantToPlayCard) << qint32(CardID);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	tcpSocket->write(block);

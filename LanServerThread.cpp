@@ -43,4 +43,6 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(this,SIGNAL(EffectAddedToStack(quint32,const EffectData&)),tcpSocket,SLOT(SendEffectAddedToStack(quint32,const EffectData&)));
 	connect(this,SIGNAL(EffectResolved()),tcpSocket,SLOT(SendEffectResolved()));
 	connect(this,SIGNAL(PlayableCards(int,QList<int>)),tcpSocket,SLOT(SendPlayableCards(int,QList<int>)));
+	connect(tcpSocket,SIGNAL(WantPlayCard(int,int)),this,SIGNAL(WantPlayCard(int,int)));
+	connect(this,SIGNAL(PlayedCard(int,const CardData&)),tcpSocket,SLOT(SendPlayedCard(int,const CardData&)));
 }

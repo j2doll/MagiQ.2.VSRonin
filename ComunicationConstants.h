@@ -38,6 +38,8 @@ namespace Comunications{
 		,EffectAddedStack
 		,EffectResolved
 		,PlayableCards
+		,WantToPlayCard
+		,PlayedCard
 		,ChatMessage
 	};}
 }

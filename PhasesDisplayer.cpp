@@ -46,7 +46,6 @@ PhasesDisplayer::PhasesDisplayer(QWidget* parent)
 	TurnTimer->setObjectName("TurnTimer");
 	TurnTimer->setMinimum(0);
 	TurnTimer->setOrientation(Qt::Horizontal);
-	TurnTimer->setToolTip(tr("Turn Time"));
 	TurnTimer->setTextVisible(false);
 	TurnTimer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 
@@ -58,7 +57,7 @@ PhasesDisplayer::PhasesDisplayer(QWidget* parent)
 	MainLay->addWidget(TurnTimer,1,0,1,2);
 	CurrentPhaseIcon->move(0,0);
 	NextPhaseIcon->hide();
-	setStyleSheet(StyleSheets::PhasesDisplayerCSS);
+	SetStackTimerActivated(false);
 }
 void PhasesDisplayer::resizeEvent(QResizeEvent* event){
 	Background->setGeometry(0,0,width(),height());
@@ -100,4 +99,8 @@ void PhasesDisplayer::SetTurnTime(int a){TurnTimer->setValue(TurnTimer->maximum(
 void PhasesDisplayer::SetPhaseTime(){PausedLabel->hide(); PhaseTimer->setValue(0);}
 void PhasesDisplayer::SetTurnTime(){TurnTimer->setValue(0);}
 void PhasesDisplayer::PausePhaseTimer(){PausedLabel->show(); PhaseTimer->setValue(0);}
-void PhasesDisplayer::SetStackTimerActivated(bool a){StackTimerActivated=a; setStyleSheet(StyleSheets::PhasesDisplayerCSS);}
+void PhasesDisplayer::SetStackTimerActivated(bool a){
+	StackTimerActivated=a;
+	PhaseTimer->setToolTip(a ? tr("Response Time"):tr("Phase Time"));
+	setStyleSheet(StyleSheets::PhasesDisplayerCSS);
+}

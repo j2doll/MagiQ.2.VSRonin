@@ -122,6 +122,11 @@ void BattleGround::SizePosFrames(){
 			661*height()/768,
 			qMin(HandsLay.value(-1)->sizeHint().width(),1000*width()/1024),
 			92*height()/768);
+		LandsContainer.value(NextIndex)->setGeometry(
+			(width()-qMin(HandsLay.value(-1)->sizeHint().width(),1000*width()/1024))/2,
+			561*height()/768,
+			qMin(HandsLay.value(-1)->sizeHint().width(),1000*width()/1024),
+			92*height()/768);
 		PlayesInfos.value(NextIndex)->setGeometry(
 			10*width()/1024
 			,389*height()/768
@@ -137,6 +142,11 @@ void BattleGround::SizePosFrames(){
 		HandFrames.value(NextIndex)->setGeometry(
 			(width()-qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024))/2,
 			10*height()/768,
+			qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024),
+			92*height()/768);
+		LandsContainer.value(NextIndex)->setGeometry(
+			(width()-qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024))/2,
+			110*height()/768,
 			qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024),
 			92*height()/768);
 		PlayesInfos.value(NextIndex)->setGeometry(
@@ -176,6 +186,7 @@ void BattleGround::UpdateAspect(){
 			connect(TempViewer,SIGNAL(LeftFocus()),this,SLOT(ResetHandOrder()));
 			connect(TempViewer,SIGNAL(GainFocus()),TempViewer,SLOT(raise()),Qt::QueuedConnection);
 			connect(TempViewer,SIGNAL(RequireZoom(Card*)),this,SLOT(ZoomAnimate(Card*)));
+			connect(TempViewer,SIGNAL(DoubleClicked(int)),this,SLOT(WantToPlayCard(int)));
 			HandsLay.value(index.key())->addWidget(TempViewer);
 		}
 		while(index.value()->GetHand().size()<CardsInHandView.value(index.key()).size()){
@@ -197,6 +208,7 @@ void BattleGround::UpdateAspect(){
 				CardsInHandView[index.key()].value(j)->UpdateAspect();
 			}
 		}
+		//TODO Update Lands
 	}
 	foreach(PlayerInfoDisplayer* inf,PlayesInfos)
 		inf->UpdateAspect();
@@ -246,6 +258,11 @@ void BattleGround::SetPlayersOrder(QList<int> ord){
 		GraveyardLabels[PlayID]->setAlignment(Qt::AlignCenter);
 		PlayesInfos[PlayID]=new PlayerInfoDisplayer(this);
 		PlayesInfos[PlayID]->SetInfosToDisplay(Players[PlayID]);
+		LandsContainer[PlayID]=new QFrame(this);
+		LandsContainer[PlayID]->setObjectName("LandsContainer");
+		LandsContainerLay[PlayID]=new QHBoxLayout(LandsContainer[PlayID]);
+		LandsContainerLay[PlayID]->setMargin(0);
+		LandsContainerLay[PlayID]->setSpacing(2);
 	}
 }
 void BattleGround::SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt){
@@ -418,6 +435,30 @@ void BattleGround::AnimateDraw(int whos){
 	connect(AnimDraw,SIGNAL(finished()),this,SLOT(UpdateAspect()));
 	AnimDraw->start(QAbstractAnimation::DeleteWhenStopped);
 }
+void BattleGround::AnimatePlay(int whos,Card* ToShow){
+	if (!PlayersOrder.contains(whos)) return;
+	int HeiForWid=(279*ZoommedCardWidth)/200;
+	ToShow->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
+	AnimationCard->SetCardToDisplay(ToShow);
+	AnimationCard->UpdateAspect();
+	AnimationCard->resize(DeckLabels[whos]->size());
+	AnimationCard->show();
+	QPropertyAnimation* AnimPlay=new QPropertyAnimation(AnimationCard,"pos",this);
+	AnimPlay->setDuration(2*AnimationDuration);
+	AnimPlay->setEasingCurve(QEasingCurve::InCubic);
+	AnimPlay->setKeyValueAt(1.0,QPoint((width()-DeckLabels[whos]->width())/2,(height()-DeckLabels[whos]->height())/2));
+	switch (Players.size()){
+	case 2:
+		AnimPlay->setKeyValueAt(0.0,QPoint(
+			HandFrames[whos]->pos().x()+(HandFrames[whos]->width()/2),
+			whos==-1 ? height()+AnimationCard->height()+10 : -AnimationCard->height()-10
+			));
+		break;
+	}
+	connect(AnimPlay,SIGNAL(finished()),AnimationCard,SLOT(hide()));
+	connect(AnimPlay,SIGNAL(finished()),this,SLOT(UpdateAspect()));
+	AnimPlay->start(QAbstractAnimation::DeleteWhenStopped);
+}
 void BattleGround::StopTimer(){
 	ResponseTimer->stop();
 	PhaseTimer->stop();
@@ -430,4 +471,45 @@ void BattleGround::SetPlayableCards(QList<int> IDs){
 		(*i)->SetActivable(IDs.contains((*i)->GetCardID()));
 	}
 	UpdateAspect();
+}
+void BattleGround::WantToPlayCard(int crdID){
+	Card* TheCard=NULL;
+	for(QList<Card*>::iterator i=CardsInHand[-1].begin();i!=CardsInHand[-1].end();i++){
+		if((*i)->GetCardID()==crdID){
+			TheCard=*i;
+			break;
+		}
+	}
+	if (!TheCard) return;
+	if (TheCard->GetHasManaCost()){
+		//TODO
+	}
+	emit WantPlayCard(crdID);
+}
+void BattleGround::PlayedCard(int Who,CardData crd){
+	if (!PlayersOrder.contains(Who)) return;
+	if(crd.GetCardType().contains(Constants::CardTypes::Land) && !crd.GetCardType().contains(Constants::CardTypes::Creature)){
+		if (!SameLandsFrames[Who].contains(crd.GetCardName())){
+			SameLandsFrames[Who][crd.GetCardName()]=new QFrame(this);
+			QFrame* TmpPoint=SameLandsFrames[Who][crd.GetCardName()];
+			LandsContainerLay[Who]->addWidget(TmpPoint);
+			SameLandsFramesLay[Who][crd.GetCardName()]=new HandLayout(TmpPoint);
+			SameLandsFramesLay[Who][crd.GetCardName()]->setMargin(0);
+		}
+	}
+	QList<Card*>::iterator ite;
+	for (ite=CardsInHand[Who].begin();ite!=CardsInHand[Who].end();ite++){
+		if((*ite)->GetCardID()==crd.GetCardID()){
+			CardsControlled[Who].append(*ite);
+			CardsInHand[Who].erase(ite);
+			break;
+		}
+	}
+	if (ite==CardsInHand[Who].end())
+		CardsControlled[Who].append(new Card(crd));
+	Players[Who]->RemoveFromHand(crd.GetCardID());
+	Players[Who]->AddControlledCard(crd);
+	//CardsControlled[Who].last()->SetController(Players[Who]);
+	AllCards.append(CardsControlled[Who].last());
+	AnimatePlay(Who,CardsControlled[Who].last());
 }

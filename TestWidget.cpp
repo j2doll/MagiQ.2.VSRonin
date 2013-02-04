@@ -114,6 +114,8 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(ResumeStackTimer()),board,SLOT(ResumeStackTimer()));
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),board,SLOT(ResumeStackTimer()));
 	connect(Client,SIGNAL(PlayableCards(QList<int>)),board,SLOT(SetPlayableCards(QList<int>)));
+	connect(board,SIGNAL(WantPlayCard(int)),Client,SLOT(SendWantToPlayCard(int)));
+	connect(Client,SIGNAL(PlayedCard(int,CardData)),board,SLOT(PlayedCard(int,CardData)));
 
 	//StackDisplayerConnections
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),StackDisp,SLOT(AddEffect(EffectData)));

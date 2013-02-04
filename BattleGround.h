@@ -15,6 +15,8 @@ class QPushButton;
 class PlayerInfoDisplayer;
 class QTimer;
 class PhasesDisplayer;
+class QHBoxLayout;
+class HandLayout; //TODO Change
 class BattleGround : public QWidget
 {
 	Q_OBJECT
@@ -30,9 +32,11 @@ private:
 	QMap<int,HandLayout*> HandsLay;
 	QMap<int,QLabel*> DeckLabels;
 	QMap<int,QLabel*> GraveyardLabels;
-	QMap<int,QList<CardViewer*>> CardsInHandView;
 	CardViewer* AnimationCard;
+	QMap<int,QList<CardViewer*>> CardsInHandView;
+	QMap<int,QList<CardViewer*>> CardsControlledView;
 	QMap<int,QList<Card*>> CardsInHand;
+	QMap<int,QList<Card*>> CardsControlled;
 	Card* GenericCard;
 	Card* ZoomedCard;
 	QFrame* QuestionFrame;
@@ -40,6 +44,10 @@ private:
 	QPushButton* QuestionButton1;
 	QPushButton* QuestionButton2;
 	PhasesDisplayer* PhaseDisp;
+	QMap<int,QFrame*> LandsContainer;
+	QMap<int,QHBoxLayout*> LandsContainerLay;
+	QMap<int,QMap<QString,QFrame*>> SameLandsFrames;
+	QMap<int,QMap<QString,HandLayout*>> SameLandsFramesLay; /*TODO Change Layout Type*/
 //Game Properties
 	QList<Card*> AllCards;
 	QMap<int,MagiQPlayer*> Players;
@@ -54,9 +62,12 @@ private:
 	QTimer* TurnTimer;
 	int TurnTimeLimit;
 	int CurrentTurnTime;
+	QMap<int,int> ManaToTap;
 //Functions
 	void SortCardsInHand();
 	void AnimateDraw(int whos);
+	void AnimatePlay(int whos,Card* ToShow);
+	QMap<int,int> AskManaToTap();
 private slots:
 	void UpdateAspect();
 	void ResetHandOrder();
@@ -85,12 +96,15 @@ public slots:
 	void ResumeStackTimer();
 	void EffectAddedToStack(quint32 crd,EffectData eff);
 	void SetPlayableCards(QList<int> IDs);
+	void PlayedCard(int Who,CardData crd);
+	void WantToPlayCard(int crdID);
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return Players.size();}
 protected:
 	void resizeEvent(QResizeEvent* event);
 signals:
+	void WantPlayCard(int crdID);
 	void NeedResizeFrames();
 	void Mulligan();
 	void KeepHand();

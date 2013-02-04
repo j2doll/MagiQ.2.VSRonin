@@ -103,3 +103,14 @@ void MagiQPlayer::SetLibrary(const QList<CardData>& a){
 	Library.clear(); 
 	Library=a;
 }
+CardData MagiQPlayer::RemoveFromHand(int CardID){
+	CardData Result;
+	for(QList<CardData>::iterator i=Hand.begin();i!=Hand.end();i++){
+		if(i->GetCardID()==CardID){
+			Result=*i;
+			Hand.erase(i);
+			break;
+		}
+	}
+	return Result;
+}
