@@ -27,6 +27,8 @@ private:
 	enum{TimerUpdateIntervall=100};
 //Visual Elements
 	QFrame* Board;
+	QFrame* StackCardsFrame;
+	HandLayout* StackCardsFrameLay;
 	QMap<int,QFrame*> HandFrames;
 	QMap<int,PlayerInfoDisplayer*> PlayesInfos;
 	QMap<int,HandLayout*> HandsLay;
@@ -35,8 +37,10 @@ private:
 	CardViewer* AnimationCard;
 	QMap<int,QList<CardViewer*>> CardsInHandView;
 	QMap<int,QList<CardViewer*>> CardsControlledView;
+	QList<CardViewer*> CardsInStackView;
 	QMap<int,QList<Card*>> CardsInHand;
 	QMap<int,QList<Card*>> CardsControlled;
+	QList<Card*> CardsInStack;
 	Card* GenericCard;
 	Card* ZoomedCard;
 	QFrame* QuestionFrame;
@@ -71,6 +75,7 @@ private:
 private slots:
 	void UpdateAspect();
 	void ResetHandOrder();
+	void ResetStackLayOrder();
 	void ClearQuestion();
 	void SizePosFrames();
 	void ZoomAnimate(Card* crd);
@@ -96,7 +101,7 @@ public slots:
 	void ResumeStackTimer();
 	void EffectAddedToStack(quint32 crd,EffectData eff);
 	void SetPlayableCards(QList<int> IDs);
-	void PlayedCard(int Who,CardData crd);
+	void PlayedCard(CardData crd,int Who);
 	void WantToPlayCard(int crdID);
 public:
 	BattleGround(QWidget* parent=0);

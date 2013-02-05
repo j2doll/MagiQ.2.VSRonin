@@ -8,6 +8,7 @@
 #include <QPropertyAnimation>
 #include <QPushButton>
 #include <QTimer>
+#include <QApplication>
 #include "MagiQPlayer.h"
 #include "StyleSheets.h"
 #include "CostantsDefinition.h"
@@ -68,6 +69,10 @@ BattleGround::BattleGround(QWidget* parent)
 	PhaseDisp->SetPhase(CurrentPhase);
 	PhaseDisp->hide();
 
+	StackCardsFrame=new QFrame(this);
+	StackCardsFrame->setObjectName("StackCardsFrame");
+	StackCardsFrameLay=new HandLayout(StackCardsFrame);
+
 	AnimationCard=new CardViewer(this);
 	AnimationCard->SetCanBeZoom(false);
 	AnimationCard->SetShadable(false);
@@ -113,19 +118,24 @@ void BattleGround::SizePosFrames(){
 	int NextIndex=-1;
 	switch (Players.size()){
 	case 2:
+		StackCardsFrame->setGeometry(
+			(width()-qMin(StackCardsFrame->sizeHint().width(),1000*width()/1024))/2,
+			(height()-92*height()/768)/2,
+			qMin(StackCardsFrame->sizeHint().width(),1000*width()/1024),
+			92*height()/768);
 		PhaseDisp->setGeometry(125*width()/1024,359*height()/768,150*width()/1024,50*height()/768);
 		QuestionFrame->setGeometry((width()-QuestionFrame->sizeHint().width())/2,30*height()/768,QuestionFrame->sizeHint().width(),QuestionFrame->sizeHint().height());
 		DeckLabels.value(NextIndex)->setGeometry(915*width()/1024,418*height()/768,60*width()/1024,83*height()/768);
 		GraveyardLabels.value(NextIndex)->setGeometry(915*width()/1024,538*height()/768,60*width()/1024,83*height()/768);
 		HandFrames.value(NextIndex)->setGeometry(
-			(width()-qMin(HandsLay.value(-1)->sizeHint().width(),1000*width()/1024))/2,
+			118+(qMax(910*width()/1024-HandsLay.value(NextIndex)->sizeHint().width(),0)/2),
 			661*height()/768,
-			qMin(HandsLay.value(-1)->sizeHint().width(),1000*width()/1024),
+			qMin(HandsLay.value(NextIndex)->sizeHint().width(),910*width()/1024),
 			92*height()/768);
 		LandsContainer.value(NextIndex)->setGeometry(
-			(width()-qMin(HandsLay.value(-1)->sizeHint().width(),1000*width()/1024))/2,
+			90+((width()-qMin(HandsLay.value(NextIndex)->sizeHint().width(),910*width()/1024))/2), //TODO Fixme
 			561*height()/768,
-			qMin(HandsLay.value(-1)->sizeHint().width(),1000*width()/1024),
+			qMin(HandsLay.value(NextIndex)->sizeHint().width(),910*width()/1024),
 			92*height()/768);
 		PlayesInfos.value(NextIndex)->setGeometry(
 			10*width()/1024
@@ -140,9 +150,9 @@ void BattleGround::SizePosFrames(){
 		DeckLabels.value(NextIndex)->setGeometry(48*width()/1024,268*height()/768,60*width()/1024,83*height()/768);
 		GraveyardLabels.value(NextIndex)->setGeometry(48*width()/1024,148*height()/768,60*width()/1024,83*height()/768);
 		HandFrames.value(NextIndex)->setGeometry(
-			(width()-qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024))/2,
+			24+(qMax(910*width()/1024-HandsLay.value(NextIndex)->sizeHint().width(),0)/2),
 			10*height()/768,
-			qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024),
+			qMin(HandsLay.value(NextIndex)->sizeHint().width(),910*width()/1024),
 			92*height()/768);
 		LandsContainer.value(NextIndex)->setGeometry(
 			(width()-qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024))/2,
@@ -160,6 +170,7 @@ void BattleGround::SizePosFrames(){
 }
 void BattleGround::UpdateAspect(){
 	if (!isVisible()) return;
+	int HeiForWid=(279*ZoommedCardWidth)/200;
 	SortCardsInHand();
 	for(QMap<int,MagiQPlayer*>::iterator index=Players.begin();index!=Players.end();index++){
 		if (index.value()->GetLibrary().size()==0)
@@ -174,8 +185,10 @@ void BattleGround::UpdateAspect(){
 			GraveyardLabels.value(index.key())->show();
 			GraveyardLabels.value(index.key())->setText(QString("%1").arg(index.value()->GetGraveyard().size()));
 		}
-		int HeiForWid=(279*ZoommedCardWidth)/200;
 		GenericCard->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
+/************************************************************************
+* Update Hand                                                           *
+*************************************************************************/
 		foreach(int ks, Players.keys()){
 			for(QList<Card*>::iterator crd=CardsInHand[ks].begin();crd!=CardsInHand[ks].end();crd++)
 				(*crd)->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
@@ -208,7 +221,30 @@ void BattleGround::UpdateAspect(){
 				CardsInHandView[index.key()].value(j)->UpdateAspect();
 			}
 		}
-		//TODO Update Lands
+	}
+/************************************************************************
+* Update Stack Frame                                                    *
+*************************************************************************/
+	if(!AnimationCard->isVisible()){
+		while(CardsInStackView.size()>CardsInStack.size()){
+			CardsInStackView.takeFirst()->deleteLater();
+		}
+		while(CardsInStackView.size()<CardsInStack.size()){
+			CardsInStackView.append(new CardViewer(this));
+			CardViewer* TempViewer=CardsInStackView.last();
+			connect(TempViewer,SIGNAL(LeftFocus()),this,SLOT(ResetStackLayOrder()));
+			connect(TempViewer,SIGNAL(GainFocus()),TempViewer,SLOT(raise()),Qt::QueuedConnection);
+			connect(TempViewer,SIGNAL(RequireZoom(Card*)),this,SLOT(ZoomAnimate(Card*)));
+			StackCardsFrameLay->addWidget(TempViewer);
+		}
+		for(int stC=0;stC<CardsInStack.size();stC++){
+			CardsInStack.value(stC,NULL)->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
+			CardsInStackView.value(stC,NULL)->SetCardToDisplay(CardsInStack.value(stC,NULL));
+			CardsInStackView.value(stC,NULL)->SetCanBeZoom(true);
+			CardsInStackView.value(stC,NULL)->SetShadable(false);
+			CardsInStackView.value(stC,NULL)->SetCanBeClick(false);
+			CardsInStackView.value(stC,NULL)->UpdateAspect();
+		}
 	}
 	foreach(PlayerInfoDisplayer* inf,PlayesInfos)
 		inf->UpdateAspect();
@@ -243,6 +279,7 @@ void BattleGround::ResetHandOrder(){
 	foreach(HandLayout* hanlay,HandsLay)
 		hanlay->invalidate();
 }
+void BattleGround::ResetStackLayOrder(){StackCardsFrameLay->invalidate();}
 
 void BattleGround::SetPlayersOrder(QList<int> ord){
 	PlayersOrder.clear(); PlayersOrder=ord;
@@ -394,6 +431,7 @@ void BattleGround::EffectAddedToStack(quint32 crd,EffectData eff){
 	ResumeStackTimer();
 }
 void BattleGround::DrawCard(CardData crd){
+	Players[-1]->DrawCard();
 	Players[-1]->AddHand(crd);
 	CardsInHand[-1].append(new Card(crd,this));
 	AllCards.append(CardsInHand[-1].last());
@@ -420,14 +458,14 @@ void BattleGround::AnimateDraw(int whos){
 	AnimationCard->resize(DeckLabels[whos]->size());
 	AnimationCard->show();
 	QPropertyAnimation* AnimDraw=new QPropertyAnimation(AnimationCard,"pos",this);
-	AnimDraw->setDuration(3*AnimationDuration/2);
-	AnimDraw->setEasingCurve(QEasingCurve::InCubic);
+	AnimDraw->setDuration(AnimationDuration);
+	AnimDraw->setEasingCurve(QEasingCurve::Linear);
 	AnimDraw->setKeyValueAt(0.0,DeckLabels[whos]->pos());
 	switch (Players.size()){
 	case 2:
 		AnimDraw->setKeyValueAt(1.0,QPoint(
 			HandFrames[whos]->pos().x()+(HandFrames[whos]->width()/2),
-			whos==-1 ? height()+AnimationCard->height()+10 : -AnimationCard->height()-10
+			whos==-1 ? height()+AnimationCard->height() : -AnimationCard->height()
 			));
 		break;
 	}
@@ -444,14 +482,14 @@ void BattleGround::AnimatePlay(int whos,Card* ToShow){
 	AnimationCard->resize(DeckLabels[whos]->size());
 	AnimationCard->show();
 	QPropertyAnimation* AnimPlay=new QPropertyAnimation(AnimationCard,"pos",this);
-	AnimPlay->setDuration(2*AnimationDuration);
-	AnimPlay->setEasingCurve(QEasingCurve::InCubic);
+	AnimPlay->setDuration(AnimationDuration);
+	AnimPlay->setEasingCurve(QEasingCurve::Linear);
 	AnimPlay->setKeyValueAt(1.0,QPoint((width()-DeckLabels[whos]->width())/2,(height()-DeckLabels[whos]->height())/2));
 	switch (Players.size()){
 	case 2:
 		AnimPlay->setKeyValueAt(0.0,QPoint(
 			HandFrames[whos]->pos().x()+(HandFrames[whos]->width()/2),
-			whos==-1 ? height()+AnimationCard->height()+10 : -AnimationCard->height()-10
+			whos==-1 ? height()+AnimationCard->height() : -AnimationCard->height()
 			));
 		break;
 	}
@@ -486,9 +524,10 @@ void BattleGround::WantToPlayCard(int crdID){
 	}
 	emit WantPlayCard(crdID);
 }
-void BattleGround::PlayedCard(int Who,CardData crd){
+void BattleGround::PlayedCard(CardData crd,int Who){
 	if (!PlayersOrder.contains(Who)) return;
-	if(crd.GetCardType().contains(Constants::CardTypes::Land) && !crd.GetCardType().contains(Constants::CardTypes::Creature)){
+
+	/*if(crd.GetCardType().contains(Constants::CardTypes::Land) && !crd.GetCardType().contains(Constants::CardTypes::Creature)){
 		if (!SameLandsFrames[Who].contains(crd.GetCardName())){
 			SameLandsFrames[Who][crd.GetCardName()]=new QFrame(this);
 			QFrame* TmpPoint=SameLandsFrames[Who][crd.GetCardName()];
@@ -496,20 +535,24 @@ void BattleGround::PlayedCard(int Who,CardData crd){
 			SameLandsFramesLay[Who][crd.GetCardName()]=new HandLayout(TmpPoint);
 			SameLandsFramesLay[Who][crd.GetCardName()]->setMargin(0);
 		}
-	}
+	}*/
+
+	//Remove Cards from Hand and add it to the stacked cards
 	QList<Card*>::iterator ite;
 	for (ite=CardsInHand[Who].begin();ite!=CardsInHand[Who].end();ite++){
 		if((*ite)->GetCardID()==crd.GetCardID()){
-			CardsControlled[Who].append(*ite);
+			CardsInStack.append(*ite);
 			CardsInHand[Who].erase(ite);
 			break;
 		}
 	}
-	if (ite==CardsInHand[Who].end())
-		CardsControlled[Who].append(new Card(crd));
+	if (ite==CardsInHand[Who].end()){
+		CardsInStack.append(new Card(crd));
+		AllCards.append(CardsInStack.last());
+	}
 	Players[Who]->RemoveFromHand(crd.GetCardID());
-	Players[Who]->AddControlledCard(crd);
+	//Players[Who]->AddControlledCard(crd);
 	//CardsControlled[Who].last()->SetController(Players[Who]);
-	AllCards.append(CardsControlled[Who].last());
-	AnimatePlay(Who,CardsControlled[Who].last());
+	if (!crd.GetCardType().contains(Constants::CardTypes::Land)) ResumeStackTimer();
+	AnimatePlay(Who,CardsInStack.last());
 }

@@ -178,7 +178,7 @@ void LanClient::IncomingTransmission(){
 		else if(RequestType==Comunications::TransmissionType::PlayedCard){
 			incom >> int1;
 			incom >> card;
-			emit PlayedCard(int1,card);
+			emit PlayedCard(card,int1);
 		}
 ////////////////////////////////////////////////////////////////////////////
 

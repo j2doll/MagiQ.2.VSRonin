@@ -209,11 +209,15 @@ void LanServer::TimerFinished(int SocID){
 		foreach(MagiQPlayer* plr,PlayersList)
 			plr->SetHasFinishedTimer(false);
 		if(StackTimerRunning){
-			ResolveEffect(EffectsStack.pop());
-			if (!EffectsStack.isEmpty()){
+			if (EffectInStack.pop())
+				ResolveEffect(EffectsStack.pop());
+			else
+				ResolveCard(CardsStack.pop());
+			if (!(EffectsStack.isEmpty() && CardsStack.isEmpty())){
+				StackTimerRunning=true;
 				emit ResumeStackTimer();
 			}
-			StackTimerRunning=!EffectsStack.isEmpty();
+			else StackTimerRunning=false;
 		}
 		else if (PhaseTimerRunning){
 			PhaseTimerRunning=false;
@@ -276,10 +280,16 @@ void LanServer::WantsToPlayCard(int who,int CrdID){
 	CardData TheCard=PlayersList[who]->RemoveFromHand(CrdID);
 	if (TheCard.GetCardID()==0) return;
 	if (!CanPlayCard(TheCard,who)) return; //Double check, erase to speed up
-	PlayersList[who]->AddControlledCard(TheCard);
-	if(!TheCard.GetCardType().contains(Constants::CardTypes::Land)) StackTimerRunning=true;
-	else PlayersList[who]->SetCanPlayMana(false);
-	emit PlayedCard(who,PlayersList[who]->GetControlledCards().last());
+	TheCard.SetController(PlayersList.value(who,NULL));
+	PlayersList[who]->AddCardInStack(TheCard);
+	if(!TheCard.GetCardType().contains(Constants::CardTypes::Land)){
+		StackTimerRunning=true;
+		AddToStack(PlayersList[who]->GetCardsInStack().last());
+	}
+	else{
+		PlayersList[who]->SetCanPlayMana(false);
+		ResolveCard(PlayersList[who]->GetCardsInStack().last());
+	}	
 	CheckPlayableCards();
 }
 bool LanServer::CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai){
@@ -324,9 +334,22 @@ void LanServer::AddToStack(EffectData* eff){
 		if (effp->GetEffectID()==eff->GetEffectID()) return;
 	}
 	EffectsStack.push(eff);
+	EffectInStack.push(true);
 	StackTimerRunning=true;
 	CardData* tmpcrd=EffectsStack.top()->GetCardAttached();
 	emit EffectAddedToStack(tmpcrd ? tmpcrd->GetCardID():0,*(EffectsStack.top()));
+}
+void LanServer::AddToStack(CardData crd){
+	foreach(const CardData& crdp,CardsStack){
+		if (crdp.GetCardID()==crd.GetCardID()) return;
+	}
+	CardsStack.push(crd);
+	EffectInStack.push(false);
+	StackTimerRunning=true;
+	emit PlayedCard(crd.GetController()->GetPlayerID(),crd);
+}
+void LanServer::ResolveCard(CardData crd){
+	//TODO Check if countered
 }
 void LanServer::ResolveEffect(EffectData* eff){
 	if (!eff) return;

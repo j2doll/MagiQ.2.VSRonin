@@ -27,12 +27,18 @@ private:
 	QList<CardData> Exile;
 	QList<CardData> Sideboard;
 	QList<CardData> ControlledCards;
+	QList<CardData> CardsInStack;
 signals:
 	void LifeChanged(int l);
 	void CardDrawn();
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	const QList<CardData>& GetCardsInStack() const{return CardsInStack;}
+	void SetCardsInStack(){CardsInStack.clear();}
+	void SetCardsInStack(const QList<CardData>& a){CardsInStack.clear(); CardsInStack=a;}
+	void AddCardInStack(const CardData& a){CardsInStack.append(a);}
+	void SetCardsInStack(const CardData& a){SetCardsInStack(); AddCardInStack(a);}
 	void SetControlledCards() {ControlledCards.clear();}
 	void SetControlledCards(const QList<CardData>& a){ControlledCards.clear(); ControlledCards=a;}
 	void AddControlledCard(const CardData& a){ControlledCards.append(a);}
@@ -77,6 +83,7 @@ public:
 	MagiQPlayer(QObject* parent=0);
 	void SetLife(int a){Life=a; emit LifeChanged(Life);}
 	void AddLife(int a){Life+=a; emit LifeChanged(Life);}
+	void RemoveLife(int a){return AddLife(-a);}
 	int GetLife() const {return Life;}
 	void ResetManaPool();
 	void AddManaPool(int key, int number){ManaPool[key]+=number;}

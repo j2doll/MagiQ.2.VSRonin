@@ -2,6 +2,8 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QHeaderView>
+#include "Card.h"
+#include "CardViewer.h"
 StackDispalyer::StackDispalyer(QWidget* parent)
 	:QWidget(parent)
 {
@@ -26,7 +28,7 @@ StackDispalyer::StackDispalyer(QWidget* parent)
 	MainLay->addWidget(StackList);
 }
 void StackDispalyer::AddEffect(const EffectData& a){
-	EffStack.push(a);
+	IsCard.push(false);
 	StackList->insertRow(1);
 	StackList->setItem(1,0,
 		new QTableWidgetItem(a.GetEffectText())
@@ -34,10 +36,29 @@ void StackDispalyer::AddEffect(const EffectData& a){
 
 }
 void StackDispalyer::Resolve(){
-	EffStack.pop();
+	if (IsCard.isEmpty()) return;
+	if(IsCard.pop()) CardsInSTack.pop()->deleteLater();
 	StackList->removeRow(1);
 }
 void StackDispalyer::EmptyStack(){
-	EffStack.clear();
+	IsCard.clear();
+	foreach(Card* crd,CardsInSTack)
+		crd->deleteLater();
+	CardsInSTack.clear();
 	StackList->setRowCount(1);
+}
+void StackDispalyer::AddCard(const CardData& a){
+	IsCard.push(true);
+	CardsInSTack.push(new Card(a,this));
+	CardsInSTack.top()->resize(60,84);
+	CardsInSTack.top()->hide();
+	StackList->insertRow(1);
+	StackList->setItem(1,0,new QTableWidgetItem());
+	CardViewer* NewViewer=new CardViewer(this);
+	NewViewer->SetCanBeClick(false);
+	NewViewer->SetCanBeZoom(true);
+	NewViewer->SetShadable(false);
+	NewViewer->SetCardToDisplay(CardsInSTack.top());
+	NewViewer->UpdateAspect();
+	StackList->setCellWidget(1,0,NewViewer);
 }

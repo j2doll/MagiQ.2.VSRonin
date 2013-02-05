@@ -67,7 +67,7 @@ signals:
 	void EffectAddedToStack(EffectData,quint32);
 	void EffectResolved();
 	void PlayableCards(QList<int>);
-	void PlayedCard(int,CardData);
+	void PlayedCard(CardData,int);
 private slots:
 	void IncomingTransmission();
 public slots:

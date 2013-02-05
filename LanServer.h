@@ -43,8 +43,12 @@ private:
 	int TimerTypeStopped;
 	enum{NoneT,PhaseT,StackT,BothT};
 	QStack<EffectData*> EffectsStack;
+	QStack<CardData> CardsStack;
+	QStack<bool> EffectInStack;
 	void AddToStack(EffectData* eff);
+	void AddToStack(CardData crd);
 	void ResolveEffect(EffectData* eff);
+	void ResolveCard(CardData crd);
 	void CheckPlayableCards();
 	QMap<int,int> ManaAvailable(int PlayerCode) const;
 	bool CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai);
