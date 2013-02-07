@@ -40,6 +40,8 @@ namespace Comunications{
 		,PlayableCards
 		,WantToPlayCard
 		,PlayedCard
+		,RemoveCardFromHand
+		,PermanentResolved
 		,ChatMessage
 	};}
 }

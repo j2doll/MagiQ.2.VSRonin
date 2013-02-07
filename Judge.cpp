@@ -263,6 +263,7 @@ void Judge::WantsToPlayCard(int who,int CrdID){
 	}
 	else{
 		PlayersList[who]->SetCanPlayMana(false);
+		emit RemoveFromHand(who,CrdID);
 		ResolveCard(PlayersList[who]->GetCardsInStack().last());
 	}	
 	CheckPlayableCards();
@@ -325,6 +326,10 @@ void Judge::AddToStack(CardData crd){
 }
 void Judge::ResolveCard(CardData crd){
 	//TODO Check if countered
+	if((!crd.GetCardType().contains(Constants::CardTypes::Instant)) && (!crd.GetCardType().contains(Constants::CardTypes::Instant))){
+		PlayersList[PlayersList.key(crd.GetController())]->AddControlledCard(crd);
+		emit PermanentResolved(PlayersList.key(crd.GetController()),crd);
+	}
 }
 void Judge::ResolveEffect(EffectData* eff){
 	if (!eff) return;

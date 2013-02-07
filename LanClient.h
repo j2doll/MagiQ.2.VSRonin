@@ -68,6 +68,8 @@ signals:
 	void EffectResolved();
 	void PlayableCards(QList<int>);
 	void PlayedCard(CardData,int);
+	void RemoveFromHand(int,int);
+	void PermanentResolved(int,CardData);
 private slots:
 	void IncomingTransmission();
 public slots:

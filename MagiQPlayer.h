@@ -34,6 +34,7 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	void RemoveTopLibrary();
 	const QList<CardData>& GetCardsInStack() const{return CardsInStack;}
 	void SetCardsInStack(){CardsInStack.clear();}
 	void SetCardsInStack(const QList<CardData>& a){CardsInStack.clear(); CardsInStack=a;}

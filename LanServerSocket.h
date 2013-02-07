@@ -52,6 +52,8 @@ public slots:
 	void SendEffectResolved();
 	void SendPlayableCards(int socID,QList<int> IDs);
 	void SendPlayedCard(int who,const CardData& crd);
+	void SendRemoveFromHand(int who,int crdID);
+	void SendPermanentResolved(int who,CardData crd);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);

@@ -4,6 +4,7 @@
 #include <QList>
 #include <QMap>
 #include <QPixmap>
+#include <QSet>
 #include "CardData.h"
 class HandLayout;
 class MagiQPlayer;
@@ -36,6 +37,7 @@ private:
 	QMap<int,QLabel*> GraveyardLabels;
 	CardViewer* AnimationCard;
 	QMap<int,QList<CardViewer*>> CardsInHandView;
+	QMap<int,QList<CardViewer*>> LandsControlledView;
 	QMap<int,QList<CardViewer*>> CardsControlledView;
 	QList<CardViewer*> CardsInStackView;
 	QMap<int,QList<Card*>> CardsInHand;
@@ -49,11 +51,9 @@ private:
 	QPushButton* QuestionButton2;
 	PhasesDisplayer* PhaseDisp;
 	QMap<int,QFrame*> LandsContainer;
-	QMap<int,QHBoxLayout*> LandsContainerLay;
-	QMap<int,QMap<QString,QFrame*>> SameLandsFrames;
-	QMap<int,QMap<QString,HandLayout*>> SameLandsFramesLay; /*TODO Change Layout Type*/
+	QMap<int,HandLayout*> LandsContainerLay; //TODO change Layout
 //Game Properties
-	QList<Card*> AllCards;
+	QSet<Card*> AllCards;
 	QMap<int,MagiQPlayer*> Players;
 	QList<int> PlayersOrder;
 	int CurrentPhase;
@@ -72,9 +72,11 @@ private:
 	void AnimateDraw(int whos);
 	void AnimatePlay(int whos,Card* ToShow);
 	QMap<int,int> AskManaToTap();
+	int NumberOfLands(int who);
 private slots:
 	void UpdateAspect();
 	void ResetHandOrder();
+	void ResetLandOrder();
 	void ResetStackLayOrder();
 	void ClearQuestion();
 	void SizePosFrames();
@@ -103,6 +105,8 @@ public slots:
 	void SetPlayableCards(QList<int> IDs);
 	void PlayedCard(CardData crd,int Who);
 	void WantToPlayCard(int crdID);
+	void RemoveCardHand(int who,int crdID);
+	void ResolveCard(int Who, CardData crd);
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return Players.size();}

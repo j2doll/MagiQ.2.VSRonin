@@ -180,6 +180,16 @@ void LanClient::IncomingTransmission(){
 			incom >> card;
 			emit PlayedCard(card,int1);
 		}
+		else if(RequestType==Comunications::TransmissionType::RemoveCardFromHand){
+			incom >> int1;
+			incom >> int2;
+			emit RemoveFromHand(int1,int2);
+		}
+		else if(RequestType==Comunications::TransmissionType::PermanentResolved){
+			incom >> int1;
+			incom >> card;
+			emit PermanentResolved(int1,card);
+		}
 ////////////////////////////////////////////////////////////////////////////
 
 		nextBlockSize = 0;

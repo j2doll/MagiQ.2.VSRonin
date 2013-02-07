@@ -341,3 +341,23 @@ void LanServerSocket::SendPlayedCard(int who,const CardData& crd){
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
 }
+void LanServerSocket::SendRemoveFromHand(int who,int crdID){
+	if (who==SocketID) who=-1;
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::RemoveCardFromHand) << qint32(who) << qint32(crdID);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendPermanentResolved(int who,CardData crd){
+	if (who==SocketID) who=-1;
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::PermanentResolved) << qint32(who) << crd;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}

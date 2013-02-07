@@ -80,14 +80,14 @@ TestWidget::TestWidget(QWidget* parent)
 	MainLay->addWidget(chat,0,1,5,1);
 
 	//Chat Connections
-	connect(chat,SIGNAL(OutgoingMessage(QString)),Client,SLOT(SendChatMessage(QString)));
-	connect(Client,SIGNAL(ChatMessageRecieved(QString)),chat,SLOT(IncomingMesage(QString)));
 	connect(Client,SIGNAL(Disconnected()),chat,SLOT(Disconnected()));
 	connect(Client,SIGNAL(UserJoined(QString)),chat,SLOT(AnotherJoin(QString)));
 	connect(Client,SIGNAL(UserLeft(QString)),chat,SLOT(AnotherLeave(QString)));
 	connect(Client,SIGNAL(MyNameAndColor(QString,QColor)),chat,SLOT(Connected()));
 	connect(Client,SIGNAL(MyNameAndColor(QString,QColor)),chat,SLOT(SetNameColor(QString,QColor)));
 	connect(Client,SIGNAL(error(QAbstractSocket::SocketError)),chat,SLOT(DisplayNetworkErrors(QAbstractSocket::SocketError)));
+	connect(chat,SIGNAL(OutgoingMessage(QString)),Client,SLOT(SendChatMessage(QString)));
+	connect(Client,SIGNAL(ChatMessageRecieved(QString)),chat,SLOT(IncomingMesage(QString)));
 
 	//BattleGroundConnection
 	connect(Client,SIGNAL(PlayOrder(QList<int>)),board,SLOT(SetPlayersOrder(QList<int>)));
@@ -116,6 +116,8 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(PlayableCards(QList<int>)),board,SLOT(SetPlayableCards(QList<int>)));
 	connect(board,SIGNAL(WantPlayCard(int)),Client,SLOT(SendWantToPlayCard(int)));
 	connect(Client,SIGNAL(PlayedCard(CardData,int)),board,SLOT(PlayedCard(CardData,int)));
+	connect(Client,SIGNAL(RemoveFromHand(int,int)),board,SLOT(RemoveCardHand(int,int)));
+	connect(Client,SIGNAL(PermanentResolved(int,CardData)),board,SLOT(ResolveCard(int,CardData)));
 
 	//StackDisplayerConnections
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),StackDisp,SLOT(AddEffect(EffectData)));

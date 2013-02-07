@@ -75,5 +75,6 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(TempPoint,SIGNAL(WantPlayCard(int,int)),Ruler,SLOT(WantsToPlayCard(int,int)));
 	connect(Ruler,SIGNAL(PlayedCard(int,const CardData&)),TempPoint,SIGNAL(PlayedCard(int,const CardData&)));
 	connect(Ruler,SIGNAL(RemoveFromHand(int,int)),TempPoint,SIGNAL(RemoveFromHand(int,int)));
+	connect(Ruler,SIGNAL(PermanentResolved(int,CardData)),TempPoint,SIGNAL(PermanentResolved(int,CardData)));
 	Ruler->IncomingJoinRequest(a,nam,avat);
 }

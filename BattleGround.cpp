@@ -133,9 +133,9 @@ void BattleGround::SizePosFrames(){
 			qMin(HandsLay.value(NextIndex)->sizeHint().width(),910*width()/1024),
 			92*height()/768);
 		LandsContainer.value(NextIndex)->setGeometry(
-			90+((width()-qMin(HandsLay.value(NextIndex)->sizeHint().width(),910*width()/1024))/2), //TODO Fixme
+			118+(qMax(910*width()/1024-LandsContainerLay.value(NextIndex)->sizeHint().width(),0)/2),
 			561*height()/768,
-			qMin(HandsLay.value(NextIndex)->sizeHint().width(),910*width()/1024),
+			qMin(LandsContainerLay.value(NextIndex)->sizeHint().width(),910*width()/1024),
 			92*height()/768);
 		PlayesInfos.value(NextIndex)->setGeometry(
 			10*width()/1024
@@ -155,9 +155,9 @@ void BattleGround::SizePosFrames(){
 			qMin(HandsLay.value(NextIndex)->sizeHint().width(),910*width()/1024),
 			92*height()/768);
 		LandsContainer.value(NextIndex)->setGeometry(
-			(width()-qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024))/2,
+			24+(qMax(910*width()/1024-LandsContainerLay.value(NextIndex)->sizeHint().width(),0)/2),
 			110*height()/768,
-			qMin(HandsLay.value(NextIndex)->sizeHint().width(),1000*width()/1024),
+			qMin(LandsContainerLay.value(NextIndex)->sizeHint().width(),1000*width()/1024),
 			92*height()/768);
 		PlayesInfos.value(NextIndex)->setGeometry(
 			924*width()/1024
@@ -221,6 +221,41 @@ void BattleGround::UpdateAspect(){
 				CardsInHandView[index.key()].value(j)->UpdateAspect();
 			}
 		}
+/************************************************************************
+* Update Controlled Cards                                                          *
+*************************************************************************/
+		foreach(int ks, Players.keys()){
+			for(QList<Card*>::iterator crd=CardsControlled[ks].begin();crd!=CardsControlled[ks].end();crd++)
+				(*crd)->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
+		}
+		//Lands
+		while(LandsControlledView.value(index.key()).size()>NumberOfLands(index.key())){
+			LandsControlledView[index.key()].takeFirst()->deleteLater();
+		}
+		while(LandsControlledView.value(index.key()).size()<NumberOfLands(index.key())){
+			LandsControlledView[index.key()].append(new CardViewer(this));
+			CardViewer* TempViewer=LandsControlledView[index.key()].last();
+			connect(TempViewer,SIGNAL(LeftFocus()),this,SLOT(ResetLandOrder()));
+			connect(TempViewer,SIGNAL(GainFocus()),TempViewer,SLOT(raise()),Qt::QueuedConnection);
+			connect(TempViewer,SIGNAL(RequireZoom(Card*)),this,SLOT(ZoomAnimate(Card*)));
+			LandsContainerLay.value(index.key())->addWidget(TempViewer);
+		}
+		int contLands=0;
+		for (int j=0;j<index.value()->GetControlledCards().size();j++){
+			if (CardsControlled[index.key()].value(j,NULL)){
+				if (
+					CardsControlled[index.key()].value(j)->GetCardType().contains(Constants::CardTypes::Land)
+					&& (!CardsControlled[index.key()].value(j)->GetCardType().contains(Constants::CardTypes::Creature))
+					)
+				{
+					LandsControlledView[index.key()].value(contLands,NULL)->SetCardToDisplay(CardsControlled[index.key()].value(j));
+					LandsControlledView[index.key()].value(contLands,NULL)->SetCanBeZoom(true);
+					LandsControlledView[index.key()].value(contLands,NULL)->SetShadable(false);
+					LandsControlledView[index.key()].value(contLands,NULL)->SetCanBeClick(CardsControlled[index.key()].value(j,NULL)->GetActivable());
+					LandsControlledView[index.key()].value(contLands++,NULL)->UpdateAspect();
+				}
+			}
+		}
 	}
 /************************************************************************
 * Update Stack Frame                                                    *
@@ -279,6 +314,10 @@ void BattleGround::ResetHandOrder(){
 	foreach(HandLayout* hanlay,HandsLay)
 		hanlay->invalidate();
 }
+void BattleGround::ResetLandOrder(){
+	foreach(HandLayout* hanlay,LandsContainerLay)
+		hanlay->invalidate();
+}
 void BattleGround::ResetStackLayOrder(){StackCardsFrameLay->invalidate();}
 
 void BattleGround::SetPlayersOrder(QList<int> ord){
@@ -297,9 +336,7 @@ void BattleGround::SetPlayersOrder(QList<int> ord){
 		PlayesInfos[PlayID]->SetInfosToDisplay(Players[PlayID]);
 		LandsContainer[PlayID]=new QFrame(this);
 		LandsContainer[PlayID]->setObjectName("LandsContainer");
-		LandsContainerLay[PlayID]=new QHBoxLayout(LandsContainer[PlayID]);
-		LandsContainerLay[PlayID]->setMargin(0);
-		LandsContainerLay[PlayID]->setSpacing(2);
+		LandsContainerLay[PlayID]=new HandLayout(LandsContainer[PlayID]);
 	}
 }
 void BattleGround::SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt){
@@ -314,7 +351,7 @@ void BattleGround::SetMyHand(QList<CardData> hnd){
 	while (!CardsInHand[-1].isEmpty()) CardsInHand[-1].takeAt(0)->deleteLater();
 	foreach(CardData crd,Players[-1]->GetHand()){
 		CardsInHand[-1].append(new Card(crd,this));
-		AllCards.append(CardsInHand[-1].last());
+		AllCards.insert(CardsInHand[-1].last());
 		CardsInHand[-1].last()->UpdateAspect();
 		CardsInHand[-1].last()->hide();
 	}
@@ -394,7 +431,7 @@ void BattleGround::ZoomAnimate(Card* crd){
 	Animations->start(QAbstractAnimation::DeleteWhenStopped);
 }
 void BattleGround::UntapCards(QList<int> crds){
-	for(QList<Card*>::iterator i=AllCards.begin();i!=AllCards.end();i++)
+	for(QSet<Card*>::iterator i=AllCards.begin();i!=AllCards.end();i++)
 		(*i)->SetTapped(false);
 }
 void BattleGround::SetCurrentPhase(int ph){
@@ -431,10 +468,10 @@ void BattleGround::EffectAddedToStack(quint32 crd,EffectData eff){
 	ResumeStackTimer();
 }
 void BattleGround::DrawCard(CardData crd){
-	Players[-1]->DrawCard();
+	Players[-1]->RemoveTopLibrary();
 	Players[-1]->AddHand(crd);
 	CardsInHand[-1].append(new Card(crd,this));
-	AllCards.append(CardsInHand[-1].last());
+	AllCards.insert(CardsInHand[-1].last());
 	CardsInHand[-1].last()->UpdateAspect();
 	CardsInHand[-1].last()->hide();
 	AnimateDraw(-1);
@@ -505,7 +542,7 @@ void BattleGround::StopTimer(){
 void BattleGround::StopTurnTimer(){TurnTimer->stop();}
 void BattleGround::ResumeTurnTimer(){TurnTimer->start();}
 void BattleGround::SetPlayableCards(QList<int> IDs){
-	for(QList<Card*>::iterator i=AllCards.begin();i!=AllCards.end();i++){
+	for(QSet<Card*>::iterator i=AllCards.begin();i!=AllCards.end();i++){
 		(*i)->SetActivable(IDs.contains((*i)->GetCardID()));
 	}
 	UpdateAspect();
@@ -527,16 +564,6 @@ void BattleGround::WantToPlayCard(int crdID){
 void BattleGround::PlayedCard(CardData crd,int Who){
 	if (!PlayersOrder.contains(Who)) return;
 
-	/*if(crd.GetCardType().contains(Constants::CardTypes::Land) && !crd.GetCardType().contains(Constants::CardTypes::Creature)){
-		if (!SameLandsFrames[Who].contains(crd.GetCardName())){
-			SameLandsFrames[Who][crd.GetCardName()]=new QFrame(this);
-			QFrame* TmpPoint=SameLandsFrames[Who][crd.GetCardName()];
-			LandsContainerLay[Who]->addWidget(TmpPoint);
-			SameLandsFramesLay[Who][crd.GetCardName()]=new HandLayout(TmpPoint);
-			SameLandsFramesLay[Who][crd.GetCardName()]->setMargin(0);
-		}
-	}*/
-
 	//Remove Cards from Hand and add it to the stacked cards
 	QList<Card*>::iterator ite;
 	for (ite=CardsInHand[Who].begin();ite!=CardsInHand[Who].end();ite++){
@@ -548,11 +575,58 @@ void BattleGround::PlayedCard(CardData crd,int Who){
 	}
 	if (ite==CardsInHand[Who].end()){
 		CardsInStack.append(new Card(crd));
-		AllCards.append(CardsInStack.last());
+		AllCards.insert(CardsInStack.last());
 	}
-	Players[Who]->RemoveFromHand(crd.GetCardID());
-	//Players[Who]->AddControlledCard(crd);
-	//CardsControlled[Who].last()->SetController(Players[Who]);
+	if (Players[Who]->RemoveFromHand(crd.GetCardID()).GetCardID()==0){
+		for(QList<Card*>::iterator i=CardsInHand[Who].begin();i!=CardsInHand[Who].end();i++){
+			if((*i)->GetIsNull()){
+				(*i)->deleteLater();
+				CardsInHand[Who].erase(i);
+				break;
+			}
+		}
+	}
 	if (!crd.GetCardType().contains(Constants::CardTypes::Land)) ResumeStackTimer();
 	AnimatePlay(Who,CardsInStack.last());
+}
+void BattleGround::RemoveCardHand(int who,int crdID){
+	int RemovedID=Players[who]->RemoveFromHand(crdID).GetCardID();
+	for(QList<Card*>::iterator i=CardsInHand[who].begin();i!=CardsInHand[who].end();i++){
+		if (RemovedID==0){
+			if((*i)->GetIsNull()){
+				(*i)->deleteLater();
+				CardsInHand[who].erase(i);
+				break;
+			}
+		}
+		else{
+			if((*i)->GetCardID()==RemovedID){
+				(*i)->deleteLater();
+				CardsInHand[who].erase(i);
+				break;
+			}
+		}
+	}
+	UpdateAspect();
+}
+void BattleGround::ResolveCard(int Who, CardData crd){
+	for(QList<Card*>::const_iterator i=CardsControlled[Who].constBegin();i!=CardsControlled[Who].constEnd();i++){
+		if ((*i)->GetCardID()==crd.GetCardID()) return;
+	}	
+	CardsControlled[Who].append(new Card(crd,this));
+	AllCards.insert(CardsControlled[Who].last());
+	CardsControlled[Who].last()->SetController(Players[Who]);
+	CardsControlled[Who].last()->SetActivable(false);
+	Players[Who]->AddControlledCard(crd);
+	UpdateAspect();
+}
+int BattleGround::NumberOfLands(int who){
+	int Result=0;
+	foreach(Card* crd,CardsControlled[who]){
+		if(
+			crd->GetCardType().contains(Constants::CardTypes::Land)
+			&& (!crd->GetCardType().contains(Constants::CardTypes::Creature))
+		)++Result;
+	}
+	return Result;
 }

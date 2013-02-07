@@ -32,6 +32,11 @@ void MagiQPlayer::ShuffleLibrary(){
 		card.SetSortingMethod(CardData::Random);
 	qSort(Library.begin(),Library.end());
 }
+void MagiQPlayer::RemoveTopLibrary(){
+	if (Library.isEmpty())
+		emit NoMoreCardsToDraw();
+	Library.takeAt(0);
+}
 const CardData& MagiQPlayer::DrawCard(){
 	if (Library.isEmpty()){
 		emit NoMoreCardsToDraw();
@@ -105,12 +110,18 @@ void MagiQPlayer::SetLibrary(const QList<CardData>& a){
 }
 CardData MagiQPlayer::RemoveFromHand(int CardID){
 	CardData Result;
+	QList<CardData>::iterator Alternative=Hand.end();
 	for(QList<CardData>::iterator i=Hand.begin();i!=Hand.end();i++){
 		if(i->GetCardID()==CardID){
 			Result=*i;
 			Hand.erase(i);
-			break;
+			return Result;
 		}
+		if (i->GetCardID()==0) Alternative=i;
+	}
+	if (Alternative!=Hand.end()){
+		Result=*Alternative;
+		Hand.erase(Alternative);
 	}
 	return Result;
 }
