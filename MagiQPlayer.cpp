@@ -28,8 +28,8 @@ void MagiQPlayer::ResetManaPool(){
 }
 
 void MagiQPlayer::ShuffleLibrary(){
-	foreach(CardData card,Library)
-		card.SetSortingMethod(CardData::Random);
+	for (QList<CardData>::const_iterator i=Library.constBegin();i!=Library.constEnd();i++)
+		i->SetSortingMethod(CardData::Random);
 	qSort(Library.begin(),Library.end());
 }
 void MagiQPlayer::RemoveTopLibrary(){
@@ -54,7 +54,14 @@ void MagiQPlayer::SortHand(){
 	for (QList<CardData>::const_iterator i=Hand.constBegin();i!=Hand.constEnd();i++)
 		i->SetSortingMethod(PrimaryOrdering);
 	qStableSort(Hand.begin(),Hand.end());
-	emit RequireUpdateAspect();
+}
+void MagiQPlayer::SortControlled(){
+	for (QList<CardData>::const_iterator i=ControlledCards.constBegin();i!=ControlledCards.constEnd();i++)
+		i->SetSortingMethod(CardData::ByName);
+	qSort(ControlledCards.begin(),ControlledCards.end());
+	for (QList<CardData>::const_iterator i=ControlledCards.constBegin();i!=ControlledCards.constEnd();i++)
+		i->SetSortingMethod(CardData::ByType);
+	qStableSort(ControlledCards.begin(),ControlledCards.end());
 }
 MagiQPlayer::MagiQPlayer(const MagiQPlayer& a,QObject* parent)
 	:QObject(parent)

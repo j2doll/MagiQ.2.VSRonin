@@ -4,6 +4,7 @@
 class QProgressBar;
 class QLabel;
 class QFrame;
+class QPushButton;
 class PhasesDisplayer : public QWidget{
 	Q_OBJECT
 	Q_PROPERTY(bool StackTimerActivated READ GetStackTimerActivated WRITE SetStackTimerActivated)
@@ -18,6 +19,7 @@ private:
 	QFrame* Background;
 	int CurrentPhase;
 	bool StackTimerActivated;
+	QPushButton* ContinueButton;
 public:
 	PhasesDisplayer(QWidget* parent=0);
 	void SetPhaseTimeLimit(int a);
@@ -30,9 +32,12 @@ public:
 	void PausePhaseTimer();
 	bool GetStackTimerActivated() const {return StackTimerActivated;}
 	void SetStackTimerActivated(bool a);
+	void ShowButton(bool a);
 protected:
 	void resizeEvent(QResizeEvent* event);
 private slots:
 	void AnimationFinished();
+signals:
+	void Continued();
 };
 #endif

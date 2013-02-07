@@ -172,6 +172,7 @@ void BattleGround::UpdateAspect(){
 	if (!isVisible()) return;
 	int HeiForWid=(279*ZoommedCardWidth)/200;
 	SortCardsInHand();
+	SortCardsControlled();
 	for(QMap<int,MagiQPlayer*>::iterator index=Players.begin();index!=Players.end();index++){
 		if (index.value()->GetLibrary().size()==0)
 			DeckLabels.value(index.key())->hide();
@@ -222,7 +223,7 @@ void BattleGround::UpdateAspect(){
 			}
 		}
 /************************************************************************
-* Update Controlled Cards                                                          *
+* Update Controlled Cards                                               *
 *************************************************************************/
 		foreach(int ks, Players.keys()){
 			for(QList<Card*>::iterator crd=CardsControlled[ks].begin();crd!=CardsControlled[ks].end();crd++)
@@ -308,6 +309,29 @@ void BattleGround::SortCardsInHand(){
 			}
 		}
 		CardsInHand[ks]=Sorter.values();
+	}
+}
+void BattleGround::SortCardsControlled(){
+	int index;
+	int MinimumIndex=-1;
+	QMap<int,Card*> Sorter;
+	foreach(int ks, Players.keys()){
+		Sorter.clear();
+		Players.value(ks)->SortControlled();
+		const QList<CardData>& TempList=Players.value(ks)->GetControlledCards();
+		foreach(Card* car,CardsControlled[ks]){
+			index=-1;
+			if (car->GetIsNull())
+				Sorter.insert(MinimumIndex--,car);
+			else{
+				for(int j=0;j<TempList.size() && index<0;j++){
+					if(TempList.value(j).GetCardID()==car->GetCardID())
+						index=j;
+				}
+				Sorter.insert(index,car);
+			}
+		}
+		CardsControlled[ks]=Sorter.values();
 	}
 }
 void BattleGround::ResetHandOrder(){
@@ -452,10 +476,16 @@ void BattleGround::SetCurrentPhase(int ph){
 		&& CurrentPhase!=Constants::Phases::DeclareAttackers
 		&& CurrentPhase!=Constants::Phases::DeclareBlockers
 	)
+	{
+		PhaseDisp->ShowButton(false);
 		PhaseTimer->start();
-	else PhaseDisp->SetPhaseTime();
+	}
+	else{
+		PhaseDisp->ShowButton(true);
+	}
 }
 void BattleGround::ResumeStackTimer(){
+	PhaseDisp->ShowButton(false);
 	disconnect(PhaseTimer,SIGNAL(timeout()),this,SLOT(PhaseTimeUpdate()));
 	connect(ResponseTimer,SIGNAL(timeout()),this,SLOT(PhaseTimeUpdate()));
 	CurrentResponseTime=0;

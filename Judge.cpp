@@ -330,6 +330,7 @@ void Judge::ResolveCard(CardData crd){
 		PlayersList[PlayersList.key(crd.GetController())]->AddControlledCard(crd);
 		emit PermanentResolved(PlayersList.key(crd.GetController()),crd);
 	}
+	CheckPlayableCards();
 }
 void Judge::ResolveEffect(EffectData* eff){
 	if (!eff) return;

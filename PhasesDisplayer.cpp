@@ -6,6 +6,7 @@
 #include <QGridLayout>
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
+#include <QPushButton>
 #include "StyleSheets.h"
 PhasesDisplayer::PhasesDisplayer(QWidget* parent)
 	:QWidget(parent)
@@ -49,12 +50,20 @@ PhasesDisplayer::PhasesDisplayer(QWidget* parent)
 	TurnTimer->setTextVisible(false);
 	TurnTimer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 
+	ContinueButton=new QPushButton(this);
+	ContinueButton->setObjectName("ContinueButton");
+	ContinueButton->setText(tr("Continue"));
+	ContinueButton->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
+	connect(ContinueButton,SIGNAL(clicked()),this,SIGNAL(Continued()));
+	ContinueButton->hide();
+
 	QGridLayout* MainLay=new QGridLayout(this);
 	MainLay->setMargin(3);
 	MainLay->setSpacing(2);
 	MainLay->addWidget(Displayer,0,0);
 	MainLay->addWidget(PhaseTimer,0,1);
-	MainLay->addWidget(TurnTimer,1,0,1,2);
+	MainLay->addWidget(ContinueButton,0,2);
+	MainLay->addWidget(TurnTimer,1,0,1,3);
 	CurrentPhaseIcon->move(0,0);
 	NextPhaseIcon->hide();
 	SetStackTimerActivated(false);
@@ -103,4 +112,16 @@ void PhasesDisplayer::SetStackTimerActivated(bool a){
 	StackTimerActivated=a;
 	PhaseTimer->setToolTip(a ? tr("Response Time"):tr("Phase Time"));
 	setStyleSheet(StyleSheets::PhasesDisplayerCSS);
+}
+void PhasesDisplayer::ShowButton(bool a){
+	if (a){
+		SetPhaseTime();
+		PhaseTimer->hide();
+		ContinueButton->show();
+	}
+	else{
+		SetPhaseTime();
+		PhaseTimer->show();
+		ContinueButton->hide();
+	}
 }

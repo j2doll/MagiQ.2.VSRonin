@@ -69,6 +69,7 @@ private:
 	QMap<int,int> ManaToTap;
 //Functions
 	void SortCardsInHand();
+	void SortCardsControlled();
 	void AnimateDraw(int whos);
 	void AnimatePlay(int whos,Card* ToShow);
 	QMap<int,int> AskManaToTap();

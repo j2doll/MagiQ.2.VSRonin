@@ -94,6 +94,7 @@ public:
 	void ShuffleLibrary();
 	const CardData& DrawCard();
 	void SortHand();
+	void SortControlled();
 	void DiscardRandom(){Graveyard.append(Hand.takeAt(qrand()%Hand.size()));}
 	void HandToBottomLibrary(){while(!Hand.isEmpty()) Library.append(Hand.takeAt(0));}
 	void SetCanPlayMana(bool a){CanPlayMana=a;}
