@@ -58,6 +58,7 @@ signals:
 	void PlayableCards(int,QList<int>);
 	void WantPlayCard(int,int);
 	void PlayedCard(int,const CardData&);
+	void RemoveFromHand(int,int);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

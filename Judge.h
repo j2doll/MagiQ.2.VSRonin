@@ -88,6 +88,7 @@ signals:
 	void EffectResolved();
 	void PlayableCards(int,QList<int>);
 	void PlayedCard(int Who,const CardData& crd);
+	void RemoveFromHand(int who,int crdID);
 public slots:
 	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersList.size());}
 	void IncomingJoinRequest(int a,QString nam,QPixmap avat);
