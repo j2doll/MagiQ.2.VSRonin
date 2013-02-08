@@ -35,7 +35,7 @@ public:
 	void SetHiddenEffect(bool a){HiddenEffect=a;}
 	void SetEffectCost(const QMap<int,int>& a){EffectCost.clear(); EffectCost=a;}
 	void SetEffectCost();
-	void SetEffectCost(int key, int cost){SetEffectCost(); EffectCost.insert(key,cost);}
+	void SetEffectCost(int key, int cost){SetEffectCost(); EffectCost[key]=cost;}
 	void AddEffectCost(int key, int cost){if(key>=0 && key<EffectsConstants::EffectCosts::END) EffectCost[key]+=cost;}
 	void SetTargets(){Targets.clear();}
 	void SetTargets(const QMap<int,int>& a){Targets.clear(); Targets=a;}

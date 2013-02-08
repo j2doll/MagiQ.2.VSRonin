@@ -251,16 +251,17 @@ void Judge::ResumeTimer(int SocID){
 QMap<int,int> Judge::ManaAvailable(int PlayerCode) const{
 	if(!PlayersList.contains(PlayerCode)) return QMap<int,int>();
 	QMap<int,int> Result(PlayersList.value(PlayerCode)->GetManaPool());
-	for(QList<CardData>::const_iterator crd=PlayersList.value(PlayerCode)->GetControlledCards().constBegin();crd!=PlayersList.value(PlayerCode)->GetControlledCards().constEnd();crd++){
+	const QList<CardData>& ContCrds=PlayersList.value(PlayerCode)->GetControlledCards();
+	for(QList<CardData>::const_iterator crd=ContCrds.constBegin();crd!=ContCrds.constEnd();crd++){
 		if(crd->GetSummoningSickness()) continue;
-		for(QList<EffectData>::const_iterator eff=crd->GetEffects().constBegin();eff!=crd->GetEffects().constEnd();eff++){
-			if(!eff->GetManaEffect()) continue;
-			switch(eff->GetEffectBody()){
-			case EffectsConstants::Effects::AddWToManaPool: Result[Constants::ManaCosts::W]+=eff->GetVariableValues().at(0); break;
-			case EffectsConstants::Effects::AddUToManaPool: Result[Constants::ManaCosts::U]+=eff->GetVariableValues().at(0); break;
-			case EffectsConstants::Effects::AddBToManaPool: Result[Constants::ManaCosts::B]+=eff->GetVariableValues().at(0); break;
-			case EffectsConstants::Effects::AddRToManaPool: Result[Constants::ManaCosts::R]+=eff->GetVariableValues().at(0); break;
-			case EffectsConstants::Effects::AddGToManaPool: Result[Constants::ManaCosts::G]+=eff->GetVariableValues().at(0); break;
+		foreach(const EffectData& eff, crd->GetEffects()){
+			if(!eff.GetManaEffect()) continue;
+			switch(eff.GetEffectBody()){
+			case EffectsConstants::Effects::AddWToManaPool: Result[Constants::ManaCosts::W]+=eff.GetVariableValues().at(0); break;
+			case EffectsConstants::Effects::AddUToManaPool: Result[Constants::ManaCosts::U]+=eff.GetVariableValues().at(0); break;
+			case EffectsConstants::Effects::AddBToManaPool: Result[Constants::ManaCosts::B]+=eff.GetVariableValues().at(0); break;
+			case EffectsConstants::Effects::AddRToManaPool: Result[Constants::ManaCosts::R]+=eff.GetVariableValues().at(0); break;
+			case EffectsConstants::Effects::AddGToManaPool: Result[Constants::ManaCosts::G]+=eff.GetVariableValues().at(0); break;
 				//TODO Add the others
 			}
 		}
@@ -270,7 +271,7 @@ QMap<int,int> Judge::ManaAvailable(int PlayerCode) const{
 void Judge::WantsToPlayCard(int who,int CrdID){
 	CardData TheCard=PlayersList[who]->RemoveFromHand(CrdID);
 	if (TheCard.GetCardID()==0) return;
-	if (!CanPlayCard(TheCard,who)) return; //Double check, erase to speed up
+	//if (!CanPlayCard(TheCard,who)) return; //Double check, erase to speed up
 	TheCard.SetController(PlayersList.value(who,NULL));
 	PlayersList[who]->AddCardInStack(TheCard);
 	if(!TheCard.GetCardType().contains(Constants::CardTypes::Land)){
@@ -286,9 +287,23 @@ void Judge::WantsToPlayCard(int who,int CrdID){
 	CheckPlayableCards();
 }
 bool Judge::CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai){
-	if (crd.GetCardType().contains(Constants::CardTypes::Land) && !crd.GetHasManaCost() && PlayersList.value(PlayerCode)->GetCanPlayMana()) return true;
-	//TODO implement
-	return false;
+	QMap<int,int> ManAv(ManaAvai);
+	int TempValue;
+	if (crd.GetCardType().contains(Constants::CardTypes::Land) && !crd.GetHasManaCost()) return PlayersList.value(PlayerCode)->GetCanPlayMana();
+	for(QMap<int,int>::const_iterator i=crd.GetCardCost().constBegin();i!=crd.GetCardCost().constEnd();i++){
+		if(i.value()<=0) continue;
+		TempValue=i.value();
+		switch(i.key()){
+		case Constants::ManaCosts::G:
+			if(ManAv.value(Constants::ManaCosts::G,0)>=TempValue){
+				ManAv[Constants::ManaCosts::G]-=TempValue;
+				break;
+			}
+			TempValue-=ManAv.value(Constants::ManaCosts::G,0);
+			return false; //Temp
+		}
+	}
+	return true;
 }
 void Judge::CheckPlayableCards(){
 	QList<int> PlayableCardsIDs;

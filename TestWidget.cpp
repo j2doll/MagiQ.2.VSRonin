@@ -1,4 +1,5 @@
 #include "TestWidget.h"
+#include "EffectsConstants.h"
 TestWidget::TestWidget(QWidget* parent)
 	:QWidget(parent)
 {
@@ -18,7 +19,14 @@ TestWidget::TestWidget(QWidget* parent)
 	StackDisp=new StackDispalyer(BattleFrame);
 	BattleFrameLay->addWidget(StackDisp);
 
-
+	EffectData AddG;
+	AddG.SetEffectBody(EffectsConstants::Effects::AddGToManaPool);
+	AddG.SetHiddenEffect(true);
+	AddG.SetEffectCost(EffectsConstants::EffectCosts::Tap,1);
+	AddG.SetVariableValues(1);
+	AddG.SetEffectText("Tap: add G to your mana pool");
+	AddG.SetEffectType(EffectsConstants::EffectTypes::ActivatedEffect);
+	AddG.SetManaEffect(true);
 	CardData Foresta;
 	Foresta.SetCardName("Forest");
 	Foresta.SetHasManaCost(false);
@@ -28,10 +36,11 @@ TestWidget::TestWidget(QWidget* parent)
 	Foresta.AddCardType(Constants::CardTypes::Basic);
 	Foresta.AddCardType(Constants::CardTypes::Land);
 	Foresta.AddCardSubType(Constants::CardSubTypes::Forest);
+	Foresta.AddEffect(AddG);
 	CardData Bear;
 	Bear.SetCardName("Grizzly Bears");
 	Bear.AddCardCost(Constants::ManaCosts::G,1);
-	Bear.AddCardCost(Constants::ManaCosts::Colorless,1);
+	//Bear.AddCardCost(Constants::ManaCosts::Colorless,1);
 	Bear.AddCardColor(Constants::CardColor::Green);
 	Bear.SetHasPT(true);
 	Bear.SetCardPower(2);
@@ -125,7 +134,7 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(EffectResolved()),StackDisp,SLOT(Resolve()));
 
 	//Test Connections
-	connect(Client,SIGNAL(PlayOrder(QList<int>)),BattleFrame,SLOT(show()));
+	connect(Client,SIGNAL(GameHasStarted()),BattleFrame,SLOT(show()));
 	connect(board,SIGNAL(KeepHand()),WhoCares,SLOT(SendHandAccepted()));
 	connect(board,SIGNAL(TimerFinished()),WhoCares,SLOT(SendFinishedTimer()));
 	QPushButton* PauseTimerButton=new QPushButton(this);

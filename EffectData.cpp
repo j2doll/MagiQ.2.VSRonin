@@ -23,6 +23,7 @@ EffectData::EffectData(const EffectData& a)
 	,EffectTooltip(a.EffectTooltip)
 	,EffectID(a.EffectID)
 	,CardAttached(a.CardAttached)
+	,VariableValues(a.VariableValues)
 {}
 const EffectData& EffectData::operator=(const EffectData& a){
 	EffectType=a.EffectType;
@@ -37,6 +38,7 @@ const EffectData& EffectData::operator=(const EffectData& a){
 	EffectTooltip=a.EffectTooltip;
 	EffectID=a.EffectID;
 	CardAttached=a.CardAttached;
+	VariableValues.clear(); VariableValues=a.VariableValues;
 	return *this;
 }
 QDataStream &operator<<(QDataStream &out, const EffectData &effect)
@@ -85,4 +87,9 @@ void EffectData::ReplaceSpecificSelectedTarget(int key, int oldval, int newval){
 	for(QMultiMap<int,int>::iterator i=SelectedTargets.begin();i!=SelectedTargets.end();i++){
 		if(i.key()==key && i.value()==oldval) i.value()=newval;
 	}
+}
+void EffectData::SetEffectCost(){
+	EffectCost.clear();
+	for (int i=0;i<EffectsConstants::EffectCosts::END;i++)
+		EffectCost.insert(i,0);
 }

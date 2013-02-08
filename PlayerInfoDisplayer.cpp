@@ -136,7 +136,6 @@ void PlayerInfoDisplayer::resizeEvent(QResizeEvent* event){
 	ExileLabel->setMask(QPixmap(":/Board/Resources/Exile.png")
 		.scaled(ExileLabel->size())
 		.mask());
-	AvatarLabel->setMask(QPixmap::grabWidget(AvatarLabel).mask());
 	WManaPoolLabel->setGeometry(38*ManaPoolFrame->width()/102,0,26*ManaPoolFrame->width()/102,26*ManaPoolFrame->height()/98);
 	UManaPoolLabel->setGeometry(76*ManaPoolFrame->width()/102,27*ManaPoolFrame->height()/98,26*ManaPoolFrame->width()/102,26*ManaPoolFrame->height()/98);
 	BManaPoolLabel->setGeometry(61*ManaPoolFrame->width()/102,72*ManaPoolFrame->height()/98,26*ManaPoolFrame->width()/102,26*ManaPoolFrame->height()/98);
