@@ -4,7 +4,7 @@
 #include <QList>
 #include <QMap>
 #include <QPixmap>
-#include <QSet>
+#include <QHash>
 #include "CardData.h"
 class HandLayout;
 class MagiQPlayer;
@@ -36,12 +36,17 @@ private:
 	QMap<int,QLabel*> DeckLabels;
 	QMap<int,QLabel*> GraveyardLabels;
 	CardViewer* AnimationCard;
+	QHash<int,QString> PlayerNames;
+	QHash<int,QPixmap> PlayerAvatars;
+	QHash<int,int> PlayerLife;
 	QMap<int,QList<CardViewer*>> CardsInHandView;
 	QMap<int,QList<CardViewer*>> LandsControlledView;
 	QMap<int,QList<CardViewer*>> CardsControlledView;
 	QList<CardViewer*> CardsInStackView;
 	QMap<int,QList<Card*>> CardsInHand;
 	QMap<int,QList<Card*>> CardsControlled;
+	QMap<int,QList<Card*>> CardsInGraveyard;
+	QMap<int,QList<Card*>> CardsExiled;
 	QList<Card*> CardsInStack;
 	Card* GenericCard;
 	Card* ZoomedCard;
@@ -53,8 +58,9 @@ private:
 	QMap<int,QFrame*> LandsContainer;
 	QMap<int,HandLayout*> LandsContainerLay; //TODO change Layout
 //Game Properties
-	QSet<Card*> AllCards;
-	QMap<int,MagiQPlayer*> Players;
+	QMap<int,Card*> AllCards;
+	QHash<int,int> LibrarySizes;
+	//QMap<int,MagiQPlayer*> Players;
 	QList<int> PlayersOrder;
 	int CurrentPhase;
 	QTimer* PhaseTimer;
@@ -67,6 +73,8 @@ private:
 	int TurnTimeLimit;
 	int CurrentTurnTime;
 	QMap<int,int> ManaToTap;
+	int HandPrimarySorting;
+	int HandSecondarySorting;
 //Functions
 	void SortCardsInHand();
 	void SortCardsControlled();
@@ -81,6 +89,7 @@ private slots:
 	void ResetStackLayOrder();
 	void ClearQuestion();
 	void SizePosFrames();
+	void SizePosAllCards();
 	void ZoomAnimate(Card* crd);
 	void TurnTimeUpdate();
 	void PhaseTimeUpdate();
@@ -88,15 +97,14 @@ public slots:
 	void AskMulligan();
 	void SetPlayersOrder(QList<int> ord);
 	void SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt);
-	void SetMyHand(QList<CardData> hnd);
+	void SetMyHand(QList<int> hnd);
 	void SetOtherHand(int whos,int numcards);
-	void SetMyLibrary(QList<CardData> libr);
-	void SetOtherLibrary(int whos,int numcards);
+	void SetPlayerLibrary(int whos,int numcards);
 	void DispalyWaitingFor(QString a);
 	void HideWaitingFor();
 	void UntapCards(QList<int> crds);
 	void SetCurrentPhase(int ph);
-	void DrawCard(CardData crd);
+	void DrawCard(int crd);
 	void OtherDraw(int who);
 	void StopTimer();
 	void StopTurnTimer();
@@ -104,18 +112,20 @@ public slots:
 	void ResumeStackTimer();
 	void EffectAddedToStack(quint32 crd,EffectData eff);
 	void SetPlayableCards(QList<int> IDs);
-	void PlayedCard(CardData crd,int Who);
+	void PlayedCard(int crd,int Who);
 	void WantToPlayCard(int crdID);
 	void RemoveCardHand(int who,int crdID);
-	void ResolveCard(int Who, CardData crd);
+	void ResolveCard(int Who, int crd);
+	void SetAllCards(QList<CardData> a);
 public:
 	BattleGround(QWidget* parent=0);
-	int GetNumOfPlayers() const {return Players.size();}
+	int GetNumOfPlayers() const {return PlayersOrder.size();}
 protected:
 	void resizeEvent(QResizeEvent* event);
 signals:
 	void WantPlayCard(int crdID);
 	void NeedResizeFrames();
+	void NeedResizeCards();
 	void Mulligan();
 	void KeepHand();
 	void TimerFinished();

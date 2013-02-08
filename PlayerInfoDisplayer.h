@@ -3,11 +3,11 @@
 #include <QWidget>
 #include <QPixmap>
 #include <QList>
+#include <QMap>
 class QPropertyAnimation;
 class QFrame;
 class QLabel;
 class QProgressBar;
-class MagiQPlayer;
 class RoundedCornersLabel;
 class PlayerInfoDisplayer :public QWidget{
 	Q_OBJECT
@@ -29,7 +29,14 @@ private:
 	QLabel* GManaPoolLabel;
 	QLabel* CManaPoolLabel;
 
-	MagiQPlayer* InfosToDisplay;
+	int LifeValue;
+	int HandSize;
+	int LibrarySize;
+	int GraveyardSize;
+	int ExileSize;
+	QPixmap PlayerAvatar;
+	QString PlayerName;
+	QMap<int,int> ManaPool;
 
 	enum{LifeAnimationDuration=1000};
 	enum{LifeBarMultiply=100}; //The higher, the smoother the animation is
@@ -41,9 +48,23 @@ private slots:
 	void NextAnimation();
 public:
 	PlayerInfoDisplayer(QWidget* parent=0);
-	void SetInfosToDisplay(MagiQPlayer* a=NULL);
-	MagiQPlayer* GetInfosToDisplay() const {return InfosToDisplay;}
 	int GetLifeLevel() const;
+	int GetLifeValue() const{return LifeValue;}
+	int GetHandSize() const{return HandSize;}
+	int GetLibrarySize() const{return LibrarySize;}
+	int GetGraveyardSize() const{return GraveyardSize;}
+	int GetExileSize() const{return ExileSize;}
+	const QPixmap& GetPlayerAvatar() const{return PlayerAvatar;}
+	const QString& GetPlayerName() const{return PlayerName;}
+	const QMap<int,int>& GetManaPool() const{return ManaPool;}
+	void SetLifeValue(int a){if(a==LifeValue) return; LifeValue=a; AnimateLifeBar(a);}
+	void SetHandSize(int a){HandSize=a;}
+	void SetLibrarySize(int a){LibrarySize=a;}
+	void SetGraveyardSize(int a){GraveyardSize=a;}
+	void SetExileSize(int a){ExileSize=a;}
+	void SetPlayerAvatar(const QPixmap& a){PlayerAvatar=a;}
+	void SetPlayerName(const QString& a){PlayerName=a;}
+	void SetManaPool(const QMap<int,int>& a){ManaPool=a;}
 public slots:
 	void UpdateAspect();
 protected:

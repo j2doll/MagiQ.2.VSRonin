@@ -12,9 +12,15 @@
 #include "RoundedCornersLabel.h"
 PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	:QWidget(parent)
-	,InfosToDisplay(NULL)
 	,CurrentLife(0)
 	,TargetLife(0)
+	,LifeValue(0)
+	,HandSize(0)
+	,LibrarySize(0)
+	,ExileSize(0)
+	,GraveyardSize(0)
+	,PlayerName(tr("Player"))
+	,PlayerAvatar(":/Board/DefaultAvatar.png")
 {
 	BackGround=new QFrame(this);
 	BackGround->setObjectName("BackGround");
@@ -104,29 +110,18 @@ PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	MainLayout->addWidget(ManaPoolFrame,5,0,1,2);
 }
 void PlayerInfoDisplayer::UpdateAspect(){
-	if (InfosToDisplay){
-		NameLabel->setText(InfosToDisplay->GetPlayerName());
-		HandSizeLabel->setText(QString("%1").arg(InfosToDisplay->GetHand().size()));
-		GraveyardLabel->setText(QString("%1").arg(InfosToDisplay->GetGraveyard().size()));
-		ExileLabel->setText(QString("%1").arg(InfosToDisplay->GetExile().size()));
-		AvatarLabel->SetImageToShow(InfosToDisplay->GetAvatar());
-		LifeLabel->setText(QString("%1").arg(InfosToDisplay->GetLife()));
-		WManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::W,0)));
-		UManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::U,0)));
-		BManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::B,0)));
-		RManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::R,0)));
-		GManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::G,0)));
-		CManaPoolLabel->setText(QString("%1").arg(InfosToDisplay->GetManaPool().value(Constants::ManaCosts::Colorless,0)));
-	}
-	else{
-		HandSizeLabel->setText(QString(""));
-		GraveyardLabel->setText(QString(""));
-		ExileLabel->setText(QString(""));
-		AvatarLabel->SetImageToShow(QPixmap());
-		CurrentLife=0;
-		LifeLabel->setText("0");
-		LifeBar->setValue(0);
-	}
+	NameLabel->setText(PlayerName);
+	HandSizeLabel->setText(QString("%1").arg(HandSize));
+	GraveyardLabel->setText(QString("%1").arg(GraveyardSize));
+	ExileLabel->setText(QString("%1").arg(ExileSize));
+	AvatarLabel->SetImageToShow(PlayerAvatar);
+	LifeLabel->setText(QString("%1").arg(LifeValue));
+	WManaPoolLabel->setText(QString("%1").arg(ManaPool.value(Constants::ManaCosts::W,0)));
+	UManaPoolLabel->setText(QString("%1").arg(ManaPool.value(Constants::ManaCosts::U,0)));
+	BManaPoolLabel->setText(QString("%1").arg(ManaPool.value(Constants::ManaCosts::B,0)));
+	RManaPoolLabel->setText(QString("%1").arg(ManaPool.value(Constants::ManaCosts::R,0)));
+	GManaPoolLabel->setText(QString("%1").arg(ManaPool.value(Constants::ManaCosts::G,0)));
+	CManaPoolLabel->setText(QString("%1").arg(ManaPool.value(Constants::ManaCosts::Colorless,0)));
 	setStyleSheet(StyleSheets::PlayerInfoCSS);
 }
 void PlayerInfoDisplayer::resizeEvent(QResizeEvent* event){
@@ -156,7 +151,6 @@ void PlayerInfoDisplayer::resizeEvent(QResizeEvent* event){
 	CManaPoolLabel->setMask(QRegion(0,0,26*ManaPoolFrame->width()/102,26*ManaPoolFrame->height()/98,QRegion::Ellipse));
 }
 int PlayerInfoDisplayer::GetLifeLevel() const{
-	if (!InfosToDisplay) return 0;
 	int Result=0;
 	int Lifer=CurrentLife;
 	while (Lifer>20){
@@ -273,17 +267,6 @@ void PlayerInfoDisplayer::AnimateLifeBar(int NewLife){
 		CurrentLife=tempPoint->keyValueAt(1.0).toInt()/LifeBarMultiply;
 		tempPoint->start(QAbstractAnimation::DeleteWhenStopped);
 	}
-}
-void PlayerInfoDisplayer::SetInfosToDisplay(MagiQPlayer* a){
-	InfosToDisplay=a;
-	if (!InfosToDisplay) return;
-	CurrentLife=InfosToDisplay->GetLife();
-	if (CurrentLife<0) CurrentLife=0;
-	while(CurrentLife>20) CurrentLife-=20;
-	LifeBar->setValue(CurrentLife*LifeBarMultiply);
-	CurrentLife=InfosToDisplay->GetLife();
-	connect(InfosToDisplay,SIGNAL(LifeChanged(int)),this,SLOT(AnimateLifeBar(int)),Qt::UniqueConnection);
-	connect(InfosToDisplay,SIGNAL(LifeChanged(int)),this,SLOT(UpdateAspect()));
 }
 bool PlayerInfoDisplayer::eventFilter(QObject *target, QEvent *event){
 	if (event->type()==QEvent::MouseButtonPress)

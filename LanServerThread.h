@@ -35,8 +35,9 @@ signals:
 	void YourNameColor(int,QString,QColor);
 	void InvalidDeck(int);
 	void GameHasStarted();
-	void PlayerHand(int,QList<CardData>);
-	void PlayerLibrary(int,QList<CardData>);
+	void AllCards(QList<CardData>);
+	void PlayerHand(int,QList<int>);
+	void PlayerLibrary(int,int);
 	void PlayOrder(QList<int>);
 	void Mulligan(int);
 	void HandAccepted(int);
@@ -45,7 +46,7 @@ signals:
 	void StopWaitingFor();
 	void CurrentPhaseChanged(int);
 	void CardsToUntap(QList<int>);
-	void CardDrawn(int,CardData);
+	void CardDrawn(int,int);
 	void TimerFinished(int);
 	void TimerStopped(int);
 	void StopTimers();
@@ -57,9 +58,9 @@ signals:
 	void EffectResolved();
 	void PlayableCards(int,QList<int>);
 	void WantPlayCard(int,int);
-	void PlayedCard(int,const CardData&);
+	void PlayedCard(int,int);
 	void RemoveFromHand(int,int);
-	void PermanentResolved(int,CardData);
+	void PermanentResolved(int,int);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

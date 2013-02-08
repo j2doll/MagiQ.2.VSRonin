@@ -72,6 +72,11 @@ void Judge::DeckSetUp(int socID,CardDeck deck){
 			i->SetCardID(++CardIDCounter);
 			i->SetOwner(PlayersList[socID]);
 		}
+		for (QList<CardData>::iterator i=PlayersList[socID]->GetSideboard().begin();i!=PlayersList[socID]->GetSideboard().end();i++){
+			for (int j=0;j<i->GetEffects().size();j++) i->SetEffectID(j,++EffectsIDCounter);
+			i->SetCardID(++CardIDCounter);
+			i->SetOwner(PlayersList[socID]);
+		}
 	}
 	else{
 		emit InvalidDeck(socID);
@@ -82,6 +87,12 @@ void Judge::StartMatch(){
 	GameStarted=true;
 	//Decide who plays first
 	QMap<int,int> Randomizer;
+	QList<CardData> AllCardsToSend;
+	foreach(int socID,PlayersList.keys()){
+		AllCardsToSend.append(PlayersList[socID]->GetLibrary());
+		AllCardsToSend.append(PlayersList[socID]->GetSideboard());
+	}
+	emit AllCards(AllCardsToSend);
 	foreach(int socID,PlayersList.keys())
 		Randomizer.insert(qrand()%100,socID);
 	PlayersOrder=Randomizer.values();
@@ -93,12 +104,15 @@ void Judge::StartMatch(){
 		PlayerAvatars.insert(ite.key(),ite.value()->GetAvatar());
 	}
 	emit PlayersNameAvatar(PlayerNames,PlayerAvatars);
-	//Shuffle the libraries, draw 7 card for each player and send them the result 
+	//Shuffle the libraries, draw 7 card for each player and send them the result
+	QList<int> IDsInHand;
 	for(QMap<int,MagiQPlayer*>::iterator index=PlayersList.begin();index!=PlayersList.end();index++){
 		index.value()->ShuffleLibrary();
 		for(int i=0;i<7;i++) index.value()->DrawCard();
-		emit PlayerLibrary(index.key(),index.value()->GetLibrary());
-		emit PlayerHand(index.key(),index.value()->GetHand());
+		emit PlayerLibrary(index.key(),index.value()->GetLibrary().size());
+		IDsInHand.clear();
+		foreach(const CardData& crd,index.value()->GetHand()) IDsInHand.append(crd.GetCardID());
+		emit PlayerHand(index.key(),IDsInHand);
 	}
 	emit GameHasStarted();
 }
@@ -110,8 +124,10 @@ void Judge::DoMulligan(int socID){
 	TempPoint->HandToBottomLibrary();
 	TempPoint->ShuffleLibrary();
 	for(int i=0;i<HandSize;i++) TempPoint->DrawCard();
-	emit PlayerLibrary(socID,TempPoint->GetLibrary());
-	emit PlayerHand(socID,TempPoint->GetHand());
+	emit PlayerLibrary(socID,TempPoint->GetLibrary().size());
+	QList<int> IDsInHand;
+	foreach(const CardData& crd,TempPoint->GetHand()) IDsInHand.append(crd.GetCardID());
+	emit PlayerHand(socID,IDsInHand);
 }
 void Judge::AcceptedHand(int socID){
 	MagiQPlayer* TempPoint=PlayersList.value(socID,NULL);
@@ -259,6 +275,7 @@ void Judge::WantsToPlayCard(int who,int CrdID){
 	PlayersList[who]->AddCardInStack(TheCard);
 	if(!TheCard.GetCardType().contains(Constants::CardTypes::Land)){
 		StackTimerRunning=true;
+		emit RemoveFromHand(who,CrdID);
 		AddToStack(PlayersList[who]->GetCardsInStack().last());
 	}
 	else{
@@ -322,13 +339,13 @@ void Judge::AddToStack(CardData crd){
 	CardsStack.push(crd);
 	EffectInStack.push(false);
 	StackTimerRunning=true;
-	emit PlayedCard(crd.GetController()->GetPlayerID(),crd);
+	emit PlayedCard(crd.GetController()->GetPlayerID(),crd.GetCardID());
 }
 void Judge::ResolveCard(CardData crd){
 	//TODO Check if countered
 	if((!crd.GetCardType().contains(Constants::CardTypes::Instant)) && (!crd.GetCardType().contains(Constants::CardTypes::Instant))){
 		PlayersList[PlayersList.key(crd.GetController())]->AddControlledCard(crd);
-		emit PermanentResolved(PlayersList.key(crd.GetController()),crd);
+		emit PermanentResolved(PlayersList.key(crd.GetController()),crd.GetCardID());
 	}
 	CheckPlayableCards();
 }
@@ -341,7 +358,7 @@ void Judge::ResolveEffect(EffectData* eff){
 		const QList<int> TmpList=eff->GetSelectedTargets().values(EffectsConstants::Targets::Player);
 		for(int drw=0;drw<TmpList.size();drw++){
 			for (int j=0;j<eff->GetVariableValues().value(drw,0);j++){
-				CardData CardToSend=PlayersList.value(TmpList.at(drw))->DrawCard();
+				int CardToSend=PlayersList.value(TmpList.at(drw))->DrawCard().GetCardID();
 				emit CardDrawn(TmpList.at(drw),CardToSend);
 			}
 		}

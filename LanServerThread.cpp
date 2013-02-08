@@ -23,16 +23,17 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(stop()));
 	connect(this,SIGNAL(finished()),this,SLOT(SendReachedEnd()));
 	connect(this,SIGNAL(PlayOrder(QList<int>)),tcpSocket,SLOT(SendPlayOrder(QList<int>)));
+	connect(this,SIGNAL(AllCards(QList<CardData>)),tcpSocket,SLOT(SendAllCards(QList<CardData>)));
 	connect(this,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)),tcpSocket,SLOT(SendPlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)));
-	connect(this,SIGNAL(PlayerHand(int,QList<CardData>)),tcpSocket,SLOT(SendPlayerHand(int,QList<CardData>)));
-	connect(this,SIGNAL(PlayerLibrary(int,QList<CardData>)),tcpSocket,SLOT(SendPlayerLibrary(int,QList<CardData>)));
+	connect(this,SIGNAL(PlayerHand(int,QList<int>)),tcpSocket,SLOT(SendPlayerHand(int,QList<int>)));
+	connect(this,SIGNAL(PlayerLibrary(int,int)),tcpSocket,SLOT(SendPlayerLibrary(int,int)));
 	connect(tcpSocket,SIGNAL(Mulligan(int)),this,SIGNAL(Mulligan(int)));
 	connect(tcpSocket,SIGNAL(HandAccepted(int)),this,SIGNAL(HandAccepted(int)));
 	connect(this,SIGNAL(WaitingFor(int,QString)),tcpSocket,SLOT(SendWaitingFor(int,QString)));
 	connect(this,SIGNAL(StopWaitingFor()),tcpSocket,SLOT(SendStopWaitingFor()));
 	connect(this,SIGNAL(CurrentPhaseChanged(int)),tcpSocket,SLOT(SendCurrentPhaseChanged(int)));
 	connect(this,SIGNAL(CardsToUntap(QList<int>)),tcpSocket,SLOT(SendCardsToUntap(QList<int>)));
-	connect(this,SIGNAL(CardDrawn(int,CardData)),tcpSocket,SLOT(SendCardDrawn(int,CardData)));
+	connect(this,SIGNAL(CardDrawn(int,int)),tcpSocket,SLOT(SendCardDrawn(int,int)));
 	connect(tcpSocket,SIGNAL(TimerFinished(int)),this,SIGNAL(TimerFinished(int)));
 	connect(tcpSocket,SIGNAL(TimerStopped(int)),this,SIGNAL(TimerStopped(int)));
 	connect(tcpSocket,SIGNAL(TimerResumed(int)),this,SIGNAL(TimerResumed(int)));
@@ -44,7 +45,7 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(this,SIGNAL(EffectResolved()),tcpSocket,SLOT(SendEffectResolved()));
 	connect(this,SIGNAL(PlayableCards(int,QList<int>)),tcpSocket,SLOT(SendPlayableCards(int,QList<int>)));
 	connect(tcpSocket,SIGNAL(WantPlayCard(int,int)),this,SIGNAL(WantPlayCard(int,int)));
-	connect(this,SIGNAL(PlayedCard(int,const CardData&)),tcpSocket,SLOT(SendPlayedCard(int,const CardData&)));
+	connect(this,SIGNAL(PlayedCard(int,int)),tcpSocket,SLOT(SendPlayedCard(int,int)));
 	connect(this,SIGNAL(RemoveFromHand(int,int)),tcpSocket,SLOT(SendRemoveFromHand(int,int)));
-	connect(this,SIGNAL(PermanentResolved(int,CardData)),tcpSocket,SLOT(SendPermanentResolved(int,CardData)));
+	connect(this,SIGNAL(PermanentResolved(int,int)),tcpSocket,SLOT(SendPermanentResolved(int,int)));
 }

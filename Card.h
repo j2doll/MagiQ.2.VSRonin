@@ -74,12 +74,15 @@ private:
 	bool ShowFlavorText;
 	bool IsNull;
 	bool Activable;
+	mutable int SortingMethod;
 
 // Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
 	void PrepareUi();
 public:
+	int GetSortingMethod() const {return SortingMethod;}
+	void SetSortingMethod(int a) const {if(a>=CardData::Random && a<=CardData::ByColor) SortingMethod=a;}
 	bool GetActivable() const {return Activable;}
 	void SetActivable(bool a){Activable=a;}
 	void SetIsNull(bool a) {IsNull=a;}
@@ -189,6 +192,7 @@ public:
 	bool GetCertified() const {return Certified;}
 	void SetCertified(bool a){Certified=a;}
 	CardData ExtractData() const;
+	static bool PointLessThan(Card* const& a,Card* const& b);
 public slots:
 	void UpdateAspect();
 protected:

@@ -53,15 +53,16 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(Ruler,SIGNAL(InvalidDeck(int)),TempPoint,SIGNAL(InvalidDeck(int)));
 	connect(Ruler,SIGNAL(PlayOrder(QList<int>)),TempPoint,SIGNAL(PlayOrder(QList<int>)));
 	connect(Ruler,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)),TempPoint,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)));
-	connect(Ruler,SIGNAL(PlayerHand(int,QList<CardData>)),TempPoint,SIGNAL(PlayerHand(int,QList<CardData>)));
-	connect(Ruler,SIGNAL(PlayerLibrary(int,QList<CardData>)),TempPoint,SIGNAL(PlayerLibrary(int,QList<CardData>)));
+	connect(Ruler,SIGNAL(AllCards(QList<CardData>)),TempPoint,SIGNAL(AllCards(QList<CardData>)));
+	connect(Ruler,SIGNAL(PlayerHand(int,QList<int>)),TempPoint,SIGNAL(PlayerHand(int,QList<int>)));
+	connect(Ruler,SIGNAL(PlayerLibrary(int,int)),TempPoint,SIGNAL(PlayerLibrary(int,int)));
 	connect(TempPoint,SIGNAL(Mulligan(int)),Ruler,SLOT(DoMulligan(int)));
 	connect(TempPoint,SIGNAL(HandAccepted(int)),Ruler,SLOT(AcceptedHand(int)));
 	connect(Ruler,SIGNAL(WaitingFor(int,QString)),TempPoint,SIGNAL(WaitingFor(int,QString)));
 	connect(Ruler,SIGNAL(StopWaitingFor()),TempPoint,SIGNAL(StopWaitingFor()));
 	connect(Ruler,SIGNAL(CurrentPhaseChanged(int)),TempPoint,SIGNAL(CurrentPhaseChanged(int)));
 	connect(Ruler,SIGNAL(CardsToUntap(QList<int>)),TempPoint,SIGNAL(CardsToUntap(QList<int>)));
-	connect(Ruler,SIGNAL(CardDrawn(int,CardData)),TempPoint,SIGNAL(CardDrawn(int,CardData)));
+	connect(Ruler,SIGNAL(CardDrawn(int,int)),TempPoint,SIGNAL(CardDrawn(int,int)));
 	connect(TempPoint,SIGNAL(TimerFinished(int)),Ruler,SLOT(TimerFinished(int)));
 	connect(TempPoint,SIGNAL(TimerStopped(int)),Ruler,SLOT(TimerStopped(int)));
 	connect(TempPoint,SIGNAL(TimerResumed(int)),Ruler,SLOT(ResumeTimer(int)));
@@ -73,8 +74,8 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(Ruler,SIGNAL(EffectResolved()),TempPoint,SIGNAL(EffectResolved()));
 	connect(Ruler,SIGNAL(PlayableCards(int,QList<int>)),TempPoint,SIGNAL(PlayableCards(int,QList<int>)));
 	connect(TempPoint,SIGNAL(WantPlayCard(int,int)),Ruler,SLOT(WantsToPlayCard(int,int)));
-	connect(Ruler,SIGNAL(PlayedCard(int,const CardData&)),TempPoint,SIGNAL(PlayedCard(int,const CardData&)));
+	connect(Ruler,SIGNAL(PlayedCard(int,int)),TempPoint,SIGNAL(PlayedCard(int,int)));
 	connect(Ruler,SIGNAL(RemoveFromHand(int,int)),TempPoint,SIGNAL(RemoveFromHand(int,int)));
-	connect(Ruler,SIGNAL(PermanentResolved(int,CardData)),TempPoint,SIGNAL(PermanentResolved(int,CardData)));
+	connect(Ruler,SIGNAL(PermanentResolved(int,int)),TempPoint,SIGNAL(PermanentResolved(int,int)));
 	Ruler->IncomingJoinRequest(a,nam,avat);
 }

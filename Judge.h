@@ -69,8 +69,9 @@ signals:
 	void Joined(QString);
 	void YourNameColor(int,QString,QColor);
 	void InvalidDeck(int);
-	void PlayerHand(int,QList<CardData>);
-	void PlayerLibrary(int,QList<CardData>);
+	void AllCards(QList<CardData>);
+	void PlayerHand(int,QList<int>);
+	void PlayerLibrary(int,int);
 	void PlayOrder(QList<int>);
 	void PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>);
 	void GameHasStarted();
@@ -78,7 +79,7 @@ signals:
 	void StopWaitingFor();
 	void CurrentPhaseChanged(int);
 	void CardsToUntap(QList<int>);
-	void CardDrawn(int,CardData);
+	void CardDrawn(int,int);
 	void StopTimers();
 	void ResumeTimers();
 	void StopTurnTimer();
@@ -87,9 +88,9 @@ signals:
 	void EffectAddedToStack(quint32,const EffectData&);
 	void EffectResolved();
 	void PlayableCards(int,QList<int>);
-	void PlayedCard(int Who,const CardData& crd);
+	void PlayedCard(int Who,int crd);
 	void RemoveFromHand(int who,int crdID);
-	void PermanentResolved(int,CardData);
+	void PermanentResolved(int,int);
 public slots:
 	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersList.size());}
 	void IncomingJoinRequest(int a,QString nam,QPixmap avat);

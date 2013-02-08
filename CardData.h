@@ -57,6 +57,7 @@ public:
 	void SetIsNull(bool a) {IsNull=a;}
 	void SetActivable(bool a) const {Activable=a;}
 	void SetSummoningSickness(bool a){SummoningSickness=a;}
+	void SetSortingMethod(int a) const {if(a>=Random && a<=ByColor) SortingMethod=a;}
 	void SetCardName(const QString& a){CardName=a;}
 	void SetCardColor(const int& a){CardColor.clear(); if(a>=Constants::CardColor::Colorless && a<=Constants::CardColor::Green) CardColor.append(a);}
 	void SetCardColor(const QList<int>& a){CardColor.clear(); CardColor=a;}
@@ -111,7 +112,6 @@ public:
 	bool operator<(const CardData& a) const;
 	const CardData& operator=(const CardData& a);
 	CardData ToNoImage() const;
-	void SetSortingMethod(int a) const {if(a>=Random && a<=ByColor) SortingMethod=a;}
 private:
 //Game Properties
 	unsigned int CardID;
@@ -121,6 +121,7 @@ private:
 	bool IsNull;
 	mutable bool Activable;
 	bool SummoningSickness;
+	mutable int SortingMethod;
 //Card Properties
 	QString CardName;
 	QList<int> CardColor;
@@ -145,7 +146,6 @@ private:
 	int HasFlipped;
 	QScopedPointer<CardData> FlippedCard;
 	QList<EffectData> Effects;
-	mutable int SortingMethod;
 };
 QDataStream &operator<<(QDataStream &out, const CardData &card);
 QDataStream &operator>>(QDataStream &in, CardData &card);

@@ -35,15 +35,15 @@ public slots:
 	void SendYourNameColor(int SocID,QString nam,QColor col);
 	void SendInvalidDeck(int SocID);
 	void SendGameHasStarted();
-	void SendPlayerHand(int SocID,QList<CardData> hand);
-	void SendPlayerLibrary(int SocID,QList<CardData> libr);
+	void SendPlayerHand(int SocID,QList<int> hand);
+	void SendPlayerLibrary(int SocID,int libr);
 	void SendPlayOrder(QList<int> Order);
 	void SendPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt);
 	void SendWaitingFor(int socID,QString msg);
 	void SendStopWaitingFor();
 	void SendCurrentPhaseChanged(int newphase);
 	void SendCardsToUntap(QList<int> crds);
-	void SendCardDrawn(int socID,CardData crd);
+	void SendCardDrawn(int socID,int crd);
 	void SendStopTimers();
 	void SendStopTurnTimer();
 	void SendResumeTurnTimer();
@@ -51,9 +51,10 @@ public slots:
 	void SendEffectAddedToStack(quint32 crd,const EffectData& eff);
 	void SendEffectResolved();
 	void SendPlayableCards(int socID,QList<int> IDs);
-	void SendPlayedCard(int who,const CardData& crd);
+	void SendPlayedCard(int who,int crd);
 	void SendRemoveFromHand(int who,int crdID);
-	void SendPermanentResolved(int who,CardData crd);
+	void SendPermanentResolved(int who,int crd);
+	void SendAllCards(QList<CardData> crds);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);

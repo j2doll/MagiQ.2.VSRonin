@@ -92,18 +92,18 @@ TestWidget::TestWidget(QWidget* parent)
 	//BattleGroundConnection
 	connect(Client,SIGNAL(PlayOrder(QList<int>)),board,SLOT(SetPlayersOrder(QList<int>)));
 	connect(Client,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)),board,SLOT(SetPlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)));
-	connect(Client,SIGNAL(MyHand(QList<CardData>)),board,SLOT(SetMyHand(QList<CardData>)));
+	connect(Client,SIGNAL(AllCards(QList<CardData>)),board,SLOT(SetAllCards(QList<CardData>)));
+	connect(Client,SIGNAL(MyHand(QList<int>)),board,SLOT(SetMyHand(QList<int>)));
+	connect(Client,SIGNAL(MyHand(QList<int>)),board,SLOT(AskMulligan()));
 	connect(Client,SIGNAL(OtherHand(int,int)),board,SLOT(SetOtherHand(int,int)));
-	connect(Client,SIGNAL(MyLibrary(QList<CardData>)),board,SLOT(SetMyLibrary(QList<CardData>)));
-	connect(Client,SIGNAL(OtherLibrary(int,int)),board,SLOT(SetOtherLibrary(int,int)));
-	connect(Client,SIGNAL(MyHand(QList<CardData>)),board,SLOT(AskMulligan()));
+	connect(Client,SIGNAL(PlayerLibrary(int,int)),board,SLOT(SetPlayerLibrary(int,int)));
 	connect(Client,SIGNAL(WaitingFor(QString)),board,SLOT(DispalyWaitingFor(QString)));
 	connect(Client,SIGNAL(StopWaitingFor()),board,SLOT(HideWaitingFor()));
 	connect(board,SIGNAL(Mulligan()),Client,SLOT(SendMulligan()));
 	connect(board,SIGNAL(KeepHand()),Client,SLOT(SendHandAccepted()));
 	connect(Client,SIGNAL(CurrentPhaseChanged(int)),board,SLOT(SetCurrentPhase(int)));
 	connect(Client,SIGNAL(CardsToUntap(QList<int>)),board,SLOT(UntapCards(QList<int>)));
-	connect(Client,SIGNAL(CardDrawn(CardData)),board,SLOT(DrawCard(CardData)));
+	connect(Client,SIGNAL(CardDrawn(int)),board,SLOT(DrawCard(int)));
 	connect(Client,SIGNAL(OtherDrawn(int)),board,SLOT(OtherDraw(int)));
 	connect(board,SIGNAL(TimerFinished()),Client,SLOT(SendFinishedTimer()));
 	connect(board,SIGNAL(TimerStopped()),Client,SLOT(SendStoppedTimer()));
@@ -115,13 +115,13 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),board,SLOT(ResumeStackTimer()));
 	connect(Client,SIGNAL(PlayableCards(QList<int>)),board,SLOT(SetPlayableCards(QList<int>)));
 	connect(board,SIGNAL(WantPlayCard(int)),Client,SLOT(SendWantToPlayCard(int)));
-	connect(Client,SIGNAL(PlayedCard(CardData,int)),board,SLOT(PlayedCard(CardData,int)));
+	connect(Client,SIGNAL(PlayedCard(int,int)),board,SLOT(PlayedCard(int,int)));
 	connect(Client,SIGNAL(RemoveFromHand(int,int)),board,SLOT(RemoveCardHand(int,int)));
-	connect(Client,SIGNAL(PermanentResolved(int,CardData)),board,SLOT(ResolveCard(int,CardData)));
+	connect(Client,SIGNAL(PermanentResolved(int,int)),board,SLOT(ResolveCard(int,int)));
 
 	//StackDisplayerConnections
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),StackDisp,SLOT(AddEffect(EffectData)));
-	connect(Client,SIGNAL(PlayedCard(CardData,int)),StackDisp,SLOT(AddCard(CardData)));
+	//connect(Client,SIGNAL(PlayedCard(CardData,int)),StackDisp,SLOT(AddCard(CardData)));
 	connect(Client,SIGNAL(EffectResolved()),StackDisp,SLOT(Resolve()));
 
 	//Test Connections

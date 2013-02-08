@@ -638,4 +638,29 @@ CardData Card::ExtractData() const{
 	//TODO add effects
 	return Result;
 }
-
+bool Card::PointLessThan(Card* const& a,Card* const& b){
+	if (!b) return !a;
+	if (!a) return !b;
+	if (b->IsNull) return !a->IsNull;
+	switch(a->SortingMethod){
+	case CardData::ByName:
+		return a->CardName<b->CardName;
+	case CardData::ByManaCost:
+		return a->GetConvertedManaCost()<b->GetConvertedManaCost();
+	case CardData::ByType:
+		for (int i=0;i<Constants::CardTypes::END;i++){
+			if (a->CardType.contains(i)) return true;
+			if (b->CardType.contains(i)) return false;
+		}
+		return false;
+	case CardData::ByColor:
+		for (int i=0;i<=Constants::CardColor::Green;i++){
+			if (a->CardColor.contains(i)) return true;
+			if (b->CardColor.contains(i)) return false;
+		}
+		return false;
+	case CardData::Random:
+	default:
+		return qrand()%2==0;
+	}
+}

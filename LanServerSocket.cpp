@@ -170,7 +170,7 @@ void LanServerSocket::SendPlayOrder(QList<int> Order){
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
 }
-void LanServerSocket::SendPlayerHand(int SocID,QList<CardData> hand){
+void LanServerSocket::SendPlayerHand(int SocID,QList<int> hand){
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
@@ -178,22 +178,18 @@ void LanServerSocket::SendPlayerHand(int SocID,QList<CardData> hand){
 		out << quint32(0) << quint32(Comunications::TransmissionType::YourHand) << hand;
 	}
 	else{
-		out << quint32(0) << quint32(Comunications::TransmissionType::OthersHand) << qint32(SocID) << hand.size();
+		out << quint32(0) << quint32(Comunications::TransmissionType::OthersHand) << qint32(SocID) << qint32(hand.size());
 	}
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
 }
-void LanServerSocket::SendPlayerLibrary(int SocID,QList<CardData> libr){
+void LanServerSocket::SendPlayerLibrary(int SocID,int libr){
+	if (SocID==SocketID) SocID=-1;
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
-	if (SocID==SocketID){
-		out << quint32(0) << quint32(Comunications::TransmissionType::YourLibrary) << libr;
-	}
-	else{
-		out << quint32(0) << quint32(Comunications::TransmissionType::OthersLibrary) << qint32(SocID) << libr.size();
-	}
+	out << quint32(0) << quint32(Comunications::TransmissionType::PlayerLibrary) << qint32(SocID) << qint32(libr);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
@@ -251,7 +247,7 @@ void LanServerSocket::SendCardsToUntap(QList<int> crds){
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
 }
-void LanServerSocket::SendCardDrawn(int socID,CardData crd){
+void LanServerSocket::SendCardDrawn(int socID,int crd){
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
@@ -331,12 +327,12 @@ void LanServerSocket::SendPlayableCards(int socID,QList<int> IDs){
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
 }
-void LanServerSocket::SendPlayedCard(int who,const CardData& crd){
+void LanServerSocket::SendPlayedCard(int who,int crd){
 	if (who==SocketID) who=-1;
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
-	out << quint32(0) << quint32(Comunications::TransmissionType::PlayedCard) << qint32(who) << crd;
+	out << quint32(0) << quint32(Comunications::TransmissionType::PlayedCard) << qint32(who) << qint32(crd);
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
@@ -351,12 +347,21 @@ void LanServerSocket::SendRemoveFromHand(int who,int crdID){
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
 }
-void LanServerSocket::SendPermanentResolved(int who,CardData crd){
+void LanServerSocket::SendPermanentResolved(int who,int crd){
 	if (who==SocketID) who=-1;
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
-	out << quint32(0) << quint32(Comunications::TransmissionType::PermanentResolved) << qint32(who) << crd;
+	out << quint32(0) << quint32(Comunications::TransmissionType::PermanentResolved) << qint32(who) << qint32(crd);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	write(block);
+}
+void LanServerSocket::SendAllCards(QList<CardData> crds){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::AllCards) << crds;
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);

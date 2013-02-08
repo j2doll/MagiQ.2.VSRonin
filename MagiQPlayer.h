@@ -64,11 +64,13 @@ public:
 	void SetLibrary(const QList<CardData>& a);
 	void SetLibrary(const CardDeck& a);
 	QList<CardData>& GetLibrary() {return Library;}
+	const QList<CardData>& GetLibrary() const {return Library;}
 	void AddLibrary(const CardData& a){Library.append(a);}
 	void SetSideboard(const QList<CardData>& a){Sideboard.clear(); Sideboard=a;}
 	void SetSideboard(){Sideboard.clear();}
 	void SetSideboard(const CardDeck& a){SetLibrary(a);}
 	const QList<CardData>& GetSideboard() const {return Sideboard;}
+	QList<CardData>& GetSideboard(){return Sideboard;}
 	const QList<CardData>& GetHand() const {return Hand;}
 	const QList<CardData>& GetGraveyard() const {return Graveyard;}
 	const QList<CardData>& GetExile() const {return Exile;}

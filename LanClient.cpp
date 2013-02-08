@@ -112,21 +112,22 @@ void LanClient::IncomingTransmission(){
 			incom >> pixmapIntMap;
 			emit PlayersNameAvatar(stringIntMap,pixmapIntMap);
 		}
-		else if(RequestType==Comunications::TransmissionType::YourHand){
+		else if(RequestType==Comunications::TransmissionType::AllCards){
 			incom >> cardlists;
-			emit MyHand(cardlists);
+			emit AllCards(cardlists);
 		}
-		else if(RequestType==Comunications::TransmissionType::YourLibrary){
-			incom >> cardlists;
-			emit MyLibrary(cardlists);
+		else if(RequestType==Comunications::TransmissionType::YourHand){
+			incom >> intlists;
+			emit MyHand(intlists);
+		}
+		else if(RequestType==Comunications::TransmissionType::PlayerLibrary){
+			incom >> int1;
+			incom >> int2;
+			emit PlayerLibrary(int1,int2);
 		}
 		else if(RequestType==Comunications::TransmissionType::OthersHand){
 			incom >> int1 >> int2;
 			emit OtherHand(int1,int2);
-		}
-		else if(RequestType==Comunications::TransmissionType::OthersLibrary){
-			incom >> int1 >> int2;
-			emit OtherLibrary(int1,int2);
 		}
 		else if(RequestType==Comunications::TransmissionType::WaitingFor){
 			incom >> strings;
@@ -144,8 +145,8 @@ void LanClient::IncomingTransmission(){
 			emit CardsToUntap(intlists);
 		}
 		else if(RequestType==Comunications::TransmissionType::YouDrawnCard){
-			incom >> card;
-			emit CardDrawn(card);
+			incom >> int1;
+			emit CardDrawn(int1);
 		}
 		else if(RequestType==Comunications::TransmissionType::OtherDrawnCard){
 			incom >> int1;
@@ -177,8 +178,8 @@ void LanClient::IncomingTransmission(){
 		}
 		else if(RequestType==Comunications::TransmissionType::PlayedCard){
 			incom >> int1;
-			incom >> card;
-			emit PlayedCard(card,int1);
+			incom >> int2;
+			emit PlayedCard(int2,int1);
 		}
 		else if(RequestType==Comunications::TransmissionType::RemoveCardFromHand){
 			incom >> int1;
@@ -187,8 +188,8 @@ void LanClient::IncomingTransmission(){
 		}
 		else if(RequestType==Comunications::TransmissionType::PermanentResolved){
 			incom >> int1;
-			incom >> card;
-			emit PermanentResolved(int1,card);
+			incom >> int2;
+			emit PermanentResolved(int1,int2);
 		}
 ////////////////////////////////////////////////////////////////////////////
 

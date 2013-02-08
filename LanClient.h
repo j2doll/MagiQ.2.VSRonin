@@ -50,15 +50,14 @@ signals:
 	void GameHasStarted();
 	void PlayOrder(QList<int>);
 	void PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>);
-	void MyHand(QList<CardData>);
+	void MyHand(QList<int>);
 	void OtherHand(int whos,int numcards);
-	void MyLibrary(QList<CardData>);
-	void OtherLibrary(int whos,int numcards);
+	void PlayerLibrary(int whos,int numcards);
 	void WaitingFor(QString);
 	void StopWaitingFor();
 	void CurrentPhaseChanged(int);
 	void CardsToUntap(QList<int>);
-	void CardDrawn(CardData);
+	void CardDrawn(int);
 	void OtherDrawn(int);
 	void StopTimer();
 	void StopTurnTimer();
@@ -67,9 +66,10 @@ signals:
 	void EffectAddedToStack(EffectData,quint32);
 	void EffectResolved();
 	void PlayableCards(QList<int>);
-	void PlayedCard(CardData,int);
+	void PlayedCard(int,int);
 	void RemoveFromHand(int,int);
-	void PermanentResolved(int,CardData);
+	void PermanentResolved(int,int);
+	void AllCards(QList<CardData>);
 private slots:
 	void IncomingTransmission();
 public slots:

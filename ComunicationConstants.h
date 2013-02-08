@@ -15,10 +15,10 @@ namespace Comunications{
 		,GameStarted
 		,PlayersOrder
 		,PlayesNameAndAvatar
+		,AllCards
 		,YourHand
-		,YourLibrary
+		,PlayerLibrary
 		,OthersHand
-		,OthersLibrary
 		,Mulligan
 		,HandAccepted
 		,WaitingFor
