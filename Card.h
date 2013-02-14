@@ -193,6 +193,7 @@ public:
 	void SetCertified(bool a){Certified=a;}
 	CardData ExtractData() const;
 	static bool PointLessThan(Card* const& a,Card* const& b);
+	bool IsManaSource() const;
 public slots:
 	void UpdateAspect();
 protected:

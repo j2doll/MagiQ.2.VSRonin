@@ -42,10 +42,12 @@ protected:
 public slots:
 	void UpdateAspect();
 	void TapAnimationStart();
+	void UnTapAnimationStart();
 signals:
 	void LeftFocus();
 	void GainFocus();
 	void RequireZoom(Card*);
 	void DoubleClicked(int);
+	void clicked(int);
 };
 #endif

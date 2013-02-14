@@ -16,8 +16,10 @@
 #include "HandLayout.h"
 #include "CardViewer.h"
 #include "Card.h"
+#include "Effect.h"
 #include "PlayerInfoDisplayer.h"
 #include "PhasesDisplayer.h"
+#include "ManaCostLabel.h"
 #ifdef _DEBUG
 	#include "SizeSliders.h"
 #endif
@@ -29,6 +31,8 @@ BattleGround::BattleGround(QWidget* parent)
 	,TurnTimeLimit(300000)
 	,HandPrimarySorting(CardData::ByManaCost)
 	,HandSecondarySorting(CardData::ByType)
+	,ManaSelectionModeON(false)
+	,CardRequiringMana(NULL)
 {
 	setMinimumSize(1024,768);
 	Board=new QFrame(this);
@@ -56,6 +60,20 @@ BattleGround::BattleGround(QWidget* parent)
 	QuestionButton2=new QPushButton(QuestionFrame);
 	QuestionButton2->setObjectName("QuestionButton");
 	QuestionLayout->addWidget(QuestionButton2,1,1);
+	QuestionFrame->hide();
+	QuestionLowFrame=new QFrame(this);
+	QuestionLowFrame->setObjectName("QuestionFrame");
+	QuestionLayout=new QGridLayout(QuestionLowFrame);
+	QuestionLowText=new QLabel(QuestionLowFrame);
+	QuestionLowText->setScaledContents(true);
+	QuestionLowText->setObjectName("QuestionText");
+	QuestionLowText->setAlignment(Qt::AlignCenter);
+	QuestionLowText->setWordWrap(true);
+	QuestionLayout->addWidget(QuestionLowText,0,0,1,2);
+	QuestionLowButton1=new QPushButton(QuestionLowFrame);
+	QuestionLowButton1->setObjectName("QuestionButton");
+	QuestionLayout->addWidget(QuestionLowButton1,1,0);
+	QuestionLowFrame->hide();
 
 	PhaseTimer=new QTimer(this);
 	PhaseTimer->setInterval(TimerUpdateIntervall);
@@ -71,6 +89,33 @@ BattleGround::BattleGround(QWidget* parent)
 	PhaseDisp->SetPhaseTimeLimit(PhaseTimeLimit);
 	PhaseDisp->SetPhase(CurrentPhase);
 	PhaseDisp->hide();
+
+	RequiredCostFrame=new QFrame(this);
+	RequiredCostFrame->setObjectName("CostFrame");
+	QVBoxLayout* TempLay=new QVBoxLayout(RequiredCostFrame);
+	TempLay->setMargin(4);
+	TempLay->setSpacing(2);
+	RequiredCostText=new QLabel(RequiredCostFrame);
+	RequiredCostText->setObjectName("CostText");
+	RequiredCostText->setText(tr("Cost:"));
+	TempLay->addWidget(RequiredCostText);
+	RequiredCostLabel=new ManaCostLabel(RequiredCostFrame);
+	RequiredCostLabel->setObjectName("CostLabel");
+	TempLay->addWidget(RequiredCostLabel);
+	RequiredCostFrame->hide();
+	PayedCostFrame=new QFrame(this);
+	PayedCostFrame->setObjectName("CostFrame");
+	TempLay=new QVBoxLayout(PayedCostFrame);
+	TempLay->setMargin(4);
+	TempLay->setSpacing(2);
+	PayedCostText=new QLabel(PayedCostFrame);
+	PayedCostText->setObjectName("CostText");
+	PayedCostText->setText(tr("Payed:"));
+	TempLay->addWidget(PayedCostText);
+	PayedCostLabel=new ManaCostLabel(this);
+	PayedCostLabel->setObjectName("CostLabel");
+	TempLay->addWidget(PayedCostLabel);
+	PayedCostFrame->hide();
 
 	StackCardsFrame=new QFrame(this);
 	StackCardsFrame->setObjectName("StackCardsFrame");
@@ -130,6 +175,30 @@ void BattleGround::SizePosAllCards(){
 	for(QMap<int,Card*>::iterator crd=AllCards.begin();crd!=AllCards.end();crd++)
 		(*crd)->setGeometry((width()-ZoommedCardWidth)/2,(height()-HeiForWid)/2,ZoommedCardWidth,HeiForWid);
 	UpdateAspect();
+}
+void BattleGround::SizePosCosts(){
+	RequiredCostFrame->resize(
+		50*(RequiredCostLabel->GetNumberOfSymbols()>0 ? RequiredCostLabel->GetNumberOfSymbols() : 1) *width()/1024,
+		60*height()/768
+	);
+	RequiredCostFrame->move(
+		(width()-RequiredCostFrame->width())/2,
+		218*height()/768
+	);
+	PayedCostFrame->resize(
+		50*(PayedCostLabel->GetNumberOfSymbols()>0 ? PayedCostLabel->GetNumberOfSymbols() : 1) *width()/1024,
+		60*height()/768
+	);
+	PayedCostFrame->move(
+		(width()-PayedCostFrame->width())/2,
+		282*height()/768
+	);
+	QuestionLowFrame->setGeometry(
+		737*width()/1024,
+		608*height()/768,
+		200*width()/1024,
+		105*height()/768
+		);
 }
 void BattleGround::SizePosFrames(){
 	if (!isVisible()) return;
@@ -223,7 +292,7 @@ void BattleGround::UpdateAspect(){
 				CardsInHandView[*index].value(j,NULL)->SetCardToDisplay(CardsInHand[*index].value(j));
 				CardsInHandView[*index].value(j,NULL)->SetCanBeZoom(true);
 				CardsInHandView[*index].value(j,NULL)->SetShadable(true);
-				CardsInHandView[*index].value(j,NULL)->SetCanBeClick(CardsInHand[*index].value(j,NULL)->GetActivable());
+				CardsInHandView[*index].value(j,NULL)->SetCanBeClick(ManaSelectionModeON ? false : CardsInHand[*index].value(j,NULL)->GetActivable());
 			}
 			else{
 				CardsInHandView[*index].value(j)->SetCardToDisplay(GenericCard);
@@ -258,7 +327,12 @@ void BattleGround::UpdateAspect(){
 					LandsControlledView[*index].value(contLands,NULL)->SetCardToDisplay(CardsControlled[*index].value(j));
 					LandsControlledView[*index].value(contLands,NULL)->SetCanBeZoom(true);
 					LandsControlledView[*index].value(contLands,NULL)->SetShadable(false);
-					LandsControlledView[*index].value(contLands,NULL)->SetCanBeClick(CardsControlled[*index].value(j,NULL)->GetActivable());
+					LandsControlledView[*index].value(contLands,NULL)->SetCanBeClick(
+						ManaSelectionModeON ? 
+							CardsControlled[*index].value(j,NULL)->IsManaSource()
+						: 
+							CardsControlled[*index].value(j,NULL)->GetActivable()
+					);
 					LandsControlledView[*index].value(contLands++,NULL)->UpdateAspect();
 				}
 			}
@@ -389,6 +463,10 @@ void BattleGround::ClearQuestion(){
 	QuestionButton1->disconnect();
 	QuestionButton2->disconnect();
 	QuestionFrame->hide();
+}
+void BattleGround::ClearLowerQuestion(){
+	QuestionLowButton1->disconnect();
+	QuestionLowFrame->hide();
 }
 void BattleGround::AskMulligan(){
 	if(CardsInHand[-1].size()<1){
@@ -564,9 +642,77 @@ void BattleGround::WantToPlayCard(int crdID){
 	}
 	if (!TheCard) return;
 	if (TheCard->GetHasManaCost()){
-		//TODO
+		ManaSelectionMode(TheCard);
 	}
-	emit WantPlayCard(crdID);
+	else if(TheCard->GetCardType().contains(Constants::CardTypes::Land)) emit WantPlayCard(crdID,QList<int>());
+}
+void BattleGround::ManaSelectionMode(Card* const& TheCard){
+	ManaSelectionModeON=true;
+	/*QList<CardViewer*>& TmpViews=CardsControlledView[-1];
+	for(QList<CardViewer*>::iterator i=TmpViews.begin();i!=TmpViews.end();i++){
+		if((*i)->GetCardToDisplay()->IsManaSource())
+			connect((*i),SIGNAL(clicked(int)),this,SLOT(NewManaPayed(int)));
+	}*/
+	foreach(CardViewer* crd,CardsControlledView[-1]){
+		if(crd->GetCardToDisplay()->IsManaSource())
+			connect(crd,SIGNAL(clicked(int)),this,SLOT(NewManaPayed(int)));
+	}
+	foreach(CardViewer* crd,LandsControlledView[-1]){
+		if(crd->GetCardToDisplay()->IsManaSource())
+			connect(crd,SIGNAL(clicked(int)),this,SLOT(NewManaPayed(int)));
+	}
+	ManaToTap.clear();
+	CardsUsedToPay.clear();
+	CardRequiringMana=TheCard;
+	RequiredCostLabel->SetCostMap(TheCard->GetCardCost());
+	RequiredCostFrame->show();
+	RequiredCostFrame->raise();
+	PayedCostLabel->SetCostMap(QMap<int,int>());
+	PayedCostFrame->show();
+	PayedCostFrame->raise();
+	QuestionLowText->setText(tr("Select mana sources to pay for the spell cost"));
+	QuestionLowButton1->setText(tr("Cancel","Button that abort the paying of mana"));
+	connect(QuestionLowButton1,SIGNAL(clicked()),this,SLOT(CancelManaSelectionMode()));
+	connect(QuestionLowButton1,SIGNAL(clicked()),this,SLOT(ClearLowerQuestion()));
+	QuestionLowFrame->show();
+	QuestionLowFrame->raise();
+	SizePosCosts();
+	UpdateAspect();
+}
+void BattleGround::NewManaPayed(int crdID){
+	if((!ManaSelectionModeON) || (!CardRequiringMana)) return;
+	const QList<Effect*>& TempList=AllCards[crdID]->GetEffects();
+	for(QList<Effect*>::const_iterator i=TempList.constBegin();i!=TempList.constEnd();i++){
+		if((*i)->GetManaEffect()){
+			switch((*i)->GetEffectBody()){
+			case EffectsConstants::Effects::AddWToManaPool: ManaToTap[Constants::ManaCosts::W]+=(*i)->GetVariableValues().at(0)*(CardsUsedToPay.contains(crdID) ? -1:1); break;
+			case EffectsConstants::Effects::AddUToManaPool: ManaToTap[Constants::ManaCosts::U]+=(*i)->GetVariableValues().at(0)*(CardsUsedToPay.contains(crdID) ? -1:1); break;
+			case EffectsConstants::Effects::AddBToManaPool: ManaToTap[Constants::ManaCosts::B]+=(*i)->GetVariableValues().at(0)*(CardsUsedToPay.contains(crdID) ? -1:1); break;
+			case EffectsConstants::Effects::AddRToManaPool: ManaToTap[Constants::ManaCosts::R]+=(*i)->GetVariableValues().at(0)*(CardsUsedToPay.contains(crdID) ? -1:1); break;
+			case EffectsConstants::Effects::AddGToManaPool: ManaToTap[Constants::ManaCosts::G]+=(*i)->GetVariableValues().at(0)*(CardsUsedToPay.contains(crdID) ? -1:1); break;
+			}
+			if (CardsUsedToPay.contains(crdID)){
+				CardsUsedToPay.removeAt(CardsUsedToPay.indexOf(crdID));
+			}
+			else CardsUsedToPay.append(crdID);
+			PayedCostLabel->SetCostMap(ManaToTap);
+			if (CheckPayedCard(CardRequiringMana->GetCardCost(),ManaToTap)){
+				emit WantPlayCard(CardRequiringMana->GetCardID(),CardsUsedToPay);
+				CancelManaSelectionMode();
+				ClearLowerQuestion();
+			}
+			return;
+		}
+	}
+}
+void BattleGround::CancelManaSelectionMode(){
+	ManaSelectionModeON=false;
+	ManaToTap.clear();
+	CardsUsedToPay.clear();
+	CardRequiringMana=NULL;
+	PayedCostFrame->hide();
+	RequiredCostFrame->hide();
+	UpdateAspect();
 }
 void BattleGround::PlayedCard(int crd,int Who){
 	if (!PlayersOrder.contains(Who)) return;
@@ -594,4 +740,272 @@ int BattleGround::NumberOfLands(int who){
 		)++Result;
 	}
 	return Result;
+}
+bool BattleGround::CheckPayedCard(const QMap<int,int>& ManaCost,const QMap<int,int>& ManaPay) const{
+	QMap<int,int> ManAv(ManaPay);
+	int index;
+	int TempValue=ManAv.value(Constants::ManaCosts::WU);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::WU]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::W]+=TempValue-index;
+			ManAv[Constants::ManaCosts::U]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::W]-=TempValue-index;
+			ManAv[Constants::ManaCosts::U]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::WB);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::WB]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::W]+=TempValue-index;
+			ManAv[Constants::ManaCosts::B]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::W]-=TempValue-index;
+			ManAv[Constants::ManaCosts::B]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::WR);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::WR]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::W]+=TempValue-index;
+			ManAv[Constants::ManaCosts::R]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::W]-=TempValue-index;
+			ManAv[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::WG);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::WG]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::W]+=TempValue-index;
+			ManAv[Constants::ManaCosts::G]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::W]-=TempValue-index;
+			ManAv[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::UB);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::UB]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::U]+=TempValue-index;
+			ManAv[Constants::ManaCosts::U]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::U]-=TempValue-index;
+			ManAv[Constants::ManaCosts::B]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::UR);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::UR]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::U]+=TempValue-index;
+			ManAv[Constants::ManaCosts::R]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::U]-=TempValue-index;
+			ManAv[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::UG);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::UG]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::U]+=TempValue-index;
+			ManAv[Constants::ManaCosts::G]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::U]-=TempValue-index;
+			ManAv[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::BR);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::BR]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::B]+=TempValue-index;
+			ManAv[Constants::ManaCosts::R]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::B]-=TempValue-index;
+			ManAv[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::BG);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::BG]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::B]+=TempValue-index;
+			ManAv[Constants::ManaCosts::G]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::B]-=TempValue-index;
+			ManAv[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::RG);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::RG]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::R]+=TempValue-index;
+			ManAv[Constants::ManaCosts::G]+=index;
+			if (CheckPayedCard(ManaCost,ManAv)) return true;
+			ManAv[Constants::ManaCosts::R]-=TempValue-index;
+			ManAv[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+
+	//Linear trials of combinations of bicolor mana cost
+	QMap<int,int> TmpCard(ManaCost);
+	TempValue=TmpCard.value(Constants::ManaCosts::WU);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::WU]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::W]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::U]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::W]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::U]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::WB);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::WB]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::W]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::B]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::W]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::B]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::WR);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::WR]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::W]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::R]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::W]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::WG);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::WG]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::W]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::G]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::W]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::UB);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::UB]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::U]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::B]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::U]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::B]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::UR);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::UR]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::U]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::R]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::U]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::UG);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::UG]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::U]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::G]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::U]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::BR);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::BR]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::B]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::R]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::B]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::BG);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::BG]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::B]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::G]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::B]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=TmpCard.value(Constants::ManaCosts::RG);
+	if(TempValue>0){
+		TmpCard[Constants::ManaCosts::RG]=0;
+		for(index=0;index<=TempValue;index++){
+			TmpCard[Constants::ManaCosts::R]+=TempValue-index;
+			TmpCard[Constants::ManaCosts::G]+=index;
+			if (CheckPayedCard(TmpCard,ManAv)) return true;
+			TmpCard[Constants::ManaCosts::R]-=TempValue-index;
+			TmpCard[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+
+	//Deal with elementary mana
+	if(ManaCost.value(Constants::ManaCosts::W)>ManAv.value(Constants::ManaCosts::W)) return false;
+	ManAv[Constants::ManaCosts::W]-=ManaCost.value(Constants::ManaCosts::W);
+	if(ManaCost.value(Constants::ManaCosts::W)>ManAv.value(Constants::ManaCosts::U)) return false;
+	ManAv[Constants::ManaCosts::U]-=ManaCost.value(Constants::ManaCosts::U);
+	if(ManaCost.value(Constants::ManaCosts::W)>ManAv.value(Constants::ManaCosts::B)) return false;
+	ManAv[Constants::ManaCosts::B]-=ManaCost.value(Constants::ManaCosts::B);
+	if(ManaCost.value(Constants::ManaCosts::W)>ManAv.value(Constants::ManaCosts::R)) return false;
+	ManAv[Constants::ManaCosts::R]-=ManaCost.value(Constants::ManaCosts::R);
+	if(ManaCost.value(Constants::ManaCosts::G)>ManAv.value(Constants::ManaCosts::G)) return false;
+	ManAv[Constants::ManaCosts::G]-=ManaCost.value(Constants::ManaCosts::G);
+	if(ManaCost.value(Constants::ManaCosts::Colorless)>
+		ManAv.value(Constants::ManaCosts::W)+
+		ManAv.value(Constants::ManaCosts::U)+
+		ManAv.value(Constants::ManaCosts::B)+
+		ManAv.value(Constants::ManaCosts::R)+
+		ManAv.value(Constants::ManaCosts::G)+
+		ManAv.value(Constants::ManaCosts::Colorless)
+		)return false;
+	return true;
 }

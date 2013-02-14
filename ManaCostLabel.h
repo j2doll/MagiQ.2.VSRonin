@@ -2,6 +2,7 @@
 #define MANACOSTLABEL_H
 #include <QWidget>
 #include <QList>
+#include <QMap>
 #include <QPixmap>
 #include <QStringList>
 class QLabel;
@@ -35,16 +36,15 @@ private:
 	QPixmap RGSymbol;
 	QHBoxLayout* MainLayout;
 	QList<QLabel*> SymbolsLabels;
-	QString CostString;
 	int NumberOfSymbols;
 	QStringList SortedManaList(const QStringList& Base);
 public:
 	ManaCostLabel(QWidget* parent=0);
 	ManaCostLabel(QWidget* parent,const QString& Cost);
-	const QString& GetCostString() const {return CostString;}
 	int GetNumberOfSymbols() const {return NumberOfSymbols;}
 public slots:
 	void SetCostString(const QString& Cost);
+	void SetCostMap(const QMap<int,int>& Cost, const QList<int>& Modifiers=QList<int>());
 	void ClearCost();
 };
 #endif

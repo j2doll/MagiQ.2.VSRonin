@@ -71,13 +71,24 @@ void CardViewer::TapAnimationStart(){
 	animTap->setKeyValueAt(1.0,90);
 	animTap->start(QAbstractAnimation::DeleteWhenStopped);
 }
+void CardViewer::UnTapAnimationStart(){
+	QPropertyAnimation* animTap= new QPropertyAnimation(this,"CardRotation",parent());
+	animTap->setDuration(3000);
+	animTap->setEasingCurve(QEasingCurve::Linear);
+	animTap->setKeyValueAt(1.0,0);
+	animTap->setKeyValueAt(0.0,90);
+	animTap->start(QAbstractAnimation::DeleteWhenStopped);
+}
 void CardViewer::mousePressEvent(QMouseEvent* event){
-	if(!CanBeZoom){
+	if(!CanBeZoom && event->button() == Qt::RightButton){
 		emit RequireZoom(NULL);
 		return;
 	}
 	if (event->button() == Qt::RightButton){
 		emit RequireZoom(CardToDisplay);
+	}
+	else if (event->button() == Qt::LeftButton && CanBeClick){
+		emit clicked(CardToDisplay->GetCardID());
 	}
 }
 void CardViewer::SetShadable(bool a){

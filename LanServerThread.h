@@ -57,7 +57,7 @@ signals:
 	void EffectAddedToStack(quint32,const EffectData&);
 	void EffectResolved();
 	void PlayableCards(int,QList<int>);
-	void WantPlayCard(int,int);
+	void WantPlayCard(int,int,QList<int>);
 	void PlayedCard(int,int);
 	void RemoveFromHand(int,int);
 	void PermanentResolved(int,int);

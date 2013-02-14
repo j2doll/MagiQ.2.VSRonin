@@ -84,7 +84,7 @@ public slots:
 	void SendFinishedTimer();
 	void SendStoppedTimer();
 	void SendResumeTimer();
-	void SendWantToPlayCard(int CardID);
+	void SendWantToPlayCard(int CardID,QList<int> PayedWithIDs);
 
 };
 #endif

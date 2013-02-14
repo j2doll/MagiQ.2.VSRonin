@@ -17,7 +17,8 @@ class PlayerInfoDisplayer;
 class QTimer;
 class PhasesDisplayer;
 class QHBoxLayout;
-class HandLayout; //TODO Change
+class HandLayout;
+class ManaCostLabel;
 class BattleGround : public QWidget
 {
 	Q_OBJECT
@@ -33,6 +34,8 @@ private:
 	QMap<int,QFrame*> HandFrames;
 	QMap<int,PlayerInfoDisplayer*> PlayesInfos;
 	QMap<int,HandLayout*> HandsLay;
+	QMap<int,QFrame*> LandsContainer;
+	QMap<int,HandLayout*> LandsContainerLay; //TODO change Layout
 	QMap<int,QLabel*> DeckLabels;
 	QMap<int,QLabel*> GraveyardLabels;
 	CardViewer* AnimationCard;
@@ -54,9 +57,16 @@ private:
 	QLabel* QuestionText;
 	QPushButton* QuestionButton1;
 	QPushButton* QuestionButton2;
+	QFrame* QuestionLowFrame;
+	QLabel* QuestionLowText;
+	QPushButton* QuestionLowButton1;
+	QFrame* RequiredCostFrame;
+	QLabel* RequiredCostText;
+	ManaCostLabel* RequiredCostLabel;
+	ManaCostLabel* PayedCostLabel;
+	QFrame* PayedCostFrame;
+	QLabel* PayedCostText;
 	PhasesDisplayer* PhaseDisp;
-	QMap<int,QFrame*> LandsContainer;
-	QMap<int,HandLayout*> LandsContainerLay; //TODO change Layout
 //Game Properties
 	QMap<int,Card*> AllCards;
 	QHash<int,int> LibrarySizes;
@@ -72,9 +82,12 @@ private:
 	QTimer* TurnTimer;
 	int TurnTimeLimit;
 	int CurrentTurnTime;
-	QMap<int,int> ManaToTap;
 	int HandPrimarySorting;
 	int HandSecondarySorting;
+	Card* CardRequiringMana;
+	QMap<int,int> ManaToTap;
+	QList<int> CardsUsedToPay;
+	bool ManaSelectionModeON;
 //Functions
 	void SortCardsInHand();
 	void SortCardsControlled();
@@ -82,17 +95,23 @@ private:
 	void AnimatePlay(int whos,Card* ToShow);
 	QMap<int,int> AskManaToTap();
 	int NumberOfLands(int who);
+	bool CheckPayedCard(const QMap<int,int>& ManaCost,const QMap<int,int>& ManaPay) const;
+	void ManaSelectionMode(Card* const& TheCard);
 private slots:
 	void UpdateAspect();
 	void ResetHandOrder();
 	void ResetLandOrder();
 	void ResetStackLayOrder();
 	void ClearQuestion();
+	void ClearLowerQuestion();
 	void SizePosFrames();
 	void SizePosAllCards();
+	void SizePosCosts();
 	void ZoomAnimate(Card* crd);
 	void TurnTimeUpdate();
 	void PhaseTimeUpdate();
+	void NewManaPayed(int crdID);
+	void CancelManaSelectionMode();
 public slots:
 	void AskMulligan();
 	void SetPlayersOrder(QList<int> ord);
@@ -123,7 +142,7 @@ public:
 protected:
 	void resizeEvent(QResizeEvent* event);
 signals:
-	void WantPlayCard(int crdID);
+	void WantPlayCard(int crdID, QList<int> PayedWithIDs);
 	void NeedResizeFrames();
 	void NeedResizeCards();
 	void Mulligan();

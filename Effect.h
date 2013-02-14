@@ -25,12 +25,18 @@ private:
 	int EffectBody;
 	QString EffectText;
 	QString EffectTooltip;
+	QList<int> VariableValues;
 // Game Properties
 	Card* AttachedCard;
 // Functions
 	QString FromCostToString();
 	void PrepareUi();
 public:
+	void SetVariableValues(const QList<int>& a){VariableValues.clear(); VariableValues=a;}
+	void SetVariableValues(){VariableValues.clear();}
+	void AddVariableValue(int a){VariableValues.append(a);}
+	void SetVariableValues(int a){SetVariableValues(); AddVariableValue(a);}
+	const QList<int>& GetVariableValues() const {return VariableValues;}
 	void SetEffectTooltip(const QString& a){EffectTooltip=a;}
 	const QString& GetEffectTooltip() const {return EffectTooltip;}
 	int GetMinimumHeight() const;

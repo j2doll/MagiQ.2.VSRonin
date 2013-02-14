@@ -3,9 +3,9 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QMessageBox>
+#include "CostantsDefinition.h"
 ManaCostLabel::ManaCostLabel(QWidget* parent,const QString& Cost)
 	:QWidget(parent)
-	,CostString(Cost)
 	,NumberOfSymbols(0)
 	,WSymbol(":/ManaSymbols/WMana.png")
 	,USymbol(":/ManaSymbols/UMana.png")
@@ -64,14 +64,9 @@ ManaCostLabel::ManaCostLabel(QWidget* parent/* =0 */)
 	MainLayout->setSpacing(0);
 }
 void ManaCostLabel::SetCostString(const QString& Cost){
-	NumberOfSymbols=0;
-	if(!SymbolsLabels.isEmpty()){
-		for(QList<QLabel*>::iterator i=SymbolsLabels.begin();i!=SymbolsLabels.end();i++)
-			(*i)->deleteLater();
-		SymbolsLabels.clear();
-	}
+	ClearCost();
 	if(Cost.isEmpty()) return;
-	CostString=Cost.toUpper();
+	QString CostString=Cost.toUpper();
 	QStringList Components=CostString.split(',',QString::SkipEmptyParts);
 	Components=SortedManaList(Components);
 	for (QStringList::const_iterator i=Components.begin();i!=Components.end();i++){
@@ -292,12 +287,231 @@ void ManaCostLabel::SetCostString(const QString& Cost){
 	}
 	//QMessageBox::information(this,"Converted Mana Cost",QString("%1").arg(ConvertedManaCost));
 }
-void ManaCostLabel::ClearCost(){
-	if(!SymbolsLabels.isEmpty()){
-		for(QList<QLabel*>::iterator i=SymbolsLabels.begin();i!=SymbolsLabels.end();i++)
-			(*i)->deleteLater();
+void ManaCostLabel::SetCostMap(const QMap<int,int>& Cost, const QList<int>& Modifiers){
+	ClearCost();
+	int i;
+	short ModifiersPositive;
+	if(Modifiers.isEmpty()) ModifiersPositive=0;
+	else ModifiersPositive=Modifiers.count(1)-Modifiers.count(-1);
+	if(Cost.value(Constants::ManaCosts::Colorless,0)>0 || ModifiersPositive>0){
+		QPixmap TextPixmap(CSymbol);
+		QPainter TextPainter(&TextPixmap);
+		SymbolsLabels.append(new QLabel(this));
+		TextPainter.setFont(QFont ("Arial",ManaFontSize,QFont::Bold));
+		if (ModifiersPositive>0)
+			TextPainter.setPen(QPen(QColor(Qt::darkGreen)));
+		else if (ModifiersPositive<0)
+			TextPainter.setPen(QPen(QColor(Qt::darkRed)));
+		else TextPainter.setPen(QPen(QColor(Qt::black)));
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,QString("%1").arg(Cost.value(Constants::ManaCosts::Colorless)+ModifiersPositive));
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
 	}
-	SymbolsLabels.clear();
+	for(i=0;i<Cost.value(Constants::ManaCosts::X,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		QPixmap TextPixmap(CSymbol);
+		QPainter TextPainter(&TextPixmap);
+		TextPainter.setFont(QFont ("Arial",ManaFontSize,QFont::Bold));
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,"X");
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::Y,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		QPixmap TextPixmap(CSymbol);
+		QPainter TextPainter(&TextPixmap);
+		TextPainter.setFont(QFont ("Arial",ManaFontSize,QFont::Bold));
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,"Y");
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::Z,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		QPixmap TextPixmap(CSymbol);
+		QPainter TextPainter(&TextPixmap);
+		TextPainter.setFont(QFont ("Arial",ManaFontSize,QFont::Bold));
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,"Z");
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::C2W,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		QPixmap TextPixmap(CWSymbol);
+		QPainter TextPainter(&TextPixmap);
+		TextPainter.setFont(QFont ("Arial",ManaFontSize/2,QFont::Bold));
+		TextPainter.translate(TranslateX,TranslateY);
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,"2");
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::C2U,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		QPixmap TextPixmap(CUSymbol);
+		QPainter TextPainter(&TextPixmap);
+		TextPainter.setFont(QFont ("Arial",ManaFontSize/2,QFont::Bold));
+		TextPainter.translate(TranslateX,TranslateY);
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,"2");
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::C2B,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		QPixmap TextPixmap(CBSymbol);
+		QPainter TextPainter(&TextPixmap);
+		TextPainter.setFont(QFont ("Arial",ManaFontSize/2,QFont::Bold));
+		TextPainter.translate(TranslateX,TranslateY);
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,"2");
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::C2R,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		QPixmap TextPixmap(CRSymbol);
+		QPainter TextPainter(&TextPixmap);
+		TextPainter.setFont(QFont ("Arial",ManaFontSize/2,QFont::Bold));
+		TextPainter.translate(TranslateX,TranslateY);
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,"2");
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::C2G,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		QPixmap TextPixmap(CGSymbol);
+		QPainter TextPainter(&TextPixmap);
+		TextPainter.setFont(QFont ("Arial",ManaFontSize/2,QFont::Bold));
+		TextPainter.translate(TranslateX,TranslateY);
+		TextPainter.drawText(TextPixmap.rect(),Qt::AlignCenter,"2");
+		SymbolsLabels.last()->setPixmap(TextPixmap);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::WU,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(WUSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::WB,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(WBSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::WR,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(WRSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::WG,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(WGSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::UB,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(UBSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::UR,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(URSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::UG,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(UGSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::BR,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(BRSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::BG,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(BGSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::RG,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(RGSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::W,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(WSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::U,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(USymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::B,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(BSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::R,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(RSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+	for(i=0;i<Cost.value(Constants::ManaCosts::G,0);i++){
+		SymbolsLabels.append(new QLabel(this));
+		SymbolsLabels.last()->setPixmap(GSymbol);
+		SymbolsLabels.last()->setScaledContents(true);
+		MainLayout->addWidget(SymbolsLabels.last());
+		NumberOfSymbols++;
+	}
+
+}
+void ManaCostLabel::ClearCost(){
+	while(!SymbolsLabels.isEmpty())
+		SymbolsLabels.takeFirst()->deleteLater();
 	NumberOfSymbols=0;
 }
 QStringList ManaCostLabel::SortedManaList(const QStringList& Base){

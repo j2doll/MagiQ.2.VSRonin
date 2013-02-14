@@ -65,6 +65,6 @@ signals:
 	void TimerFinished(int);
 	void TimerStopped(int);
 	void TimerResumed(int);
-	void WantPlayCard(int socID,int crdID);
+	void WantPlayCard(int socID,int crdID,QList<int>);
 };
 #endif

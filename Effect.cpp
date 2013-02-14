@@ -183,6 +183,7 @@ Effect::Effect(const Effect& a,QWidget* parent)
 	,EffectBody(a.EffectBody)
 	,EffectText(a.EffectText)
 	,EffectTooltip(a.EffectTooltip)
+	,VariableValues(a.VariableValues)
 {
 	PrepareUi();
 	UpdateAspect();
@@ -200,6 +201,7 @@ Effect::Effect(const EffectData& a,QWidget* parent)
 	,EffectBody(a.GetEffectBody())
 	,EffectText(a.GetEffectText())
 	,EffectTooltip(a.GetEffectTooltip())
+	,VariableValues(a.GetVariableValues())
 {
 	PrepareUi();
 	UpdateAspect();
@@ -215,6 +217,7 @@ Effect& Effect::operator=(const Effect& a){
 	EffectBody=a.EffectBody;
 	EffectText=a.EffectText;
 	EffectTooltip=a.EffectTooltip;
+	VariableValues=a.VariableValues;
 	return *this;
 }
 QDataStream &operator<<(QDataStream &out, const Effect &effect)
@@ -229,6 +232,7 @@ QDataStream &operator<<(QDataStream &out, const Effect &effect)
 		<< effect.GetTriggers()
 		<< qint32(effect.GetEffectBody())
 		<< effect.GetEffectText()
+		<< effect.GetVariableValues()
 	;
 	return out;
 }
@@ -249,9 +253,10 @@ QDataStream &operator>>(QDataStream &input, Effect &effect){
 	input >> Booleans; effect.SetHiddenEffect(Booleans);
 	input >> IntMap; effect.SetEffectCost(IntMap); IntMap.clear();
 	input >> IntMap; effect.SetTargets(IntMap); IntMap.clear();
-	input >> IntLists; effect.SetTriggers(IntLists);
+	input >> IntLists; effect.SetTriggers(IntLists); IntLists.clear();
 	input >> Numbers; effect.SetEffectBody(Numbers);
 	input >> Strings; effect.SetEffectText(Strings);
+	input >> IntLists; effect.SetVariableValues(IntLists);
 	effect.UpdateAspect();
 	return input;
 }

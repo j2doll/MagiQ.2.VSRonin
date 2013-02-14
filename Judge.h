@@ -46,8 +46,8 @@ private:
 	void ResolveCard(CardData crd);
 	void CheckPlayableCards();
 	QMap<int,int> ManaAvailable(int PlayerCode) const;
-	bool CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai);
-	bool CanPlayCard(const CardData& crd, int PlayerCode){return CanPlayCard(crd,PlayerCode,ManaAvailable(PlayerCode));}
+	bool CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai) const ;
+	bool CanPlayCard(const CardData& crd, int PlayerCode) const {return CanPlayCard(crd,PlayerCode,ManaAvailable(PlayerCode));}
 public:
 	Judge(QObject* parent=0);
 	bool GetGameStarted() const {return GameStarted;}
@@ -107,6 +107,6 @@ public slots:
 	void TimerFinished(int SocID);
 	void TimerStopped(int SocID);
 	void ResumeTimer(int SocID);
-	void WantsToPlayCard(int who,int CrdID);
+	void WantsToPlayCard(int who,int CrdID,QList<int> UsedToPayIDs);
 };
 #endif

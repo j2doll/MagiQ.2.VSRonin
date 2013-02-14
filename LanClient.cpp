@@ -277,11 +277,11 @@ void LanClient::SendResumeTimer(){
 	out << quint32(block.size() - sizeof(quint32));
 	tcpSocket->write(block);
 }
-void LanClient::SendWantToPlayCard(int CardID){
+void LanClient::SendWantToPlayCard(int CardID,QList<int> PayedWithIDs){
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
-	out << quint32(0) << quint32(Comunications::TransmissionType::WantToPlayCard) << qint32(CardID);
+	out << quint32(0) << quint32(Comunications::TransmissionType::WantToPlayCard) << qint32(CardID) << PayedWithIDs;
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	tcpSocket->write(block);

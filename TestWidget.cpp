@@ -123,7 +123,7 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(ResumeStackTimer()),board,SLOT(ResumeStackTimer()));
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),board,SLOT(ResumeStackTimer()));
 	connect(Client,SIGNAL(PlayableCards(QList<int>)),board,SLOT(SetPlayableCards(QList<int>)));
-	connect(board,SIGNAL(WantPlayCard(int)),Client,SLOT(SendWantToPlayCard(int)));
+	connect(board,SIGNAL(WantPlayCard(int,QList<int>)),Client,SLOT(SendWantToPlayCard(int,QList<int>)));
 	connect(Client,SIGNAL(PlayedCard(int,int)),board,SLOT(PlayedCard(int,int)));
 	connect(Client,SIGNAL(RemoveFromHand(int,int)),board,SLOT(RemoveCardHand(int,int)));
 	connect(Client,SIGNAL(PermanentResolved(int,int)),board,SLOT(ResolveCard(int,int)));

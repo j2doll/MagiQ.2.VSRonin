@@ -664,3 +664,10 @@ bool Card::PointLessThan(Card* const& a,Card* const& b){
 		return qrand()%2==0;
 	}
 }
+bool Card::IsManaSource() const{
+	foreach(Effect* eff,Effects){
+		if(eff->GetManaEffect())
+			return true;
+	}
+	return false;
+}

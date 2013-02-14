@@ -253,7 +253,7 @@ QMap<int,int> Judge::ManaAvailable(int PlayerCode) const{
 	QMap<int,int> Result(PlayersList.value(PlayerCode)->GetManaPool());
 	const QList<CardData>& ContCrds=PlayersList.value(PlayerCode)->GetControlledCards();
 	for(QList<CardData>::const_iterator crd=ContCrds.constBegin();crd!=ContCrds.constEnd();crd++){
-		if(crd->GetSummoningSickness()) continue;
+		if(crd->GetSummoningSickness() || crd->GetTapped()) continue;
 		foreach(const EffectData& eff, crd->GetEffects()){
 			if(!eff.GetManaEffect()) continue;
 			switch(eff.GetEffectBody()){
@@ -268,7 +268,7 @@ QMap<int,int> Judge::ManaAvailable(int PlayerCode) const{
 	}
 	return Result;
 }
-void Judge::WantsToPlayCard(int who,int CrdID){
+void Judge::WantsToPlayCard(int who,int CrdID, QList<int> UsedToPayIDs){
 	CardData TheCard=PlayersList[who]->RemoveFromHand(CrdID);
 	if (TheCard.GetCardID()==0) return;
 	//if (!CanPlayCard(TheCard,who)) return; //Double check, erase to speed up
@@ -286,23 +286,275 @@ void Judge::WantsToPlayCard(int who,int CrdID){
 	}	
 	CheckPlayableCards();
 }
-bool Judge::CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai){
-	QMap<int,int> ManAv(ManaAvai);
-	int TempValue;
+bool Judge::CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai) const{
 	if (crd.GetCardType().contains(Constants::CardTypes::Land) && !crd.GetHasManaCost()) return PlayersList.value(PlayerCode)->GetCanPlayMana();
-	for(QMap<int,int>::const_iterator i=crd.GetCardCost().constBegin();i!=crd.GetCardCost().constEnd();i++){
-		if(i.value()<=0) continue;
-		TempValue=i.value();
-		switch(i.key()){
-		case Constants::ManaCosts::G:
-			if(ManAv.value(Constants::ManaCosts::G,0)>=TempValue){
-				ManAv[Constants::ManaCosts::G]-=TempValue;
-				break;
-			}
-			TempValue-=ManAv.value(Constants::ManaCosts::G,0);
-			return false; //Temp
+
+	//Linear trials of combinations of bicolor mana available
+	QMap<int,int> ManAv(ManaAvai);
+	int index;
+	int TempValue=ManAv.value(Constants::ManaCosts::WU);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::WU]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::W]+=TempValue-index;
+			ManAv[Constants::ManaCosts::U]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::W]-=TempValue-index;
+			ManAv[Constants::ManaCosts::U]-=index;
 		}
+		return false;
 	}
+	TempValue=ManAv.value(Constants::ManaCosts::WB);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::WB]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::W]+=TempValue-index;
+			ManAv[Constants::ManaCosts::B]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::W]-=TempValue-index;
+			ManAv[Constants::ManaCosts::B]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::WR);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::WR]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::W]+=TempValue-index;
+			ManAv[Constants::ManaCosts::R]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::W]-=TempValue-index;
+			ManAv[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::WG);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::WG]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::W]+=TempValue-index;
+			ManAv[Constants::ManaCosts::G]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::W]-=TempValue-index;
+			ManAv[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::UB);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::UB]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::U]+=TempValue-index;
+			ManAv[Constants::ManaCosts::U]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::U]-=TempValue-index;
+			ManAv[Constants::ManaCosts::B]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::UR);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::UR]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::U]+=TempValue-index;
+			ManAv[Constants::ManaCosts::R]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::U]-=TempValue-index;
+			ManAv[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::UG);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::UG]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::U]+=TempValue-index;
+			ManAv[Constants::ManaCosts::G]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::U]-=TempValue-index;
+			ManAv[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::BR);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::BR]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::B]+=TempValue-index;
+			ManAv[Constants::ManaCosts::R]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::B]-=TempValue-index;
+			ManAv[Constants::ManaCosts::R]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::BG);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::BG]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::B]+=TempValue-index;
+			ManAv[Constants::ManaCosts::G]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::B]-=TempValue-index;
+			ManAv[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+	TempValue=ManAv.value(Constants::ManaCosts::RG);
+	if(TempValue>0){
+		ManAv[Constants::ManaCosts::RG]=0;
+		for(index=0;index<=TempValue;index++){
+			ManAv[Constants::ManaCosts::R]+=TempValue-index;
+			ManAv[Constants::ManaCosts::G]+=index;
+			if (CanPlayCard(crd,PlayerCode,ManAv)) return true;
+			ManAv[Constants::ManaCosts::R]-=TempValue-index;
+			ManAv[Constants::ManaCosts::G]-=index;
+		}
+		return false;
+	}
+
+	//Linear trials of combinations of bicolor mana cost
+	CardData TmpCard(crd);
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::WU);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::WU,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::W,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::U,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::W,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::U,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::WB);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::WB,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::W,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::B,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::W,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::B,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::WR);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::WR,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::W,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::R,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::W,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::R,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::WG);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::WG,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::W,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::G,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::W,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::G,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::UB);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::UB,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::U,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::B,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::U,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::B,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::UR);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::UR,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::U,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::R,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::U,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::R,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::UG);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::UG,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::U,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::G,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::U,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::G,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::BR);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::BR,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::B,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::R,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::B,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::R,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::BG);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::BG,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::B,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::G,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::B,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::G,-index);
+		}
+		return false;
+	}
+	TempValue=TmpCard.GetCardCost().value(Constants::ManaCosts::RG);
+	if(TempValue>0){
+		TmpCard.AddCardCost(Constants::ManaCosts::RG,-TempValue);
+		for(index=0;index<=TempValue;index++){
+			TmpCard.AddCardCost(Constants::ManaCosts::R,TempValue-index);
+			TmpCard.AddCardCost(Constants::ManaCosts::G,index);
+			if (CanPlayCard(TmpCard,PlayerCode,ManAv)) return true;
+			TmpCard.AddCardCost(Constants::ManaCosts::R,index-TempValue);
+			TmpCard.AddCardCost(Constants::ManaCosts::G,-index);
+		}
+		return false;
+	}
+
+	//Deal with elementary mana
+	if(crd.GetCardCost().value(Constants::ManaCosts::W)>ManAv.value(Constants::ManaCosts::W)) return false;
+	ManAv[Constants::ManaCosts::W]-=crd.GetCardCost().value(Constants::ManaCosts::W);
+	if(crd.GetCardCost().value(Constants::ManaCosts::W)>ManAv.value(Constants::ManaCosts::U)) return false;
+	ManAv[Constants::ManaCosts::U]-=crd.GetCardCost().value(Constants::ManaCosts::U);
+	if(crd.GetCardCost().value(Constants::ManaCosts::W)>ManAv.value(Constants::ManaCosts::B)) return false;
+	ManAv[Constants::ManaCosts::B]-=crd.GetCardCost().value(Constants::ManaCosts::B);
+	if(crd.GetCardCost().value(Constants::ManaCosts::W)>ManAv.value(Constants::ManaCosts::R)) return false;
+	ManAv[Constants::ManaCosts::R]-=crd.GetCardCost().value(Constants::ManaCosts::R);
+	if(crd.GetCardCost().value(Constants::ManaCosts::G)>ManAv.value(Constants::ManaCosts::G)) return false;
+	ManAv[Constants::ManaCosts::G]-=crd.GetCardCost().value(Constants::ManaCosts::G);
+	if(crd.GetCardCost().value(Constants::ManaCosts::Colorless)>
+		ManAv.value(Constants::ManaCosts::W)+
+		ManAv.value(Constants::ManaCosts::U)+
+		ManAv.value(Constants::ManaCosts::B)+
+		ManAv.value(Constants::ManaCosts::R)+
+		ManAv.value(Constants::ManaCosts::G)+
+		ManAv.value(Constants::ManaCosts::Colorless)
+	)return false;
 	return true;
 }
 void Judge::CheckPlayableCards(){

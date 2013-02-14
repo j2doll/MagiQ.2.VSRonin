@@ -26,6 +26,7 @@ void LanServerSocket::readClient(){
 	CardDeck deck;
 	QPixmap images;
 	qint32 Numbers;
+	QList<int> intlist;
 	forever {
 		if (nextBlockSize == 0) {
 			if (bytesAvailable() < sizeof(quint32))
@@ -36,6 +37,7 @@ void LanServerSocket::readClient(){
 			break;
 		incom >> RequestType;
 
+		intlist.clear();
 ///////////////////////////////////////////////////////////////////////////
 		if(RequestType==Comunications::TransmissionType::ChatMessage){
 			incom >> strings;
@@ -69,7 +71,8 @@ void LanServerSocket::readClient(){
 		}
 		else if(RequestType==Comunications::TransmissionType::WantToPlayCard){
 			incom >> Numbers;
-			emit WantPlayCard(SocketID,Numbers);
+			incom >> intlist;
+			emit WantPlayCard(SocketID,Numbers,intlist);
 		}
 ///////////////////////////////////////////////////////////////////////////
 

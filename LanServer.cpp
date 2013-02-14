@@ -73,7 +73,7 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(Ruler,SIGNAL(EffectAddedToStack(quint32,const EffectData&)),TempPoint,SIGNAL(EffectAddedToStack(quint32,const EffectData&)));
 	connect(Ruler,SIGNAL(EffectResolved()),TempPoint,SIGNAL(EffectResolved()));
 	connect(Ruler,SIGNAL(PlayableCards(int,QList<int>)),TempPoint,SIGNAL(PlayableCards(int,QList<int>)));
-	connect(TempPoint,SIGNAL(WantPlayCard(int,int)),Ruler,SLOT(WantsToPlayCard(int,int)));
+	connect(TempPoint,SIGNAL(WantPlayCard(int,int,QList<int>)),Ruler,SLOT(WantsToPlayCard(int,int,QList<int>)));
 	connect(Ruler,SIGNAL(PlayedCard(int,int)),TempPoint,SIGNAL(PlayedCard(int,int)));
 	connect(Ruler,SIGNAL(RemoveFromHand(int,int)),TempPoint,SIGNAL(RemoveFromHand(int,int)));
 	connect(Ruler,SIGNAL(PermanentResolved(int,int)),TempPoint,SIGNAL(PermanentResolved(int,int)));
