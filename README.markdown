@@ -1,51 +1,11 @@
 MagiQ Source Readme
 ===================
 
-This project aims to recreate a digital and rule-aware enviroment to play **Magic: The Gathering**&reg;  
+This project aims to recreate a digital and rule-aware enviroment to play a card based board game similar to **Magic: The Gathering**&reg;  
 
 No copyright or patent infringment is intended. Any submission that will violate the law will be immediately removed.
 
-<table border="1" width="100%">
-	<tr>
-		<th colspan="3" align="left">Source Files Decription</th>
-	</tr>
-    <tr>
-        <th align="left">Source File</th>
-        <th align="left">Type</th>
-        <th align="left">Description</th>
-    </tr>
-    <tr>
-        <td>FrmEnumToString.h<br />FrmEnumToString.cpp</td>
-        <td>Test Utility</td>
-        <td>Little utility that transforms enum lists to string lists.<br />Used just during development, will be removed from release.</td>
-    </tr>
-    <tr>
-        <td>SizeSliders.h<br />SizeSliders.cpp</td>
-        <td>Test Utility</td>
-        <td>Little utility that helps with the positioning of the widgets.<br />Used just during development, will be removed from release.</td>
-    </tr>
-    <tr>
-        <td>CostantsDefinition.h</td>
-        <td>Constants</td>
-        <td>File containing constant used all around the project</td>
-    </tr>
-    <tr>
-        <td>StyleSheets.h</td>
-        <td>Constants</td>
-        <td>File containing the style sheets of the widgets</td>
-    </tr>
-    <tr>
-        <td>SelettoreImmagini.h<br />SelettoreImmagini.cpp</td>
-        <td>Widget</td>
-        <td>Widget that lets you select an image.  
-        Usage: construct the widget specifying as Orient argument the widget layout (orizontal, the default, or vertical).<br />
-        Use the public function AggiungiImmagine to add images specifying, as arguments, the pixmap and the title of the image.<br />
-        The function CancellaTutte will reset the widget to empty.<br />
-        The function ImpostaPosDidascalia can be used to specify whether or not and where to display the image title.<br />
-        The signal IndexChanged is emitted each time an image is selected.<br />
-        Sorry for the names being in italian but I just recycled this widget from a previous project.</td>
-    </tr>
-</table>
+This project is written in C++ using [!Qt](http://i278.photobucket.com/albums/kk113/V-Ronin/QtLogo.png) Libraryes.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
