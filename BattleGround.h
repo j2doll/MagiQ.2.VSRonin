@@ -122,6 +122,7 @@ public slots:
 	void DispalyWaitingFor(QString a);
 	void HideWaitingFor();
 	void UntapCards(QList<int> crds);
+	void TapCards(QList<int> crds);
 	void SetCurrentPhase(int ph);
 	void DrawCard(int crd);
 	void OtherDraw(int who);

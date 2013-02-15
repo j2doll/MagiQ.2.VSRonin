@@ -272,6 +272,9 @@ void Judge::WantsToPlayCard(int who,int CrdID, QList<int> UsedToPayIDs){
 	CardData TheCard=PlayersList[who]->RemoveFromHand(CrdID);
 	if (TheCard.GetCardID()==0) return;
 	//if (!CanPlayCard(TheCard,who)) return; //Double check, erase to speed up
+	foreach(int cdID,UsedToPayIDs)
+		PlayersList[who]->TapCard(cdID);
+	emit CardsToTap(UsedToPayIDs);
 	TheCard.SetController(PlayersList.value(who,NULL));
 	PlayersList[who]->AddCardInStack(TheCard);
 	if(!TheCard.GetCardType().contains(Constants::CardTypes::Land)){

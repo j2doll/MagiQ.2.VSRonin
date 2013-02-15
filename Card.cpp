@@ -36,6 +36,8 @@ Card::Card(QWidget* parent)
 	,CardID(0)
 	,IsNull(false)
 	,Activable(false)
+	,TapAnimationDone(true)
+	,Tapped(false)
 {
 	PrepareUi();
 	AvailableEditions.append(Constants::Editions::NONE);
@@ -496,6 +498,8 @@ Card& Card::operator=(const Card& a){
 	HasManaCost=a.HasManaCost;
 	HasFlipped=a.HasFlipped;
 	FlippedCard=a.FlippedCard;
+	TapAnimationDone=a.TapAnimationDone;
+	Tapped=a.Tapped;
 	SetEffects();
 	foreach(Effect* eff,a.Effects)
 		AddEffect(*eff);
@@ -534,6 +538,8 @@ Card::Card(const Card& a,QWidget* parent):QWidget(parent)
 	,CardID(a.CardID)
 	,IsNull(a.IsNull)
 	,Activable(a.Activable)
+	,TapAnimationDone(a.TapAnimationDone)
+	,Tapped(a.Tapped)
 {
 	PrepareUi();
 	if (HasFlipped==Constants::CardFlipMode::HasFlip){
@@ -573,6 +579,7 @@ Card::Card(const CardData& a,QWidget* parent):QWidget(parent)
 	,IsNull(a.GetIsNull())
 	,Activable(a.GetActivable())
 	,ShowFlavorText(true)
+	,Tapped(a.GetTapped())
 {
 	PrepareUi();
 	if (HasFlipped==Constants::CardFlipMode::HasFlip){

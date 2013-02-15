@@ -70,6 +70,7 @@ signals:
 	void RemoveFromHand(int,int);
 	void PermanentResolved(int,int);
 	void AllCards(QList<CardData>);
+	void CardsToTap(QList<int>);
 private slots:
 	void IncomingTransmission();
 public slots:

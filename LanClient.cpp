@@ -191,6 +191,10 @@ void LanClient::IncomingTransmission(){
 			incom >> int2;
 			emit PermanentResolved(int1,int2);
 		}
+		else if(RequestType==Comunications::TransmissionType::TapCards){
+			incom >> intlists;
+			emit CardsToTap(intlists);
+		}
 ////////////////////////////////////////////////////////////////////////////
 
 		nextBlockSize = 0;

@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QFrame>
 #include <QBitmap>
+#include <QPainter>
 CardViewer::CardViewer(QWidget* parent)
 	:QWidget(parent)
 	,CardToDisplay(NULL)
@@ -45,6 +46,7 @@ void CardViewer::UpdateAspect(){
 		ImageToDispaly.load(":/CardImage/CBase.png");
 		setToolTip("");
 	}
+	QSize OriginalSize(ImageToDispaly.size());
 	if (!ImageToDispaly.isNull()){
 		QTransform Transformer;
 		Transformer.rotate(CardRotation);
@@ -54,9 +56,21 @@ void CardViewer::UpdateAspect(){
 			NumberPaint.setFont(QFont("Arial",height()/10,QFont::Bold));
 			NumberPaint.drawText(ImageToDispaly.rect(),Qt::AlignLeft,QString("%1").arg(RepresentNumber));
 		}
-		PrefSize=ImageToDispaly.size();
-		Displayer->setPixmap(ImageToDispaly);
-		Shader->setMask(ImageToDispaly.scaled(Displayer->size()).mask());
+		QPixmap EnlagedImageToDispaly(
+			qMax(ImageToDispaly.width(),OriginalSize.width()),
+			qMax(ImageToDispaly.height(),OriginalSize.height())
+			);
+		EnlagedImageToDispaly.fill(QColor(0,0,0,0));
+		PrefSize=EnlagedImageToDispaly.size();
+		QPainter EnlagedPainter(&EnlagedImageToDispaly);
+		EnlagedPainter.drawPixmap(
+			QPoint(
+			(EnlagedImageToDispaly.width()-ImageToDispaly.width())/2,
+			(EnlagedImageToDispaly.height()-ImageToDispaly.height())/2
+			)
+			,ImageToDispaly,ImageToDispaly.rect());
+		Displayer->setPixmap(EnlagedImageToDispaly);
+		Shader->setMask(EnlagedImageToDispaly.scaled(Displayer->size()).mask());
 	}
 	setStyleSheet(StyleSheets::CardViewerCSS);
 }

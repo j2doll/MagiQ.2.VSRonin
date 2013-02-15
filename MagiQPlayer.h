@@ -34,6 +34,8 @@ signals:
 	void NoMoreCardsToDraw();
 	void RequireUpdateAspect();
 public:
+	void TapCard(int CardID,bool Tapped=true);
+	void UntapCard(int CardID, bool untapped=true){TapCard(CardID,!untapped);}
 	void RemoveTopLibrary();
 	const QList<CardData>& GetCardsInStack() const{return CardsInStack;}
 	void SetCardsInStack(){CardsInStack.clear();}

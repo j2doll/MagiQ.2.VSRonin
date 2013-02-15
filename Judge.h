@@ -79,6 +79,7 @@ signals:
 	void StopWaitingFor();
 	void CurrentPhaseChanged(int);
 	void CardsToUntap(QList<int>);
+	void CardsToTap(QList<int>);
 	void CardDrawn(int,int);
 	void StopTimers();
 	void ResumeTimers();

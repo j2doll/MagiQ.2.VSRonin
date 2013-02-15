@@ -5,7 +5,7 @@ This project aims to recreate a digital and rule-aware enviroment to play a card
 
 No copyright or patent infringment is intended. Any submission that will violate the law will be immediately removed.
 
-This project is written in C++ using [!Qt](http://i278.photobucket.com/albums/kk113/V-Ronin/QtLogo.png) Libraryes.
+This project is written in C++ using ![Qt](http://i278.photobucket.com/albums/kk113/V-Ronin/QtLogo.png) Libraryes.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

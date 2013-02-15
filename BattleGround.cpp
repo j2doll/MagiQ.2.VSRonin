@@ -328,12 +328,25 @@ void BattleGround::UpdateAspect(){
 					LandsControlledView[*index].value(contLands,NULL)->SetCanBeZoom(true);
 					LandsControlledView[*index].value(contLands,NULL)->SetShadable(false);
 					LandsControlledView[*index].value(contLands,NULL)->SetCanBeClick(
-						ManaSelectionModeON ? 
-							CardsControlled[*index].value(j,NULL)->IsManaSource()
-						: 
-							CardsControlled[*index].value(j,NULL)->GetActivable()
+						(ManaSelectionModeON && (!CardsControlled[*index].value(j,NULL)->IsTapped()) && CardsControlled[*index].value(j,NULL)->IsManaSource())
+						||
+						((!ManaSelectionModeON) && CardsControlled[*index].value(j,NULL)->GetActivable())
 					);
-					LandsControlledView[*index].value(contLands++,NULL)->UpdateAspect();
+					if (CardsControlled[*index].value(j)->IsTapped()){
+						if(CardsControlled[*index].value(j)->GetTapAnimationDone()) LandsControlledView[*index].value(contLands,NULL)->SetCardRotation(90);
+						else{
+							LandsControlledView[*index].value(contLands,NULL)->TapAnimationStart();
+							CardsControlled[*index].value(j)->SetTapAnimationDone(true);
+						}
+					}
+					else{
+						if(CardsControlled[*index].value(j)->GetTapAnimationDone()) LandsControlledView[*index].value(contLands,NULL)->SetCardRotation(0);
+						else{
+							LandsControlledView[*index].value(contLands,NULL)->UnTapAnimationStart();
+							CardsControlled[*index].value(j)->SetTapAnimationDone(true);
+						}
+					}
+					//LandsControlledView[*index].value(contLands++,NULL)->UpdateAspect();
 				}
 			}
 		}
@@ -517,8 +530,20 @@ void BattleGround::ZoomAnimate(Card* crd){
 	Animations->start(QAbstractAnimation::DeleteWhenStopped);
 }
 void BattleGround::UntapCards(QList<int> crds){
-	foreach(int crd,crds)
-		AllCards[crd]->SetTapped(false);
+	foreach(int crdID,crds){
+		if(!AllCards[crdID]->IsTapped()) continue;
+		AllCards[crdID]->SetTapped(false);
+		AllCards[crdID]->SetTapAnimationDone(false);
+	}
+	UpdateAspect();
+}
+void BattleGround::TapCards(QList<int> crds){
+	foreach(int crdID,crds){
+		if(AllCards[crdID]->IsTapped()) continue;
+		AllCards[crdID]->SetTapped(true);
+		AllCards[crdID]->SetTapAnimationDone(false);
+	}
+	UpdateAspect();
 }
 void BattleGround::SetCurrentPhase(int ph){
 	if (ph<Constants::Phases::Untap || ph>Constants::Phases::TurnEnd) return;
@@ -654,11 +679,11 @@ void BattleGround::ManaSelectionMode(Card* const& TheCard){
 			connect((*i),SIGNAL(clicked(int)),this,SLOT(NewManaPayed(int)));
 	}*/
 	foreach(CardViewer* crd,CardsControlledView[-1]){
-		if(crd->GetCardToDisplay()->IsManaSource())
+		if(crd->GetCardToDisplay()->IsManaSource() && (!crd->GetCardToDisplay()->IsTapped()))
 			connect(crd,SIGNAL(clicked(int)),this,SLOT(NewManaPayed(int)));
 	}
 	foreach(CardViewer* crd,LandsControlledView[-1]){
-		if(crd->GetCardToDisplay()->IsManaSource())
+		if(crd->GetCardToDisplay()->IsManaSource() && (!crd->GetCardToDisplay()->IsTapped()))
 			connect(crd,SIGNAL(clicked(int)),this,SLOT(NewManaPayed(int)));
 	}
 	ManaToTap.clear();

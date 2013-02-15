@@ -25,6 +25,7 @@ namespace Comunications{
 		,StopWaitingFor
 		,PhaseChanged
 		,UntapCards
+		,TapCards
 		,YouDrawnCard
 		,OtherDrawnCard
 		,TimerFinished

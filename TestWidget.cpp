@@ -127,6 +127,7 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(PlayedCard(int,int)),board,SLOT(PlayedCard(int,int)));
 	connect(Client,SIGNAL(RemoveFromHand(int,int)),board,SLOT(RemoveCardHand(int,int)));
 	connect(Client,SIGNAL(PermanentResolved(int,int)),board,SLOT(ResolveCard(int,int)));
+	connect(Client,SIGNAL(CardsToTap(QList<int>)),board,SLOT(TapCards(QList<int>)));
 
 	//StackDisplayerConnections
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),StackDisp,SLOT(AddEffect(EffectData)));

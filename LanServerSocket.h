@@ -55,6 +55,7 @@ public slots:
 	void SendRemoveFromHand(int who,int crdID);
 	void SendPermanentResolved(int who,int crd);
 	void SendAllCards(QList<CardData> crds);
+	void SendCardsToTap(QList<int> crdIDs);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);

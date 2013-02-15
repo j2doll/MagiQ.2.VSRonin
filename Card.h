@@ -75,12 +75,14 @@ private:
 	bool IsNull;
 	bool Activable;
 	mutable int SortingMethod;
-
+	bool TapAnimationDone;
 // Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
 	void PrepareUi();
 public:
+	void SetTapAnimationDone(bool a){TapAnimationDone=a;}
+	bool GetTapAnimationDone() const {return TapAnimationDone;}
 	int GetSortingMethod() const {return SortingMethod;}
 	void SetSortingMethod(int a) const {if(a>=CardData::Random && a<=CardData::ByColor) SortingMethod=a;}
 	bool GetActivable() const {return Activable;}

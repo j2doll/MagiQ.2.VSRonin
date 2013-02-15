@@ -132,3 +132,8 @@ CardData MagiQPlayer::RemoveFromHand(int CardID){
 	}
 	return Result;
 }
+void MagiQPlayer::TapCard(int CardID,bool Tapped){
+	for(QList<CardData>::iterator i=ControlledCards.begin();i!=ControlledCards.end();i++){
+		if(i->GetCardID()==CardID) return i->SetTapped(Tapped);
+	}
+}
