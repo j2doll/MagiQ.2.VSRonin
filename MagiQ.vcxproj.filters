@@ -326,6 +326,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_Judge.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="ControlledLayout.cpp">
+      <Filter>Source Files\BattleField</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -351,6 +354,9 @@
     </ClInclude>
     <ClInclude Include="EffectData.h">
       <Filter>Header Files\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlledLayout.h">
+      <Filter>Header Files\Battlefield</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

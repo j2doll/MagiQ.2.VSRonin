@@ -14,6 +14,7 @@
 #include "StyleSheets.h"
 #include "CostantsDefinition.h"
 #include "HandLayout.h"
+#include "ControlledLayout.h"
 #include "CardViewer.h"
 #include "Card.h"
 #include "Effect.h"
@@ -317,6 +318,7 @@ void BattleGround::UpdateAspect(){
 			LandsContainerLay.value(*index)->addWidget(TempViewer);
 		}
 		int contLands=0;
+		bool MultipleCheck;
 		for (int j=0;j<CardsControlled.value(*index).size();j++){
 			if (CardsControlled[*index].value(j)){
 				if (
@@ -324,11 +326,12 @@ void BattleGround::UpdateAspect(){
 					&& (!CardsControlled[*index].value(j)->GetCardType().contains(Constants::CardTypes::Creature))
 					)
 				{
+					MultipleCheck=ManaSelectionModeON && (!CardsControlled[*index].value(j,NULL)->IsTapped()) && CardsControlled[*index].value(j,NULL)->IsManaSource();
 					LandsControlledView[*index].value(contLands,NULL)->SetCardToDisplay(CardsControlled[*index].value(j));
 					LandsControlledView[*index].value(contLands,NULL)->SetCanBeZoom(true);
-					LandsControlledView[*index].value(contLands,NULL)->SetShadable(false);
+					LandsControlledView[*index].value(contLands,NULL)->SetShadable(MultipleCheck);
 					LandsControlledView[*index].value(contLands,NULL)->SetCanBeClick(
-						(ManaSelectionModeON && (!CardsControlled[*index].value(j,NULL)->IsTapped()) && CardsControlled[*index].value(j,NULL)->IsManaSource())
+						MultipleCheck
 						||
 						((!ManaSelectionModeON) && CardsControlled[*index].value(j,NULL)->GetActivable())
 					);
@@ -418,7 +421,7 @@ void BattleGround::ResetHandOrder(){
 		hanlay->invalidate();
 }
 void BattleGround::ResetLandOrder(){
-	foreach(HandLayout* hanlay,LandsContainerLay)
+	foreach(ControlledLayout* hanlay,LandsContainerLay)
 		hanlay->invalidate();
 }
 void BattleGround::ResetStackLayOrder(){StackCardsFrameLay->invalidate();}
@@ -438,7 +441,7 @@ void BattleGround::SetPlayersOrder(QList<int> ord){
 		PlayesInfos[PlayID]=new PlayerInfoDisplayer(this);
 		LandsContainer[PlayID]=new QFrame(this);
 		LandsContainer[PlayID]->setObjectName("LandsContainer");
-		LandsContainerLay[PlayID]=new HandLayout(LandsContainer[PlayID]);
+		LandsContainerLay[PlayID]=new ControlledLayout(LandsContainer[PlayID]);
 	}
 }
 void BattleGround::SetPlayersNameAvatar(QMap<int,QString> nam,QMap<int,QPixmap> avt){

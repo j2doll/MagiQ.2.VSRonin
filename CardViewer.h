@@ -25,6 +25,7 @@ public:
 	void SetCanBeClick(bool a) {CanBeClick=a;}
 	void SetShadable(bool a);
 private:
+	enum{TapAnimationDuration=500};
 	bool CanBeZoom;
 	bool CanBeClick;
 	int RepresentNumber;

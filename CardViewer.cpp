@@ -79,7 +79,7 @@ void CardViewer::resizeEvent(QResizeEvent* event){
 }
 void CardViewer::TapAnimationStart(){
 	QPropertyAnimation* animTap= new QPropertyAnimation(this,"CardRotation",parent());
-	animTap->setDuration(3000);
+	animTap->setDuration(TapAnimationDuration);
 	animTap->setEasingCurve(QEasingCurve::Linear);
 	animTap->setKeyValueAt(0.0,0);
 	animTap->setKeyValueAt(1.0,90);
@@ -87,7 +87,7 @@ void CardViewer::TapAnimationStart(){
 }
 void CardViewer::UnTapAnimationStart(){
 	QPropertyAnimation* animTap= new QPropertyAnimation(this,"CardRotation",parent());
-	animTap->setDuration(3000);
+	animTap->setDuration(TapAnimationDuration);
 	animTap->setEasingCurve(QEasingCurve::Linear);
 	animTap->setKeyValueAt(1.0,0);
 	animTap->setKeyValueAt(0.0,90);

@@ -18,6 +18,7 @@ class QTimer;
 class PhasesDisplayer;
 class QHBoxLayout;
 class HandLayout;
+class ControlledLayout;
 class ManaCostLabel;
 class BattleGround : public QWidget
 {
@@ -35,7 +36,7 @@ private:
 	QMap<int,PlayerInfoDisplayer*> PlayesInfos;
 	QMap<int,HandLayout*> HandsLay;
 	QMap<int,QFrame*> LandsContainer;
-	QMap<int,HandLayout*> LandsContainerLay; //TODO change Layout
+	QMap<int,ControlledLayout*> LandsContainerLay; //TODO change Layout
 	QMap<int,QLabel*> DeckLabels;
 	QMap<int,QLabel*> GraveyardLabels;
 	CardViewer* AnimationCard;
