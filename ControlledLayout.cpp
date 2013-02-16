@@ -16,6 +16,7 @@ void ControlledLayout::setGeometry(const QRect &rect){
 	int TotalWid=0;
 	int CountTapped=0;
 	foreach(QLayoutItem *item,items){
+		if(!static_cast<CardViewer*>(item->widget())->GetCardToDisplay()) continue;
 		if(static_cast<CardViewer*>(item->widget())->GetCardToDisplay()->IsTapped()){
 			TotalWid+=item->minimumSize().height();
 			++CountTapped;
@@ -29,12 +30,15 @@ void ControlledLayout::setGeometry(const QRect &rect){
 		//Lay Items One over the other
 		int IncrementOnX=0;
 		if(count()>1){
-			if(static_cast<CardViewer*>(items.last()->widget())->GetCardToDisplay()->IsTapped())
-				IncrementOnX=(effectiveRect.width()-items.last()->minimumSize().height())/(count()-1);
-			else
-				IncrementOnX=(effectiveRect.width()-items.last()->minimumSize().width())/(count()-1);
+			if(static_cast<CardViewer*>(items.last()->widget())->GetCardToDisplay()){
+				if(static_cast<CardViewer*>(items.last()->widget())->GetCardToDisplay()->IsTapped())
+					IncrementOnX=(effectiveRect.width()-items.last()->minimumSize().height())/(count()-1);
+				else
+					IncrementOnX=(effectiveRect.width()-items.last()->minimumSize().width())/(count()-1);
+			}
 		}
 		foreach(QLayoutItem *item,items){
+			if(!static_cast<CardViewer*>(item->widget())->GetCardToDisplay()) continue;
 			if(static_cast<CardViewer*>(item->widget())->GetCardToDisplay()->IsTapped())
 				item->setGeometry(QRect(CurrentX,effectiveRect.y(),item->minimumSize().height(),effectiveRect.height()));
 			else
@@ -47,6 +51,7 @@ void ControlledLayout::setGeometry(const QRect &rect){
 		//Lay Items one next to the other
 		double WidForUntapped=static_cast<double>(AvailableWid)/(1.0+(0.4*static_cast<double>(CountTapped)/static_cast<double>(count())));
 		foreach(QLayoutItem *item,items){
+			if(!static_cast<CardViewer*>(item->widget())->GetCardToDisplay()) continue;
 			if(static_cast<CardViewer*>(item->widget())->GetCardToDisplay()->IsTapped()){
 				item->setGeometry(QRect(CurrentX,effectiveRect.y(),static_cast<int>(1.4*WidForUntapped),effectiveRect.height()));
 				CurrentX+=static_cast<int>(1.4*WidForUntapped)+spacing();
@@ -64,6 +69,7 @@ QSize ControlledLayout::minimumSize() const{
 	getContentsMargins(&left, &top, &right, &bottom);
 	
 	for (QList<QLayoutItem*>::const_iterator i=items.begin();i!=items.end();i++){
+		if(!static_cast<CardViewer*>((*i)->widget())->GetCardToDisplay()) continue;
 		if(static_cast<CardViewer*>((*i)->widget())->GetCardToDisplay()->IsTapped()){
 			if(static_cast<CardViewer*>(items.last()->widget())->GetCardToDisplay()->IsTapped()){
 				return QSize(
@@ -88,6 +94,7 @@ QSize ControlledLayout::sizeHint() const{
 	getContentsMargins(&left, &top, &right, &bottom);
 	int TotalWid=0;
 	foreach(QLayoutItem *item,items){
+		if(!static_cast<CardViewer*>(item->widget())->GetCardToDisplay()) continue;
 		if(static_cast<CardViewer*>(item->widget())->GetCardToDisplay()->IsTapped()){
 			TotalWid+=item->minimumSize().height();
 		}

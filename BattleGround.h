@@ -36,7 +36,9 @@ private:
 	QMap<int,PlayerInfoDisplayer*> PlayesInfos;
 	QMap<int,HandLayout*> HandsLay;
 	QMap<int,QFrame*> LandsContainer;
-	QMap<int,ControlledLayout*> LandsContainerLay; //TODO change Layout
+	QMap<int,ControlledLayout*> LandsContainerLay;
+	QMap<int,QFrame*> CreaturesContainer;
+	QMap<int,ControlledLayout*> CreaturesContainerLay;
 	QMap<int,QLabel*> DeckLabels;
 	QMap<int,QLabel*> GraveyardLabels;
 	CardViewer* AnimationCard;
@@ -45,7 +47,7 @@ private:
 	QHash<int,int> PlayerLife;
 	QMap<int,QList<CardViewer*>> CardsInHandView;
 	QMap<int,QList<CardViewer*>> LandsControlledView;
-	QMap<int,QList<CardViewer*>> CardsControlledView;
+	QMap<int,QList<CardViewer*>> CreaturesControlledView;
 	QList<CardViewer*> CardsInStackView;
 	QMap<int,QList<Card*>> CardsInHand;
 	QMap<int,QList<Card*>> CardsControlled;
@@ -96,6 +98,7 @@ private:
 	void AnimatePlay(int whos,Card* ToShow);
 	QMap<int,int> AskManaToTap();
 	int NumberOfLands(int who);
+	int NumberOfCreatures(int who);
 	bool CheckPayedCard(const QMap<int,int>& ManaCost,const QMap<int,int>& ManaPay) const;
 	void ManaSelectionMode(Card* const& TheCard);
 private slots:

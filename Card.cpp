@@ -672,9 +672,12 @@ bool Card::PointLessThan(Card* const& a,Card* const& b){
 	}
 }
 bool Card::IsManaSource() const{
+	if (Effects.isEmpty()) return false;
 	foreach(Effect* eff,Effects){
-		if(eff->GetManaEffect())
-			return true;
+		if(eff){
+			if(eff->GetManaEffect())
+				return true;
+		}
 	}
 	return false;
 }
