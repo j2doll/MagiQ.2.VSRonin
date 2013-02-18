@@ -195,6 +195,14 @@ void LanClient::IncomingTransmission(){
 			incom >> intlists;
 			emit CardsToTap(intlists);
 		}
+		else if(RequestType==Comunications::TransmissionType::CardsThatCanAttack){
+			incom >> intlists;
+			emit AttackAbleCards(intlists);
+		}
+		else if(RequestType==Comunications::TransmissionType::AttackingCards){
+			incom >> intlists;
+			emit AttackingCards(intlists);
+		}
 ////////////////////////////////////////////////////////////////////////////
 
 		nextBlockSize = 0;
@@ -286,6 +294,24 @@ void LanClient::SendWantToPlayCard(int CardID,QList<int> PayedWithIDs){
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);
 	out << quint32(0) << quint32(Comunications::TransmissionType::WantToPlayCard) << qint32(CardID) << PayedWithIDs;
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	tcpSocket->write(block);
+}
+void LanClient::SendContinueToNextPhase(){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::ContinueToNextPhase);
+	out.device()->seek(0);
+	out << quint32(block.size() - sizeof(quint32));
+	tcpSocket->write(block);
+}
+void LanClient::SendAttackingCards(const QList<int>& crdIDs){
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	out.setVersion(QDataStream::Qt_4_7);
+	out << quint32(0) << quint32(Comunications::TransmissionType::AttackingCards) << crdIDs;
 	out.device()->seek(0);
 	out << quint32(block.size() - sizeof(quint32));
 	tcpSocket->write(block);

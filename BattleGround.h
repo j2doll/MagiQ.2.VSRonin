@@ -27,7 +27,7 @@ class BattleGround : public QWidget
 private:
 	enum{AnimationDuration=500};
 	enum{ZoommedCardWidth=200};
-	enum{TimerUpdateIntervall=100};
+	enum{TimerUpdateIntervall=10};
 //Visual Elements
 	QFrame* Board;
 	QFrame* StackCardsFrame;
@@ -90,6 +90,8 @@ private:
 	Card* CardRequiringMana;
 	QMap<int,int> ManaToTap;
 	QList<int> CardsUsedToPay;
+	QList<int> CardsThatCanAttack;
+	QList<int> AttackingCards;
 	bool ManaSelectionModeON;
 //Functions
 	void SortCardsInHand();
@@ -116,6 +118,8 @@ private slots:
 	void PhaseTimeUpdate();
 	void NewManaPayed(int crdID);
 	void CancelManaSelectionMode();
+	void NewAttacker(int crdID);
+	void WantsToAttack();
 public slots:
 	void AskMulligan();
 	void SetPlayersOrder(QList<int> ord);
@@ -141,6 +145,8 @@ public slots:
 	void RemoveCardHand(int who,int crdID);
 	void ResolveCard(int Who, int crd);
 	void SetAllCards(QList<CardData> a);
+	void SetAttackAbleCards(QList<int> crdIDs);
+	void SetAttackingCards(QList<int> crdIDs);
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return PlayersOrder.size();}
@@ -155,6 +161,8 @@ signals:
 	void TimerFinished();
 	void TimerStopped();
 	void TimerResumed();
+	void ContinueToNextPhase();
+	void SendAttackingCards(const QList<int>&);
 };
 #endif
 

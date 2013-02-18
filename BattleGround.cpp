@@ -90,6 +90,7 @@ BattleGround::BattleGround(QWidget* parent)
 	PhaseDisp->SetPhaseTimeLimit(PhaseTimeLimit);
 	PhaseDisp->SetPhase(CurrentPhase);
 	PhaseDisp->hide();
+	
 
 	RequiredCostFrame=new QFrame(this);
 	RequiredCostFrame->setObjectName("CostFrame");
@@ -152,6 +153,8 @@ void BattleGround::PhaseTimeUpdate(){
 			CurrentPhaseTime=0;
 			PhaseDisp->SetStackTimerActivated(false);
 			PhaseDisp->SetPhaseTimeLimit(PhaseTimeLimit);
+			if(CurrentPhase==Constants::Phases::PreCombatMain || CurrentPhase==Constants::Phases::PostCombatMain)
+				PhaseDisp->ShowButton(true);
 			disconnect(ResponseTimer,SIGNAL(timeout()),this,SLOT(PhaseTimeUpdate()));
 			connect(PhaseTimer,SIGNAL(timeout()),this,SLOT(PhaseTimeUpdate()));
 			emit TimerFinished();
@@ -343,20 +346,25 @@ void BattleGround::UpdateAspect(){
 		}
 		int contLands=0;
 		int contCreatures=0;
-		bool MultipleCheck;
+		bool ManaSourceCheck;
 		for (int j=0;j<CardsControlled.value(*index).size();j++){
 			if (CardsControlled[*index].value(j)){
+				ManaSourceCheck=
+					ManaSelectionModeON
+					&& (!CardsControlled[*index].value(j,NULL)->IsTapped())
+					&& CardsControlled[*index].value(j,NULL)->IsManaSource()
+					&& (!CardsUsedToPay.contains(CardsControlled[*index].value(j,NULL)->GetCardID()))
+					;
 				if ( //Is a Land
 					CardsControlled[*index].value(j)->GetCardType().contains(Constants::CardTypes::Land)
 					&& (!CardsControlled[*index].value(j)->GetCardType().contains(Constants::CardTypes::Creature))
 					)
 				{
-					MultipleCheck=ManaSelectionModeON && (!CardsControlled[*index].value(j,NULL)->IsTapped()) && CardsControlled[*index].value(j,NULL)->IsManaSource();
 					LandsControlledView[*index].value(contLands,NULL)->SetCardToDisplay(CardsControlled[*index].value(j));
 					LandsControlledView[*index].value(contLands,NULL)->SetCanBeZoom(true);
-					LandsControlledView[*index].value(contLands,NULL)->SetShadable(MultipleCheck);
+					LandsControlledView[*index].value(contLands,NULL)->SetShadable(ManaSourceCheck);
 					LandsControlledView[*index].value(contLands,NULL)->SetCanBeClick(
-						MultipleCheck
+						ManaSourceCheck
 						||
 						((!ManaSelectionModeON) && CardsControlled[*index].value(j,NULL)->GetActivable())
 					);
@@ -379,8 +387,24 @@ void BattleGround::UpdateAspect(){
 				else if(CardsControlled[*index].value(j)->GetCardType().contains(Constants::CardTypes::Creature)){ //Is a Creature
 					CreaturesControlledView[*index].value(contCreatures,NULL)->SetCardToDisplay(CardsControlled[*index].value(j));
 					CreaturesControlledView[*index].value(contCreatures,NULL)->SetCanBeZoom(true);
-					CreaturesControlledView[*index].value(contCreatures,NULL)->SetShadable(false);
-					CreaturesControlledView[*index].value(contCreatures,NULL)->SetCanBeClick(false);
+					CreaturesControlledView[*index].value(contCreatures,NULL)->SetShadable(
+						ManaSourceCheck
+						|| (CurrentPhase==Constants::Phases::DeclareAttackers && CardsThatCanAttack.contains(CardsControlled[*index].value(j)->GetCardID()))
+						);
+					CreaturesControlledView[*index].value(contCreatures,NULL)->SetCanBeClick(
+						(
+							(!ManaSelectionModeON)
+							&& CurrentPhase!=Constants::Phases::DeclareAttackers
+							&& CurrentPhase!=Constants::Phases::DeclareBlockers
+							&& CardsControlled[*index].value(j,NULL)->GetActivable()
+						)
+						||
+						(
+							CurrentPhase==Constants::Phases::DeclareAttackers
+							&& CardsThatCanAttack.contains(CardsControlled[*index].value(j,NULL)->GetCardID())
+						)
+						);
+					CreaturesControlledView[*index].value(contCreatures,NULL)->SetAttacking(CardsControlled[*index].value(j,NULL)->GetAttacking());
 					if (CardsControlled[*index].value(j)->IsTapped()){
 						if(CardsControlled[*index].value(j)->GetTapAnimationDone()) CreaturesControlledView[*index].value(contCreatures,NULL)->SetCardRotation(90);
 						else{
@@ -565,6 +589,7 @@ void BattleGround::ZoomAnimate(Card* crd){
 	ZoomedCard=crd;
 	if (!crd) return;
 	crd->show();
+	crd->raise();
 	int HeiForWid=(279*ZoommedCardWidth)/200;
 	QParallelAnimationGroup* Animations=new QParallelAnimationGroup;
 	QPropertyAnimation* AnimPos=new QPropertyAnimation(crd,"pos",this);
@@ -609,19 +634,28 @@ void BattleGround::SetCurrentPhase(int ph){
 	}
 	CurrentPhase=ph;
 	PhaseDisp->SetPhase(CurrentPhase);
-	if (
-		CurrentPhase!=Constants::Phases::PreCombatMain
-		&& CurrentPhase!=Constants::Phases::PostCombatMain
-		&& CurrentPhase!=Constants::Phases::DeclareAttackers
-		&& CurrentPhase!=Constants::Phases::DeclareBlockers
-	)
-	{
+	disconnect(PhaseDisp,SIGNAL(Continued()));
+	if(CurrentPhase==Constants::Phases::PreCombatMain || CurrentPhase==Constants::Phases::PostCombatMain){
+		PhaseDisp->ShowButton(true);
+		PhaseDisp->SetButtonString(tr("Continue"));
+		connect(PhaseDisp,SIGNAL(Continued()),this,SIGNAL(ContinueToNextPhase()),Qt::UniqueConnection);
+	}
+	else if(CurrentPhase==Constants::Phases::DeclareAttackers){
+		PhaseDisp->ShowButton(true);
+		PhaseDisp->SetButtonString(tr("Skip Attack"));
+		connect(PhaseDisp,SIGNAL(Continued()),this,SLOT(WantsToAttack()),Qt::UniqueConnection);
+	}
+	else if(CurrentPhase==Constants::Phases::DeclareBlockers){
+		PhaseDisp->ShowButton(true);
+		PhaseDisp->SetButtonString(tr("Skip Block"));
+	}
+	else{
 		PhaseDisp->ShowButton(false);
 		PhaseTimer->start();
 	}
-	else{
-		PhaseDisp->ShowButton(true);
-	}
+}
+void BattleGround::WantsToAttack(){
+	emit SendAttackingCards(AttackingCards);
 }
 void BattleGround::ResumeStackTimer(){
 	PhaseDisp->ShowButton(false);
@@ -709,6 +743,17 @@ void BattleGround::SetPlayableCards(QList<int> IDs){
 	}
 	UpdateAspect();
 }
+void BattleGround::SetAttackAbleCards(QList<int> crdIDs){
+	CardsThatCanAttack.clear();
+	CardsThatCanAttack=crdIDs;
+	AttackingCards.clear();
+	foreach(CardViewer* crd,CreaturesControlledView[-1]){
+		if(crdIDs.contains(crd->GetCardToDisplay()->GetCardID())){
+			connect(crd,SIGNAL(clicked(int)),this,SLOT(NewAttacker(int)));
+		}
+	}
+	UpdateAspect();
+}
 void BattleGround::WantToPlayCard(int crdID){
 	Card* TheCard=NULL;
 	for(QList<Card*>::iterator i=CardsInHand[-1].begin();i!=CardsInHand[-1].end();i++){
@@ -724,6 +769,10 @@ void BattleGround::WantToPlayCard(int crdID){
 	else if(TheCard->GetCardType().contains(Constants::CardTypes::Land)) emit WantPlayCard(crdID,QList<int>());
 }
 void BattleGround::ManaSelectionMode(Card* const& TheCard){
+	if (TheCard->GetConvertedManaCost()==0){
+		emit WantPlayCard(CardRequiringMana->GetCardID(),CardsUsedToPay);
+		return;
+	}
 	ManaSelectionModeON=true;
 	foreach(CardViewer* crd,CreaturesControlledView[-1]){
 		if(!crd) continue;
@@ -775,9 +824,10 @@ void BattleGround::NewManaPayed(int crdID){
 				CancelManaSelectionMode();
 				ClearLowerQuestion();
 			}
-			return;
+			return UpdateAspect();
 		}
 	}
+	UpdateAspect();
 }
 void BattleGround::CancelManaSelectionMode(){
 	ManaSelectionModeON=false;
@@ -786,6 +836,31 @@ void BattleGround::CancelManaSelectionMode(){
 	CardRequiringMana=NULL;
 	PayedCostFrame->hide();
 	RequiredCostFrame->hide();
+	foreach(CardViewer* crd,CreaturesControlledView[-1])
+		disconnect(crd,SIGNAL(clicked(int)));
+	foreach(CardViewer* crd,LandsControlledView[-1])
+		disconnect(crd,SIGNAL(clicked(int)));
+	UpdateAspect();
+}
+void BattleGround::NewAttacker(int crdID){
+	if(AttackingCards.contains(crdID)){
+		AllCards[crdID]->SetAttacking(false);
+		AttackingCards.removeAt(AttackingCards.indexOf(crdID));
+	}
+	else{
+		AllCards[crdID]->SetAttacking(true);
+		AttackingCards.append(crdID);
+	}
+	if(AttackingCards.isEmpty()) PhaseDisp->SetButtonString(tr("Skip Attack"));
+	else PhaseDisp->SetButtonString(tr("Attack"));
+	UpdateAspect();
+}
+void BattleGround::SetAttackingCards(QList<int> crdIDs){
+	AttackingCards.clear();
+	for(QList<int>::const_iterator i=crdIDs.constBegin();i!=crdIDs.constEnd();i++){
+		AllCards[*i]->SetAttacking(true);
+		AttackingCards.append(*i);
+	}
 	UpdateAspect();
 }
 void BattleGround::PlayedCard(int crd,int Who){

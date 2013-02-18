@@ -329,6 +329,15 @@
     <ClCompile Include="ControlledLayout.cpp">
       <Filter>Source Files\BattleField</Filter>
     </ClCompile>
+    <ClCompile Include="TestWidgetThread.cpp">
+      <Filter>Source Files\Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TestWidgetThread.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TestWidgetThread.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -443,6 +452,9 @@
     </CustomBuild>
     <CustomBuild Include="Judge.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="TestWidgetThread.h">
+      <Filter>Header Files\Test Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

@@ -43,6 +43,9 @@ namespace Comunications{
 		,PlayedCard
 		,RemoveCardFromHand
 		,PermanentResolved
+		,ContinueToNextPhase
+		,CardsThatCanAttack
+		,AttackingCards
 		,ChatMessage
 	};}
 }

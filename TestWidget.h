@@ -16,12 +16,12 @@ private:
 	QPushButton* DisconnectButton;
 	QPushButton* ReadyButton;
 	QLineEdit* IPEditor;
-	LanServer* Server;
 	LanClient* Client;
 	ChatWidget* chat;
 	BattleGround* board;
 	QFrame* BattleFrame;
 	StackDispalyer* StackDisp;
+	LanServer* Server;
 public:
 	TestWidget(QWidget* parent=0);
 };

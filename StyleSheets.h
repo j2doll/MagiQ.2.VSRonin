@@ -200,11 +200,17 @@ namespace StyleSheets{
 			"}"
 		);
 		const QString CardViewerCSS(
-			"CardViewer[CanBeClick=\"false\"] #Shader{"
+			"CardViewer #Shader{"
 				"background-color: rgba(0,0,0,75);"
 			"}"
 			"CardViewer[CanBeClick=\"true\"] #Shader{"
+				"background-color: rgba(0,0,0,0);"
 				"border: 2px solid #FF7F00;"
+				"border-radius: 2px;"
+			"}"
+			"CardViewer[Attacking=\"true\"] #Shader{"
+				"background-color: rgba(0,0,0,0);"
+				"border: 2px solid #ED1C24;"
 				"border-radius: 2px;"
 			"}"
 		);
@@ -395,8 +401,9 @@ namespace StyleSheets{
 				"background-color: rgb(255,215,0);"
 			"}"
 			"PlayerInfoDisplayer #LifeBar::chunk{"
-				"border-top-left-radius: 4px;"
-				"border-top-right-radius: 4px;"
+				//"border-top-left-radius: 4px;"
+				//"border-top-right-radius: 4px;"
+				"border-radius: 4px;"
 				// Life greather than 60
 				"background-color: rgb(0,114,54);"
 			"}"

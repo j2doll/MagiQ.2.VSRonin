@@ -11,6 +11,7 @@ class CardViewer :public QWidget{
 	Q_PROPERTY(int CardRotation READ GetCardRotation WRITE SetCardRotation)
 	Q_PROPERTY(bool CanBeZoom READ GetCanBeZoom WRITE SetCanBeZoom)
 	Q_PROPERTY(bool CanBeClick READ GetCanBeClick WRITE SetCanBeClick)
+	Q_PROPERTY(bool Attacking READ GetAttacking WRITE SetAttacking)
 public:
 	CardViewer(QWidget* parent=0);
 	int GetCardRotation() const {return CardRotation;}
@@ -21,13 +22,16 @@ public:
 	QSize sizeHint() const {return PrefSize;}
 	bool GetCanBeZoom() const {return CanBeZoom;}
 	bool GetCanBeClick() const {return CanBeClick;}
+	bool GetAttacking() const {return Attacking;}
 	void SetCanBeZoom(bool a) {CanBeZoom=a;}
 	void SetCanBeClick(bool a) {CanBeClick=a;}
 	void SetShadable(bool a);
+	void SetAttacking(bool a){Attacking=a;}
 private:
 	enum{TapAnimationDuration=500};
 	bool CanBeZoom;
 	bool CanBeClick;
+	bool Attacking;
 	int RepresentNumber;
 	int CardRotation;
 	QSize PrefSize;

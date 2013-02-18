@@ -71,6 +71,8 @@ signals:
 	void PermanentResolved(int,int);
 	void AllCards(QList<CardData>);
 	void CardsToTap(QList<int>);
+	void AttackAbleCards(QList<int>);
+	void AttackingCards(QList<int>);
 private slots:
 	void IncomingTransmission();
 public slots:
@@ -86,6 +88,8 @@ public slots:
 	void SendStoppedTimer();
 	void SendResumeTimer();
 	void SendWantToPlayCard(int CardID,QList<int> PayedWithIDs);
+	void SendContinueToNextPhase();
+	void SendAttackingCards(const QList<int>& crdIDs);
 
 };
 #endif

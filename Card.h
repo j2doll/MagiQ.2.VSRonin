@@ -76,11 +76,14 @@ private:
 	bool Activable;
 	mutable int SortingMethod;
 	bool TapAnimationDone;
+	bool Attacking;
 // Functions
 	QString CreateManaCostString() const;
 	void ResetCardCost();
 	void PrepareUi();
 public:
+	void SetAttacking(bool a){Attacking=a;}
+	bool GetAttacking() const {return Attacking;}
 	void SetTapAnimationDone(bool a){TapAnimationDone=a;}
 	bool GetTapAnimationDone() const {return TapAnimationDone;}
 	int GetSortingMethod() const {return SortingMethod;}

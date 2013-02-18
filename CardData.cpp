@@ -21,6 +21,9 @@ CardData::CardData()
 	,IsNull(false)
 	,Activable(false)
 	,SummoningSickness(false)
+	//,CanAttack(false)
+	,CanAttack(true) //DEBUG
+	,Attacking(false)
 {}
 CardData::CardData(const CardData& a)
 	:CardEdition(a.CardEdition)
@@ -51,6 +54,8 @@ CardData::CardData(const CardData& a)
 	,IsNull(a.IsNull)
 	,Activable(a.Activable)
 	,SummoningSickness(a.SummoningSickness)
+	,CanAttack(a.CanAttack)
+	,Attacking(a.Attacking)
 {
 	if(HasFlipped==Constants::CardFlipMode::HasFlip){
 		SetFlippedCard(new CardData(*(a.FlippedCard)));
@@ -62,7 +67,9 @@ const CardData& CardData::operator=(const CardData& a){
 	CardID=a.CardID;
 	IsNull=a.IsNull;
 	Activable=a.Activable;
+	Attacking=a.Attacking;
 	SummoningSickness=a.SummoningSickness;
+	CanAttack=a.CanAttack;
 	Owner=(a.Owner);
 	Controller=(a.Controller);
 	Tapped=a.Tapped;

@@ -182,5 +182,10 @@
         <file alias="Draw.png">Resources/Phases/Draw.png</file>
         <file alias="Main.png">Resources/Phases/Main.png</file>
         <file alias="Upkeep.png">Resources/Phases/Upkeep.png</file>
+        <file alias="Attack.png">Resources/Phases/Attack.png</file>
+        <file alias="BeginCombat.png">Resources/Phases/BeginCombat.png</file>
+        <file alias="Block.png">Resources/Phases/Block.png</file>
+        <file alias="EndOfCombat.png">Resources/Phases/EndOfCombat.png</file>
+        <file alias="Damage.png">Resources/Phases/Damage.png</file>
     </qresource>
 </RCC>

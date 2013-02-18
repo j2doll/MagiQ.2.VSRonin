@@ -48,6 +48,7 @@ private:
 	QMap<int,int> ManaAvailable(int PlayerCode) const;
 	bool CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai) const ;
 	bool CanPlayCard(const CardData& crd, int PlayerCode) const {return CanPlayCard(crd,PlayerCode,ManaAvailable(PlayerCode));}
+	QList<int> AttackingCards;
 public:
 	Judge(QObject* parent=0);
 	bool GetGameStarted() const {return GameStarted;}
@@ -89,9 +90,11 @@ signals:
 	void EffectAddedToStack(quint32,const EffectData&);
 	void EffectResolved();
 	void PlayableCards(int,QList<int>);
+	void AttackAbleCards(int,QList<int>);
 	void PlayedCard(int Who,int crd);
 	void RemoveFromHand(int who,int crdID);
 	void PermanentResolved(int,int);
+	void SendAttackingCards(const QList<int>&);
 public slots:
 	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersList.size());}
 	void IncomingJoinRequest(int a,QString nam,QPixmap avat);
@@ -105,9 +108,12 @@ public slots:
 	void UpkeepStep();
 	void DrawStep();
 	void MainStep();
+	void ContinueToNextPhase(int who);
+	void DeclareAttackers();
 	void TimerFinished(int SocID);
 	void TimerStopped(int SocID);
 	void ResumeTimer(int SocID);
 	void WantsToPlayCard(int who,int CrdID,QList<int> UsedToPayIDs);
+	void SetAttackingCards(int who, QList<int> crdIDs);
 };
 #endif

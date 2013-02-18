@@ -33,6 +33,7 @@ public:
 	bool GetStackTimerActivated() const {return StackTimerActivated;}
 	void SetStackTimerActivated(bool a);
 	void ShowButton(bool a);
+	void SetButtonString(const QString& a);
 protected:
 	void resizeEvent(QResizeEvent* event);
 private slots:

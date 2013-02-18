@@ -62,6 +62,10 @@ signals:
 	void RemoveFromHand(int,int);
 	void PermanentResolved(int,int);
 	void CardsToTap(QList<int>);
+	void ContinueToNextPhase(int);
+	void AttackAbleCards(int,QList<int>);
+	void AttackingCards(int,QList<int>);
+	void SendAttackingCards(const QList<int>&);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

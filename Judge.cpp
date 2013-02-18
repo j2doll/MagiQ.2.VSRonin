@@ -192,6 +192,39 @@ void Judge::MainStep(){
 	}
 	CheckPlayableCards();
 }
+void Judge::ContinueToNextPhase(int who){
+	if (who!=PlayersOrder.value(TurnNumber%PlayersOrder.size())) return;
+	if (CurrentPhase==Constants::Phases::PreCombatMain){
+		Precombat=false;
+		SetCurrentPhase(Constants::Phases::BeginOfCombat);
+		NextPhase=Constants::Phases::DeclareAttackers;
+	}
+	else if(CurrentPhase==Constants::Phases::PostCombatMain){
+		SetCurrentPhase(Constants::Phases::EndOfTurn);
+		NextPhase=Constants::Phases::Cleanup;
+	}
+	else return;
+	PhaseTimerRunning=true;
+	CheckPlayableCards();
+}
+void Judge::DeclareAttackers(){
+	SetCurrentPhase(Constants::Phases::DeclareAttackers);
+	NextPhase=Constants::Phases::DeclareBlockers;
+	int whosTurn=PlayersOrder.value(TurnNumber%PlayersOrder.size());
+	QList<int> CardsThatCanAttack;
+	const QList<CardData>& TmpList=PlayersList[whosTurn]->GetControlledCards();
+	for(QList<CardData>::const_iterator i=TmpList.constBegin();i!=TmpList.constEnd();i++){
+		if(i->GetCanAttack()) CardsThatCanAttack.append(i->GetCardID());
+	}
+	//if(CardsThatCanAttack.isEmpty()) //TODO next Phase
+	emit AttackAbleCards(whosTurn,CardsThatCanAttack);
+}
+void Judge::SetAttackingCards(int who, QList<int> crdIDs){
+	if(who!=PlayersOrder.value(TurnNumber%PlayersOrder.size())) return;
+	AttackingCards.clear();
+	AttackingCards=crdIDs;
+	emit SendAttackingCards(AttackingCards);
+}
 void Judge::TimerFinished(int SocID){
 	MagiQPlayer* TempPoint=PlayersList.value(SocID,NULL);
 	if (!TempPoint || (!PhaseTimerRunning && !StackTimerRunning)) return;
@@ -213,12 +246,13 @@ void Judge::TimerFinished(int SocID){
 		else if (PhaseTimerRunning){
 			PhaseTimerRunning=false;
 			switch(NextPhase){
+			case Constants::Phases::Untap: return NextTurn();
 			case Constants::Phases::Upkeep: return UpkeepStep();
 			case Constants::Phases::Draw: return DrawStep();
 			case Constants::Phases::PreCombatMain:
 			case Constants::Phases::PostCombatMain:	return MainStep();
-			case Constants::Phases::Untap:
-			default: return NextTurn();
+			case Constants::Phases::DeclareAttackers: return DeclareAttackers();
+			default: return;
 			}
 		}
 	}

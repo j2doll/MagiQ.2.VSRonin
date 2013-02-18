@@ -56,6 +56,8 @@ public slots:
 	void SendPermanentResolved(int who,int crd);
 	void SendAllCards(QList<CardData> crds);
 	void SendCardsToTap(QList<int> crdIDs);
+	void SendAttackAbleCards(int who,QList<int> crdIDs);
+	void SendAttackingCards(const QList<int>& crdIDs);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);
@@ -67,5 +69,7 @@ signals:
 	void TimerStopped(int);
 	void TimerResumed(int);
 	void WantPlayCard(int socID,int crdID,QList<int>);
+	void ContinueToNextPhase(int);
+	void AttackingCards(int,QList<int>);
 };
 #endif

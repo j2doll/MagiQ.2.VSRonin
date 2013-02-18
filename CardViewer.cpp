@@ -17,6 +17,7 @@ CardViewer::CardViewer(QWidget* parent)
 	,RepresentNumber(1)
 	,CanBeZoom(true)
 	,CanBeClick(false)
+	,Attacking(false)
 {
 	setMinimumSize(60,84);
 	Displayer=new QLabel(this);

@@ -4,8 +4,10 @@ TestWidget::TestWidget(QWidget* parent)
 	:QWidget(parent)
 {
 	setMinimumSize(200,200);
+	
 	Server=new LanServer(this);
 	Server->StartListening();
+
 	Client=new LanClient(this);
 	LanClient* WhoCares=new LanClient(this);
 
@@ -128,6 +130,10 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(RemoveFromHand(int,int)),board,SLOT(RemoveCardHand(int,int)));
 	connect(Client,SIGNAL(PermanentResolved(int,int)),board,SLOT(ResolveCard(int,int)));
 	connect(Client,SIGNAL(CardsToTap(QList<int>)),board,SLOT(TapCards(QList<int>)));
+	connect(board,SIGNAL(ContinueToNextPhase()),Client,SLOT(SendContinueToNextPhase()));
+	connect(Client,SIGNAL(AttackAbleCards(QList<int>)),board,SLOT(SetAttackAbleCards(QList<int>)));
+	connect(board,SIGNAL(SendAttackingCards(const QList<int>&)),Client,SLOT(SendAttackingCards(const QList<int>&)));
+	connect(Client,SIGNAL(AttackingCards(QList<int>)),board,SLOT(SetAttackingCards(QList<int>)));
 
 	//StackDisplayerConnections
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),StackDisp,SLOT(AddEffect(EffectData)));

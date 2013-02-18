@@ -22,6 +22,8 @@ public:
 	bool GetIsNull() const {return IsNull;}
 	bool GetActivable() const {return Activable;}
 	bool GetSummoningSickness() const {return SummoningSickness;}
+	bool GetCanAttack() const {return CanAttack;}
+	bool GetAttacking() const {return Attacking;}
 	const QString& GetCardName() const {return CardName;}
 	const QList<int>& GetCardColor() const {return CardColor;}
 	const QMap<int,int>& GetCardCost() const {return CardCost;}
@@ -58,6 +60,8 @@ public:
 	void SetActivable(bool a) const {Activable=a;}
 	void SetSummoningSickness(bool a){SummoningSickness=a;}
 	void SetSortingMethod(int a) const {if(a>=Random && a<=ByColor) SortingMethod=a;}
+	void SetCanAttack(bool a){CanAttack=a;}
+	void SetAttacking(bool a){Attacking=a;}
 	void SetCardName(const QString& a){CardName=a;}
 	void SetCardColor(const int& a){CardColor.clear(); if(a>=Constants::CardColor::Colorless && a<=Constants::CardColor::Green) CardColor.append(a);}
 	void SetCardColor(const QList<int>& a){CardColor.clear(); CardColor=a;}
@@ -122,6 +126,8 @@ private:
 	mutable bool Activable;
 	bool SummoningSickness;
 	mutable int SortingMethod;
+	bool CanAttack;
+	bool Attacking;
 //Card Properties
 	QString CardName;
 	QList<int> CardColor;
