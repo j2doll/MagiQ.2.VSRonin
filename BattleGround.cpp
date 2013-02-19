@@ -21,6 +21,7 @@
 #include "PlayerInfoDisplayer.h"
 #include "PhasesDisplayer.h"
 #include "ManaCostLabel.h"
+#include "SignalerArrow.h"
 #ifdef _DEBUG
 	#include "SizeSliders.h"
 #endif
@@ -34,6 +35,7 @@ BattleGround::BattleGround(QWidget* parent)
 	,HandSecondarySorting(CardData::ByType)
 	,ManaSelectionModeON(false)
 	,CardRequiringMana(NULL)
+	,AttackTargetsSelectionModeON(false)
 {
 	setMinimumSize(1024,768);
 	Board=new QFrame(this);
@@ -480,7 +482,7 @@ void BattleGround::SortCardsControlled(){
 			if(crd) crd->SetSortingMethod(CardData::ByName);
 		}
 		qSort(CardsControlled[ks].begin(),CardsControlled[ks].end(),Card::PointLessThan);
-		foreach(Card* crd, CardsInHand[ks]){
+		foreach(Card* crd, CardsControlled[ks]){
 			if(crd) crd->SetSortingMethod(CardData::ByType);
 		}
 		qStableSort(CardsControlled[ks].begin(),CardsControlled[ks].end(),Card::PointLessThan);
@@ -509,6 +511,7 @@ void BattleGround::SetPlayersOrder(QList<int> ord){
 		GraveyardLabels[PlayID]->setObjectName("GraveyardLabel");
 		GraveyardLabels[PlayID]->setAlignment(Qt::AlignCenter);
 		PlayesInfos[PlayID]=new PlayerInfoDisplayer(this);
+		PlayesInfos[PlayID]->SetPlayerID(PlayID);
 		LandsContainer[PlayID]=new QFrame(this);
 		LandsContainer[PlayID]->setObjectName("LandsContainer");
 		LandsContainerLay[PlayID]=new ControlledLayout(LandsContainer[PlayID]);
@@ -745,8 +748,12 @@ void BattleGround::SetPlayableCards(QList<int> IDs){
 }
 void BattleGround::SetAttackAbleCards(QList<int> crdIDs){
 	CardsThatCanAttack.clear();
-	CardsThatCanAttack=crdIDs;
 	AttackingCards.clear();
+	if(crdIDs.isEmpty()){
+		emit SendAttackingCards(AttackingCards);
+		return;
+	}
+	CardsThatCanAttack=crdIDs;
 	foreach(CardViewer* crd,CreaturesControlledView[-1]){
 		if(crdIDs.contains(crd->GetCardToDisplay()->GetCardID())){
 			connect(crd,SIGNAL(clicked(int)),this,SLOT(NewAttacker(int)));
@@ -829,6 +836,11 @@ void BattleGround::NewManaPayed(int crdID){
 	}
 	UpdateAspect();
 }
+void BattleGround::NewAttackTaget(int trgID){
+	if(AttackingCards.key(NeedsATarget,-1)==-1) return;
+	AttackingCards[AttackingCards.key(NeedsATarget)]=trgID;
+	CancelAttackTaget();
+}
 void BattleGround::CancelManaSelectionMode(){
 	ManaSelectionModeON=false;
 	ManaToTap.clear();
@@ -845,21 +857,78 @@ void BattleGround::CancelManaSelectionMode(){
 void BattleGround::NewAttacker(int crdID){
 	if(AttackingCards.contains(crdID)){
 		AllCards[crdID]->SetAttacking(false);
-		AttackingCards.removeAt(AttackingCards.indexOf(crdID));
+		AttackingCards.remove(crdID);
+		if(AttackingCards.isEmpty())
+			PhaseDisp->SetButtonString(tr("Skip Attack"));
+		return UpdateAspect();
 	}
-	else{
-		AllCards[crdID]->SetAttacking(true);
-		AttackingCards.append(crdID);
+	AllCards[crdID]->SetAttacking(true);
+	AttackingCards.insert(crdID,NeedsATarget);
+	bool HasPlaneswalkers=false;
+	if(PlayersOrder.size()==2){
+		int OpponentID=-1;
+		foreach(const int& plID,PlayersOrder){
+			if(plID!=-1){
+				OpponentID=plID;
+				break;
+			}
+		}
+		const QList<Card*>& TmpCrdLst=CardsControlled.value(OpponentID);
+		for(QList<Card*>::const_iterator i=TmpCrdLst.constBegin();i!=TmpCrdLst.constEnd() && (!HasPlaneswalkers);i++){
+			if((*i)->GetCardType().contains(Constants::CardTypes::Planeswalker))
+				HasPlaneswalkers=true;
+		}
+		if(!HasPlaneswalkers){
+			AttackingCards[crdID]=OpponentID;
+			PhaseDisp->SetButtonString(tr("Attack"));
+			return UpdateAspect();
+		}
 	}
-	if(AttackingCards.isEmpty()) PhaseDisp->SetButtonString(tr("Skip Attack"));
-	else PhaseDisp->SetButtonString(tr("Attack"));
-	UpdateAspect();
+	if(PlayersOrder.size()>2 || HasPlaneswalkers){
+		AttackTargetsSelectionMode();
+	}
+	return UpdateAspect();
 }
-void BattleGround::SetAttackingCards(QList<int> crdIDs){
+void BattleGround::AttackTargetsSelectionMode(){
+	AttackTargetsSelectionModeON=true;
+	PhaseDisp->DisableButton();
+	AvailableTargetCards.clear();
+	for(QMap<int,QList<Card*>>::const_iterator i=CardsControlled.constBegin();i!=CardsControlled.constEnd();i++){
+		if(i.key()==-1) continue;
+		const QList<Card*>& tmpList=i.value();
+		foreach(Card* const& crd,tmpList){
+			if(crd->GetCardType().contains(Constants::CardTypes::Planeswalker)){
+				AvailableTargetCards.append(crd->GetCardID());
+				foreach(CardViewer* j,CreaturesControlledView[i.key()]){
+					if(j->GetCardToDisplay()->GetCardID()==crd->GetCardID()){
+						connect(j,SIGNAL(clicked(int)),this,SLOT(NewAttackTaget(int)));
+						break;
+					}
+				}
+			}
+		}
+		connect(PlayesInfos[i.key()],SIGNAL(AvatarClicked(int)),this,SLOT(NewAttackTaget(int)));
+	}
+	
+}
+
+void BattleGround::CancelAttackTaget(){
+	AttackTargetsSelectionModeON=false;
+	PhaseDisp->EnableButton();
+	AvailableTargetCards.clear();
+	for(QList<int>::const_iterator i=PlayersOrder.constBegin();i!=PlayersOrder.constEnd();i++){
+		if(*i==-1) continue;
+		foreach(CardViewer* j,CreaturesControlledView[*i]){
+			disconnect(j,SIGNAL(clicked(int)));
+		}
+		disconnect(PlayesInfos[*i],SIGNAL(AvatarClicked(int)));
+	}
+}
+void BattleGround::SetAttackingCards(QHash<int,int> crdIDs){
 	AttackingCards.clear();
-	for(QList<int>::const_iterator i=crdIDs.constBegin();i!=crdIDs.constEnd();i++){
-		AllCards[*i]->SetAttacking(true);
-		AttackingCards.append(*i);
+	for(QHash<int,int>::const_iterator i=crdIDs.constBegin();i!=crdIDs.constEnd();i++){
+		AllCards[i.key()]->SetAttacking(true);
+		AttackingCards.insert(i.key(),i.value());
 	}
 	UpdateAspect();
 }

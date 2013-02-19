@@ -95,6 +95,7 @@ signals:
 	void RemoveFromHand(int who,int crdID);
 	void PermanentResolved(int,int);
 	void SendAttackingCards(const QList<int>&);
+	void CriticalErrorOccurred(int ErrorCode);
 public slots:
 	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersList.size());}
 	void IncomingJoinRequest(int a,QString nam,QPixmap avat);

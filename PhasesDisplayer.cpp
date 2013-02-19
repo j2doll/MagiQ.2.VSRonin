@@ -125,4 +125,5 @@ void PhasesDisplayer::ShowButton(bool a){
 		ContinueButton->hide();
 	}
 }
-void PhasesDisplayer::SetButtonString(const QString& a){return ContinueButton->setText(a);}
+void PhasesDisplayer::SetButtonString(const QString& a){ContinueButton->setText(a);}
+void PhasesDisplayer::EnableButton(bool a){ContinueButton->setEnabled(a);}

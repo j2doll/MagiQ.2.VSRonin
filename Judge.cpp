@@ -1,5 +1,6 @@
 #include "Judge.h"
 #include "EffectsConstants.h"
+#include "ErrorCodes.h"
 #include <QTime>
 Judge::Judge(QObject* parent)
 	:QObject(parent)
@@ -69,7 +70,13 @@ void Judge::DeckSetUp(int socID,CardDeck deck){
 		PlayersList[socID]->SetLibrary(deck);
 		for (QList<CardData>::iterator i=PlayersList[socID]->GetLibrary().begin();i!=PlayersList[socID]->GetLibrary().end();i++){
 			for (int j=0;j<i->GetEffects().size();j++) i->SetEffectID(j,++EffectsIDCounter);
-			i->SetCardID(++CardIDCounter);
+			try{
+				i->SetCardID(++CardIDCounter);
+				if(CardIDCounter>32767) throw ErrorCode::CardIDsLimitBreached;
+			}
+			catch(int errCd){
+				emit CriticalErrorOccurred(errCd);
+			}
 			i->SetOwner(PlayersList[socID]);
 		}
 		for (QList<CardData>::iterator i=PlayersList[socID]->GetSideboard().begin();i!=PlayersList[socID]->GetSideboard().end();i++){

@@ -34,6 +34,8 @@ public:
 	void SetStackTimerActivated(bool a);
 	void ShowButton(bool a);
 	void SetButtonString(const QString& a);
+	void EnableButton(bool a=true);
+	void DisableButton(bool a=true){EnableButton(!a);}
 protected:
 	void resizeEvent(QResizeEvent* event);
 private slots:

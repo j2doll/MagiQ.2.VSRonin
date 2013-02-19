@@ -28,6 +28,7 @@ private:
 	enum{AnimationDuration=500};
 	enum{ZoommedCardWidth=200};
 	enum{TimerUpdateIntervall=10};
+	enum{NeedsATarget=0};
 //Visual Elements
 	QFrame* Board;
 	QFrame* StackCardsFrame;
@@ -91,8 +92,10 @@ private:
 	QMap<int,int> ManaToTap;
 	QList<int> CardsUsedToPay;
 	QList<int> CardsThatCanAttack;
-	QList<int> AttackingCards;
+	QHash<int,int> AttackingCards;
 	bool ManaSelectionModeON;
+	bool AttackTargetsSelectionModeON;
+	QList<int> AvailableTargetCards;
 //Functions
 	void SortCardsInHand();
 	void SortCardsControlled();
@@ -103,6 +106,7 @@ private:
 	int NumberOfCreatures(int who);
 	bool CheckPayedCard(const QMap<int,int>& ManaCost,const QMap<int,int>& ManaPay) const;
 	void ManaSelectionMode(Card* const& TheCard);
+	void AttackTargetsSelectionMode();
 private slots:
 	void UpdateAspect();
 	void ResetHandOrder();
@@ -119,6 +123,8 @@ private slots:
 	void NewManaPayed(int crdID);
 	void CancelManaSelectionMode();
 	void NewAttacker(int crdID);
+	void NewAttackTaget(int trgID);
+	void CancelAttackTaget();
 	void WantsToAttack();
 public slots:
 	void AskMulligan();
@@ -146,7 +152,7 @@ public slots:
 	void ResolveCard(int Who, int crd);
 	void SetAllCards(QList<CardData> a);
 	void SetAttackAbleCards(QList<int> crdIDs);
-	void SetAttackingCards(QList<int> crdIDs);
+	void SetAttackingCards(QHash<int,int> crdIDs);
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return PlayersOrder.size();}
@@ -162,7 +168,7 @@ signals:
 	void TimerStopped();
 	void TimerResumed();
 	void ContinueToNextPhase();
-	void SendAttackingCards(const QList<int>&);
+	void SendAttackingCards(const QHash<int,int>&);
 };
 #endif
 

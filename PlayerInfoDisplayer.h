@@ -29,6 +29,7 @@ private:
 	QLabel* GManaPoolLabel;
 	QLabel* CManaPoolLabel;
 
+	int PlayerID;
 	int LifeValue;
 	int HandSize;
 	int LibrarySize;
@@ -57,6 +58,7 @@ public:
 	const QPixmap& GetPlayerAvatar() const{return PlayerAvatar;}
 	const QString& GetPlayerName() const{return PlayerName;}
 	const QMap<int,int>& GetManaPool() const{return ManaPool;}
+	int GetPlayerID() const {return PlayerID;}
 	void SetLifeValue(int a){if(a==LifeValue) return; LifeValue=a; AnimateLifeBar(a);}
 	void SetHandSize(int a){HandSize=a;}
 	void SetLibrarySize(int a){LibrarySize=a;}
@@ -65,19 +67,21 @@ public:
 	void SetPlayerAvatar(const QPixmap& a){PlayerAvatar=a;}
 	void SetPlayerName(const QString& a){PlayerName=a;}
 	void SetManaPool(const QMap<int,int>& a){ManaPool=a;}
+	void SetPlayerID(int a){PlayerID= a<0 ? a:-a;}
 public slots:
 	void UpdateAspect();
 protected:
 	void resizeEvent(QResizeEvent* event);
 	bool eventFilter(QObject *target, QEvent *event);
 signals:
-	void WManaPoolClicked();
-	void UManaPoolClicked();
-	void BManaPoolClicked();
-	void RManaPoolClicked();
-	void GManaPoolClicked();
-	void CManaPoolClicked();
-	void GraveyardClicked();
-	void ExileClicked();
+	void WManaPoolClicked(int);
+	void UManaPoolClicked(int);
+	void BManaPoolClicked(int);
+	void RManaPoolClicked(int);
+	void GManaPoolClicked(int);
+	void CManaPoolClicked(int);
+	void GraveyardClicked(int);
+	void ExileClicked(int);
+	void AvatarClicked(int);
 };
 #endif

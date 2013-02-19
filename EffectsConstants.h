@@ -34,6 +34,7 @@ namespace EffectsConstants{
 			,Creature
 			,Player
 			,CreatureOrPlayer
+			,OpponetOrPlaneswalker
 			//Other Targets Here
 			,Planeswalker
 		};

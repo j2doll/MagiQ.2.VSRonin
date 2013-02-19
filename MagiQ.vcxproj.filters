@@ -338,6 +338,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_TestWidgetThread.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="SignalerArrow.cpp">
+      <Filter>Source Files\BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SignalerArrow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SignalerArrow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CostantsDefinition.h">
@@ -366,6 +375,9 @@
     </ClInclude>
     <ClInclude Include="ControlledLayout.h">
       <Filter>Header Files\Battlefield</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorCodes.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -455,6 +467,9 @@
     </CustomBuild>
     <CustomBuild Include="TestWidgetThread.h">
       <Filter>Header Files\Test Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SignalerArrow.h">
+      <Filter>Header Files\Battlefield</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

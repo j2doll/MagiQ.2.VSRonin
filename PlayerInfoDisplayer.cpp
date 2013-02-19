@@ -272,14 +272,15 @@ bool PlayerInfoDisplayer::eventFilter(QObject *target, QEvent *event){
 	{
 		QMouseEvent* mouseevent=static_cast<QMouseEvent*>(event);
 		if (mouseevent->button()==Qt::LeftButton){
-			if(target==WManaPoolLabel){emit WManaPoolClicked();}
-			if(target==UManaPoolLabel){emit UManaPoolClicked();}
-			if(target==BManaPoolLabel){emit BManaPoolClicked();}
-			if(target==RManaPoolLabel){emit RManaPoolClicked();}
-			if(target==GManaPoolLabel){emit GManaPoolClicked();}
-			if(target==CManaPoolLabel){emit CManaPoolClicked();}
-			if(target==ExileLabel){emit ExileClicked();}
-			if(target==GraveyardLabel){emit GraveyardClicked();}
+			if(target==WManaPoolLabel){emit WManaPoolClicked(PlayerID);}
+			else if(target==UManaPoolLabel){emit UManaPoolClicked(PlayerID);}
+			else if(target==BManaPoolLabel){emit BManaPoolClicked(PlayerID);}
+			else if(target==RManaPoolLabel){emit RManaPoolClicked(PlayerID);}
+			else if(target==GManaPoolLabel){emit GManaPoolClicked(PlayerID);}
+			else if(target==CManaPoolLabel){emit CManaPoolClicked(PlayerID);}
+			else if(target==ExileLabel){emit ExileClicked(PlayerID);}
+			else if(target==GraveyardLabel){emit GraveyardClicked(PlayerID);}
+			else if(target==AvatarLabel){emit AvatarClicked(PlayerID);}
 		}
 	}
 	return QWidget::eventFilter(target,event);
