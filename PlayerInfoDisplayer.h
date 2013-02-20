@@ -68,6 +68,7 @@ public:
 	void SetPlayerName(const QString& a){PlayerName=a;}
 	void SetManaPool(const QMap<int,int>& a){ManaPool=a;}
 	void SetPlayerID(int a){PlayerID= a<0 ? a:-a;}
+	QPoint PlayerAvatarCenter() const;
 public slots:
 	void UpdateAspect();
 protected:

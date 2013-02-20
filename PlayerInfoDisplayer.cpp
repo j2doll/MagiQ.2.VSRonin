@@ -285,3 +285,9 @@ bool PlayerInfoDisplayer::eventFilter(QObject *target, QEvent *event){
 	}
 	return QWidget::eventFilter(target,event);
 }
+QPoint PlayerInfoDisplayer::PlayerAvatarCenter() const{
+	QPoint Result(AvatarLabel->pos());
+	Result.rx()+=AvatarLabel->width()/2;
+	Result.ry()+=AvatarLabel->height()/2;
+	return Result;
+}

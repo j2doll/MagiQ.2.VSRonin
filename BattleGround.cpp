@@ -450,6 +450,67 @@ void BattleGround::UpdateAspect(){
 		}
 	}
 /************************************************************************
+* Update Arrows															*
+*************************************************************************/
+	int ContArrows=0;
+//Attack Arrows
+	for(QHash<int,int>::const_iterator atckIter=AttackingCards.constBegin();atckIter!=AttackingCards.constEnd();atckIter++){
+		if(atckIter.value()==NeedsATarget) continue;
+		++ContArrows;
+		while(Arrows.size()<ContArrows){
+			Arrows.append(new SignalerArrow(this));
+			Arrows.last()->setObjectName("SignalArrow");
+		}
+		bool CardNotFound=true;
+		for(QMap<int,QList<CardViewer*>>::const_iterator creatIter=CreaturesControlledView.constBegin();CardNotFound && creatIter!=CreaturesControlledView.constEnd();creatIter++){
+			for(QList<CardViewer*>::const_iterator viewIter=creatIter.value().constBegin();CardNotFound && viewIter!=creatIter.value().constEnd();viewIter++){
+				if((*viewIter)->GetCardToDisplay()->GetCardID()==atckIter.key()){
+					CardNotFound=false;
+					QPoint tempPoint((*viewIter)->width()/2,(*viewIter)->height()/2);
+					QWidget* CurrentWidget=(*viewIter);
+					do{
+						tempPoint.rx()+=CurrentWidget->pos().x();
+						tempPoint.ry()+=CurrentWidget->pos().y();
+						CurrentWidget=CurrentWidget->parentWidget();
+					}while(CurrentWidget && CurrentWidget!=this);
+					Arrows.at(ContArrows-1)->SetFrom(tempPoint);
+					connect(*viewIter,SIGNAL(RaisedWidget()),Arrows.at(ContArrows-1),SLOT(raise()));
+				}
+			}
+		}
+		if(CardNotFound){--ContArrows; continue;}
+		CardNotFound=true;
+		if(atckIter.value()<0){
+			CardNotFound=false;
+			PlayerInfoDisplayer* const& CurrentWidget=PlayesInfos[atckIter.value()==-1 ? -1:-atckIter.value()];
+			QPoint tempPoint(CurrentWidget->PlayerAvatarCenter());
+			tempPoint.rx()+=CurrentWidget->pos().x();
+			tempPoint.ry()+=CurrentWidget->pos().y();
+			Arrows.at(ContArrows-1)->SetTo(tempPoint);
+			Arrows.at(ContArrows-1)->SetArrowColor(SignalerArrow::ArrowRed);
+		}
+		else{
+			for(QMap<int,QList<CardViewer*>>::const_iterator creatIter=CreaturesControlledView.constBegin();CardNotFound && creatIter!=CreaturesControlledView.constEnd();creatIter++){
+				for(QList<CardViewer*>::const_iterator viewIter=creatIter.value().constBegin();CardNotFound && viewIter!=creatIter.value().constEnd();viewIter++){
+					if((*viewIter)->GetCardToDisplay()->GetCardID()==atckIter.value()){
+						CardNotFound=false;
+						QPoint tempPoint((*viewIter)->pos());
+						tempPoint.rx()+=CreaturesContainer.value(creatIter.key())->pos().x();
+						tempPoint.ry()+=CreaturesContainer.value(creatIter.key())->pos().y();
+						Arrows.at(ContArrows-1)->SetTo(tempPoint);
+						Arrows.at(ContArrows-1)->SetArrowColor(SignalerArrow::ArrowYellow);
+					}
+				}
+			}
+		}
+		if(CardNotFound) {--ContArrows; continue;}
+		Arrows.at(ContArrows-1)->show();
+		Arrows.at(ContArrows-1)->raise();
+	}
+	while(Arrows.size()>ContArrows){
+		Arrows.takeLast()->deleteLater();
+	}
+/************************************************************************
 * Update Player Informations                                            *
 *************************************************************************/
 	for(QMap<int,PlayerInfoDisplayer*>::iterator inf=PlayesInfos.begin();inf!=PlayesInfos.end();inf++){
@@ -879,7 +940,7 @@ void BattleGround::NewAttacker(int crdID){
 				HasPlaneswalkers=true;
 		}
 		if(!HasPlaneswalkers){
-			AttackingCards[crdID]=OpponentID;
+			AttackingCards[crdID]=-OpponentID;
 			PhaseDisp->SetButtonString(tr("Attack"));
 			return UpdateAspect();
 		}

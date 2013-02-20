@@ -51,7 +51,7 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(this,SIGNAL(CardsToTap(QList<int>)),tcpSocket,SLOT(SendCardsToTap(QList<int>)));
 	connect(tcpSocket,SIGNAL(ContinueToNextPhase(int)),this,SIGNAL(ContinueToNextPhase(int)));
 	connect(this,SIGNAL(AttackAbleCards(int,QList<int>)),tcpSocket,SLOT(SendAttackAbleCards(int,QList<int>)));
-	connect(tcpSocket,SIGNAL(AttackingCards(int,QList<int>)),this,SIGNAL(AttackingCards(int,QList<int>)));
-	connect(this,SIGNAL(SendAttackingCards(const QList<int>&)),tcpSocket,SLOT(SendAttackingCards(const QList<int>&)));
+	connect(tcpSocket,SIGNAL(AttackingCards(int,QHash<int,int>)),this,SIGNAL(AttackingCards(int,QHash<int,int>)));
+	connect(this,SIGNAL(SendAttackingCards(const QHash<int,int>&)),tcpSocket,SLOT(SendAttackingCards(const QHash<int,int>&)));
 	
 }

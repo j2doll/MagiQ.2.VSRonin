@@ -226,7 +226,7 @@ void Judge::DeclareAttackers(){
 	//if(CardsThatCanAttack.isEmpty()) //TODO next Phase
 	emit AttackAbleCards(whosTurn,CardsThatCanAttack);
 }
-void Judge::SetAttackingCards(int who, QList<int> crdIDs){
+void Judge::SetAttackingCards(int who, QHash<int,int> crdIDs){
 	if(who!=PlayersOrder.value(TurnNumber%PlayersOrder.size())) return;
 	AttackingCards.clear();
 	AttackingCards=crdIDs;

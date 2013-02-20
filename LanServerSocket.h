@@ -2,6 +2,7 @@
 #define LANSERVERSOCKET_H
 #include "ComunicationConstants.h"
 #include "Deck.h"
+#include <QHash>
 #ifdef USE_SSL
 #include <QSslSocket>
 #endif
@@ -57,7 +58,7 @@ public slots:
 	void SendAllCards(QList<CardData> crds);
 	void SendCardsToTap(QList<int> crdIDs);
 	void SendAttackAbleCards(int who,QList<int> crdIDs);
-	void SendAttackingCards(const QList<int>& crdIDs);
+	void SendAttackingCards(const QHash<int,int>& crdIDs);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);
@@ -70,6 +71,6 @@ signals:
 	void TimerResumed(int);
 	void WantPlayCard(int socID,int crdID,QList<int>);
 	void ContinueToNextPhase(int);
-	void AttackingCards(int,QList<int>);
+	void AttackingCards(int,QHash<int,int>);
 };
 #endif

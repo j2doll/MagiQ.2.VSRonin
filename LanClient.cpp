@@ -48,6 +48,7 @@ void LanClient::IncomingTransmission(){
 	qint32 int1,int2,int3,int4,int5;
 	quint32 UnsInt1;
 	QList<int> intlists;
+	QHash<int,int> intHash;
 	QList<CardData> cardlists;
 	QMap<int,QString> stringIntMap;
 	QMap<int,QPixmap> pixmapIntMap;
@@ -66,6 +67,7 @@ void LanClient::IncomingTransmission(){
 		pixmapIntMap.clear();
 		cardlists.clear();
 		intlists.clear();
+		intHash.clear();
 ////////////////////////////////////////////////////////////////////////////
 		if(RequestType==Comunications::TransmissionType::ChatMessage){
 			incom >> strings;
@@ -200,8 +202,8 @@ void LanClient::IncomingTransmission(){
 			emit AttackAbleCards(intlists);
 		}
 		else if(RequestType==Comunications::TransmissionType::AttackingCards){
-			incom >> intlists;
-			emit AttackingCards(intlists);
+			incom >> intHash;
+			emit AttackingCards(intHash);
 		}
 ////////////////////////////////////////////////////////////////////////////
 
@@ -307,7 +309,7 @@ void LanClient::SendContinueToNextPhase(){
 	out << quint32(block.size() - sizeof(quint32));
 	tcpSocket->write(block);
 }
-void LanClient::SendAttackingCards(const QList<int>& crdIDs){
+void LanClient::SendAttackingCards(const QHash<int,int>& crdIDs){
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);

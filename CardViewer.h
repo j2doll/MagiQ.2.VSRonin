@@ -48,7 +48,9 @@ public slots:
 	void UpdateAspect();
 	void TapAnimationStart();
 	void UnTapAnimationStart();
+	void raise();
 signals:
+	void RaisedWidget();
 	void LeftFocus();
 	void GainFocus();
 	void RequireZoom(Card*);

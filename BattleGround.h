@@ -20,6 +20,7 @@ class QHBoxLayout;
 class HandLayout;
 class ControlledLayout;
 class ManaCostLabel;
+class SignalerArrow;
 class BattleGround : public QWidget
 {
 	Q_OBJECT
@@ -71,6 +72,7 @@ private:
 	QFrame* PayedCostFrame;
 	QLabel* PayedCostText;
 	PhasesDisplayer* PhaseDisp;
+	QList<SignalerArrow*> Arrows;
 //Game Properties
 	QMap<int,Card*> AllCards;
 	QHash<int,int> LibrarySizes;

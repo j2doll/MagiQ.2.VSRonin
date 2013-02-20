@@ -5,6 +5,7 @@ TestWidgetThread::TestWidgetThread(QObject* parent)
 
 }
 void TestWidgetThread::run(){
-	Server.StartListening();
+	Server=new LanServer(this);
+	Server->StartListening();
 	exec();
 }

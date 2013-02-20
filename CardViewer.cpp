@@ -116,3 +116,7 @@ void CardViewer::mouseDoubleClickEvent(QMouseEvent* e){
 		emit DoubleClicked(CardToDisplay->GetCardID());
 	}
 }
+void CardViewer::raise(){
+	emit RaisedWidget();
+	return QWidget::raise();
+}

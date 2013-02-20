@@ -27,6 +27,7 @@ void LanServerSocket::readClient(){
 	QPixmap images;
 	qint32 Numbers;
 	QList<int> intlist;
+	QHash<int,int> intHash;
 	forever {
 		if (nextBlockSize == 0) {
 			if (bytesAvailable() < sizeof(quint32))
@@ -38,6 +39,7 @@ void LanServerSocket::readClient(){
 		incom >> RequestType;
 
 		intlist.clear();
+		intHash.clear();
 ///////////////////////////////////////////////////////////////////////////
 		if(RequestType==Comunications::TransmissionType::ChatMessage){
 			incom >> strings;
@@ -78,8 +80,8 @@ void LanServerSocket::readClient(){
 			emit ContinueToNextPhase(SocketID);
 		}
 		else if(RequestType==Comunications::TransmissionType::AttackingCards){
-			incom >> intlist;
-			emit AttackingCards(SocketID,intlist);
+			incom >> intHash;
+			emit AttackingCards(SocketID,intHash);
 		}
 ///////////////////////////////////////////////////////////////////////////
 
@@ -395,7 +397,7 @@ void LanServerSocket::SendAttackAbleCards(int who,QList<int> crdIDs){
 	out << quint32(block.size() - sizeof(quint32));
 	write(block);
 }
-void LanServerSocket::SendAttackingCards(const QList<int>& crdIDs){
+void LanServerSocket::SendAttackingCards(const QHash<int,int>& crdIDs){
 	QByteArray block;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_7);

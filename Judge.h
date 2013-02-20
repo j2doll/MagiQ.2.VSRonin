@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QMap>
 #include <QList>
+#include <QHash>
 #include "Deck.h"
 #include "CostantsDefinition.h"
 #include "MagiQPlayer.h"
@@ -48,7 +49,7 @@ private:
 	QMap<int,int> ManaAvailable(int PlayerCode) const;
 	bool CanPlayCard(const CardData& crd, int PlayerCode, const QMap<int,int>& ManaAvai) const ;
 	bool CanPlayCard(const CardData& crd, int PlayerCode) const {return CanPlayCard(crd,PlayerCode,ManaAvailable(PlayerCode));}
-	QList<int> AttackingCards;
+	QHash<int,int> AttackingCards;
 public:
 	Judge(QObject* parent=0);
 	bool GetGameStarted() const {return GameStarted;}
@@ -94,7 +95,7 @@ signals:
 	void PlayedCard(int Who,int crd);
 	void RemoveFromHand(int who,int crdID);
 	void PermanentResolved(int,int);
-	void SendAttackingCards(const QList<int>&);
+	void SendAttackingCards(const QHash<int,int>&);
 	void CriticalErrorOccurred(int ErrorCode);
 public slots:
 	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersList.size());}
@@ -115,6 +116,6 @@ public slots:
 	void TimerStopped(int SocID);
 	void ResumeTimer(int SocID);
 	void WantsToPlayCard(int who,int CrdID,QList<int> UsedToPayIDs);
-	void SetAttackingCards(int who, QList<int> crdIDs);
+	void SetAttackingCards(int who, QHash<int,int> crdIDs);
 };
 #endif

@@ -10,6 +10,6 @@ public slots:
 	void run();
 	void stop(){exit(0);}
 private:
-	LanServer Server;
+	LanServer* Server;
 };
 #endif

@@ -72,7 +72,7 @@ signals:
 	void AllCards(QList<CardData>);
 	void CardsToTap(QList<int>);
 	void AttackAbleCards(QList<int>);
-	void AttackingCards(QList<int>);
+	void AttackingCards(QHash<int,int>);
 private slots:
 	void IncomingTransmission();
 public slots:
@@ -89,7 +89,7 @@ public slots:
 	void SendResumeTimer();
 	void SendWantToPlayCard(int CardID,QList<int> PayedWithIDs);
 	void SendContinueToNextPhase();
-	void SendAttackingCards(const QList<int>& crdIDs);
+	void SendAttackingCards(const QHash<int,int>& crdIDs);
 
 };
 #endif

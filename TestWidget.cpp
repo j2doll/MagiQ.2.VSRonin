@@ -132,8 +132,8 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(CardsToTap(QList<int>)),board,SLOT(TapCards(QList<int>)));
 	connect(board,SIGNAL(ContinueToNextPhase()),Client,SLOT(SendContinueToNextPhase()));
 	connect(Client,SIGNAL(AttackAbleCards(QList<int>)),board,SLOT(SetAttackAbleCards(QList<int>)));
-	connect(board,SIGNAL(SendAttackingCards(const QList<int>&)),Client,SLOT(SendAttackingCards(const QList<int>&)));
-	connect(Client,SIGNAL(AttackingCards(QList<int>)),board,SLOT(SetAttackingCards(QList<int>)));
+	connect(board,SIGNAL(SendAttackingCards(const QHash<int,int>&)),Client,SLOT(SendAttackingCards(const QHash<int,int>&)));
+	connect(Client,SIGNAL(AttackingCards(QHash<int,int>)),board,SLOT(SetAttackingCards(QHash<int,int>)));
 
 	//StackDisplayerConnections
 	connect(Client,SIGNAL(EffectAddedToStack(EffectData,quint32)),StackDisp,SLOT(AddEffect(EffectData)));

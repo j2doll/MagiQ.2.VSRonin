@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QPixmap>
 #include <QMap>
+#include <QHash>
 #include "Deck.h"
 #include "ComunicationConstants.h"
 #ifdef USE_SSL
@@ -64,8 +65,8 @@ signals:
 	void CardsToTap(QList<int>);
 	void ContinueToNextPhase(int);
 	void AttackAbleCards(int,QList<int>);
-	void AttackingCards(int,QList<int>);
-	void SendAttackingCards(const QList<int>&);
+	void AttackingCards(int,QHash<int,int>);
+	void SendAttackingCards(const QHash<int,int>&);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif
