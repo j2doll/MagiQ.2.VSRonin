@@ -3,6 +3,7 @@
 #include <QtGui>
 #include "LanClient.h"
 #include "LanServer.h"
+//#include "TestWidgetThread.h"
 #include "BattleGround.h"
 #include "ChatWidget.h"
 #include "CardData.h"
@@ -22,6 +23,7 @@ private:
 	QFrame* BattleFrame;
 	StackDispalyer* StackDisp;
 	LanServer* Server;
+	//TestWidgetThread* ServerThread;
 public:
 	TestWidget(QWidget* parent=0);
 };

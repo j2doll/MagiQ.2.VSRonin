@@ -7,6 +7,7 @@ TestWidget::TestWidget(QWidget* parent)
 	
 	Server=new LanServer(this);
 	Server->StartListening();
+	//ServerThread=new TestWidgetThread(this);
 
 	Client=new LanClient(this);
 	LanClient* WhoCares=new LanClient(this);
