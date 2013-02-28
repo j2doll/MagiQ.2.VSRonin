@@ -36,6 +36,7 @@ BattleGround::BattleGround(QWidget* parent)
 	,ManaSelectionModeON(false)
 	,CardRequiringMana(NULL)
 	,AttackTargetsSelectionModeON(false)
+	,YourTurn(false)
 {
 	setMinimumSize(1024,768);
 	Board=new QFrame(this);
@@ -391,7 +392,12 @@ void BattleGround::UpdateAspect(){
 					CreaturesControlledView[*index].value(contCreatures,NULL)->SetCanBeZoom(true);
 					CreaturesControlledView[*index].value(contCreatures,NULL)->SetShadable(
 						ManaSourceCheck
-						|| (CurrentPhase==Constants::Phases::DeclareAttackers && CardsThatCanAttack.contains(CardsControlled[*index].value(j)->GetCardID()))
+						|| 
+						(
+							CurrentPhase==Constants::Phases::DeclareAttackers
+							&& CardsThatCanAttack.contains(CardsControlled[*index].value(j)->GetCardID())
+							&& (!AttackTargetsSelectionModeON)
+						) 
 						);
 					CreaturesControlledView[*index].value(contCreatures,NULL)->SetCanBeClick(
 						(
@@ -404,6 +410,7 @@ void BattleGround::UpdateAspect(){
 						(
 							CurrentPhase==Constants::Phases::DeclareAttackers
 							&& CardsThatCanAttack.contains(CardsControlled[*index].value(j,NULL)->GetCardID())
+							&& (!AttackTargetsSelectionModeON)
 						)
 						);
 					CreaturesControlledView[*index].value(contCreatures,NULL)->SetAttacking(CardsControlled[*index].value(j,NULL)->GetAttacking());
@@ -706,12 +713,14 @@ void BattleGround::SetCurrentPhase(int ph){
 	}
 	else if(CurrentPhase==Constants::Phases::DeclareAttackers){
 		PhaseDisp->ShowButton(true);
-		PhaseDisp->SetButtonString(tr("Skip Attack"));
-		connect(PhaseDisp,SIGNAL(Continued()),this,SLOT(WantsToAttack()),Qt::UniqueConnection);
+		PhaseDisp->EnableButton(YourTurn);
+		PhaseDisp->SetButtonString(YourTurn ? tr("Skip Attack") : tr("Waiting","Waiting for opponent to declare attackers"));
+		if(YourTurn) connect(PhaseDisp,SIGNAL(Continued()),this,SLOT(WantsToAttack()),Qt::UniqueConnection);
 	}
 	else if(CurrentPhase==Constants::Phases::DeclareBlockers){
 		PhaseDisp->ShowButton(true);
-		PhaseDisp->SetButtonString(tr("Skip Block"));
+		PhaseDisp->DisableButton(YourTurn);
+		PhaseDisp->SetButtonString(YourTurn ? tr("Waiting","Waiting for opponent to declare blockers") : tr("Skip Block"));
 	}
 	else{
 		PhaseDisp->ShowButton(false);
@@ -720,6 +729,10 @@ void BattleGround::SetCurrentPhase(int ph){
 }
 void BattleGround::WantsToAttack(){
 	emit SendAttackingCards(AttackingCards);
+	PhaseTimer->stop();
+	CurrentPhaseTime=0;
+	PhaseDisp->ShowButton(false);
+	PhaseTimer->start();
 }
 void BattleGround::ResumeStackTimer(){
 	PhaseDisp->ShowButton(false);
@@ -901,6 +914,7 @@ void BattleGround::NewAttackTaget(int trgID){
 	if(AttackingCards.key(NeedsATarget,-1)==-1) return;
 	AttackingCards[AttackingCards.key(NeedsATarget)]=trgID;
 	CancelAttackTaget();
+	UpdateAspect();
 }
 void BattleGround::CancelManaSelectionMode(){
 	ManaSelectionModeON=false;
@@ -926,6 +940,7 @@ void BattleGround::NewAttacker(int crdID){
 	AllCards[crdID]->SetAttacking(true);
 	AttackingCards.insert(crdID,NeedsATarget);
 	bool HasPlaneswalkers=false;
+
 	if(PlayersOrder.size()==2){
 		int OpponentID=-1;
 		foreach(const int& plID,PlayersOrder){
@@ -968,9 +983,17 @@ void BattleGround::AttackTargetsSelectionMode(){
 				}
 			}
 		}
-		connect(PlayesInfos[i.key()],SIGNAL(AvatarClicked(int)),this,SLOT(NewAttackTaget(int)));
 	}
-	
+	for(QMap<int,PlayerInfoDisplayer*>::iterator plID=PlayesInfos.begin();plID!=PlayesInfos.end();plID++){
+		if(plID.key()==-1) continue;
+		connect(plID.value(),SIGNAL(AvatarClicked(int)),this,SLOT(NewAttackTaget(int)));
+	}
+	QuestionLowText->setText(tr("Select the target of the attack"));
+	QuestionLowButton1->setText(tr("Cancel","Button that abort the attack of a creature"));
+	connect(QuestionLowButton1,SIGNAL(clicked()),this,SLOT(CancelAttackTaget()));
+	connect(QuestionLowButton1,SIGNAL(clicked()),this,SLOT(ClearLowerQuestion()));
+	QuestionLowFrame->show();
+	QuestionLowFrame->raise();
 }
 
 void BattleGround::CancelAttackTaget(){
@@ -991,6 +1014,10 @@ void BattleGround::SetAttackingCards(QHash<int,int> crdIDs){
 		AllCards[i.key()]->SetAttacking(true);
 		AttackingCards.insert(i.key(),i.value());
 	}
+	PhaseTimer->stop();
+	CurrentPhaseTime=0;
+	PhaseDisp->ShowButton(false);
+	PhaseTimer->start();
 	UpdateAspect();
 }
 void BattleGround::PlayedCard(int crd,int Who){

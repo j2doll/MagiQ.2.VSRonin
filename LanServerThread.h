@@ -67,6 +67,7 @@ signals:
 	void AttackAbleCards(int,QList<int>);
 	void AttackingCards(int,QHash<int,int>);
 	void SendAttackingCards(const QHash<int,int>&);
+	void IDofTurnOwner(int);
 #ifdef USE_SSL
 	void sslErrors(const QList<QSslError>& errors);
 #endif

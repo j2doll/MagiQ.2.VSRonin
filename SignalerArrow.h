@@ -1,16 +1,20 @@
 #ifndef SignalerArrow_h__
 #define SignalerArrow_h__
 #include <QWidget>
+#include <QPixmap>
 class SignalerArrow : public QWidget{
 	Q_OBJECT
 private:
-	enum{ArrowAlphaComponent=70};
 	enum{InitialWid=120};
 	enum{InitialHei=40};
 	QColor ArrowColor;
 	QPoint From;
 	QPoint To;
 	QPolygon ArrowPoligon;
+	unsigned short ArrowAlphaComponent;
+	QPixmap ArrowImage;
+	qreal Modulus;
+	qreal Phase;
 public:
 	enum{ArrowYellow,ArrowRed};
 	SignalerArrow(QWidget* parent);
@@ -24,6 +28,8 @@ public:
 	void SetArrowColor(const QString& a);
 	void SetArrowColor(const int& a);
 	void UpdateGeometry();
+	unsigned short GetArrowAlphaComponent() const{return ArrowAlphaComponent;}
+	void SetArrowAlphaComponent(unsigned short a);
 protected:
 	void paintEvent(QPaintEvent *event);
 };

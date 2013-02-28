@@ -105,6 +105,7 @@ TestWidget::TestWidget(QWidget* parent)
 	connect(Client,SIGNAL(PlayOrder(QList<int>)),board,SLOT(SetPlayersOrder(QList<int>)));
 	connect(Client,SIGNAL(PlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)),board,SLOT(SetPlayersNameAvatar(QMap<int,QString>,QMap<int,QPixmap>)));
 	connect(Client,SIGNAL(AllCards(QList<CardData>)),board,SLOT(SetAllCards(QList<CardData>)));
+	connect(Client,SIGNAL(IsMyTurn(bool)),board,SLOT(SetYourTurn(bool)));
 	connect(Client,SIGNAL(MyHand(QList<int>)),board,SLOT(SetMyHand(QList<int>)));
 	connect(Client,SIGNAL(MyHand(QList<int>)),board,SLOT(AskMulligan()));
 	connect(Client,SIGNAL(OtherHand(int,int)),board,SLOT(SetOtherHand(int,int)));

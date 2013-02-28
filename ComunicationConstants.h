@@ -16,6 +16,7 @@ namespace Comunications{
 		,PlayersOrder
 		,PlayesNameAndAvatar
 		,AllCards
+		,YourTurn
 		,YourHand
 		,PlayerLibrary
 		,OthersHand

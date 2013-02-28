@@ -97,6 +97,7 @@ signals:
 	void PermanentResolved(int,int);
 	void SendAttackingCards(const QHash<int,int>&);
 	void CriticalErrorOccurred(int ErrorCode);
+	void IDofTurnOwner(int);
 public slots:
 	void SendServerInfos(){emit ServerInfos(ServerName,GameMode,DecksFormat,MinPlayer,MaxPlayer,PlayersList.size());}
 	void IncomingJoinRequest(int a,QString nam,QPixmap avat);
@@ -112,6 +113,7 @@ public slots:
 	void MainStep();
 	void ContinueToNextPhase(int who);
 	void DeclareAttackers();
+	void DeclareBlockers();
 	void TimerFinished(int SocID);
 	void TimerStopped(int SocID);
 	void ResumeTimer(int SocID);

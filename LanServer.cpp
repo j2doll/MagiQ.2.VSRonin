@@ -82,5 +82,6 @@ void LanServer::IncomingJoinRequest(int a, QString nam, QPixmap avat){
 	connect(Ruler,SIGNAL(AttackAbleCards(int,QList<int>)),TempPoint,SIGNAL(AttackAbleCards(int,QList<int>)));
 	connect(TempPoint,SIGNAL(AttackingCards(int,QHash<int,int>)),Ruler,SLOT(SetAttackingCards(int,QHash<int,int>)));
 	connect(Ruler,SIGNAL(SendAttackingCards(const QHash<int,int>&)),TempPoint,SIGNAL(SendAttackingCards(const QHash<int,int>&)));
+	connect(Ruler,SIGNAL(IDofTurnOwner(int)),TempPoint,SIGNAL(IDofTurnOwner(int)));
 	Ruler->IncomingJoinRequest(a,nam,avat);
 }

@@ -43,6 +43,7 @@ void LanClient::IncomingTransmission(){
 	QDataStream incom(tcpSocket);
 	incom.setVersion(QDataStream::Qt_4_7);
 	quint32 RequestType;
+	bool Logicals;
 	QString strings;
 	QColor colors;
 	qint32 int1,int2,int3,int4,int5;
@@ -69,11 +70,12 @@ void LanClient::IncomingTransmission(){
 		intlists.clear();
 		intHash.clear();
 ////////////////////////////////////////////////////////////////////////////
-		if(RequestType==Comunications::TransmissionType::ChatMessage){
+		switch(RequestType){
+		case Comunications::TransmissionType::ChatMessage:
 			incom >> strings;
 			emit ChatMessageRecieved(strings);
-		}
-		else if(RequestType==Comunications::TransmissionType::SeverInformations){
+			break;
+		case Comunications::TransmissionType::SeverInformations:
 			incom >> strings
 				>>int1
 				>>int2
@@ -81,129 +83,134 @@ void LanClient::IncomingTransmission(){
 				>>int4
 				>>int5;
 			emit ServerInfos(strings,int1,int2,int3,int4,int5);
-		}
-		else if(RequestType==Comunications::TransmissionType::ServerFull){
+			break;
+		case Comunications::TransmissionType::ServerFull:
 			emit ServerIsFull();
-		}
-		else if(RequestType==Comunications::TransmissionType::PlayerJoins){
+			break;
+		case Comunications::TransmissionType::PlayerJoins:
 			incom >> strings;
 			emit UserJoined(strings);
-		}
-		else if(RequestType==Comunications::TransmissionType::PlayerLeave){
+			break;
+		case Comunications::TransmissionType::PlayerLeave:
 			incom >> strings;
 			emit UserLeft(strings);
-		}
-		else if(RequestType==Comunications::TransmissionType::YourNameAndColor){
+			break;
+		case Comunications::TransmissionType::YourNameAndColor:
 			incom >> strings;
 			incom >> colors;
 			MyName=strings;
 			emit MyNameAndColor(strings,colors);
-		}
-		else if(RequestType==Comunications::TransmissionType::InvalidDeck){
+			break;
+		case Comunications::TransmissionType::InvalidDeck:
 			emit InvalidDeck();
-		}
-		else if(RequestType==Comunications::TransmissionType::GameStarted){
+			break;
+		case Comunications::TransmissionType::GameStarted:
 			emit GameHasStarted();
-		}
-		else if(RequestType==Comunications::TransmissionType::PlayersOrder){
+			break;
+		case Comunications::TransmissionType::PlayersOrder:
 			incom >> intlists;
 			emit PlayOrder(intlists);
-		}
-		else if(RequestType==Comunications::TransmissionType::PlayesNameAndAvatar){
+			break;
+		case Comunications::TransmissionType::PlayesNameAndAvatar:
 			incom >> stringIntMap;
 			incom >> pixmapIntMap;
 			emit PlayersNameAvatar(stringIntMap,pixmapIntMap);
-		}
-		else if(RequestType==Comunications::TransmissionType::AllCards){
+			break;
+		case Comunications::TransmissionType::AllCards:
 			incom >> cardlists;
 			emit AllCards(cardlists);
-		}
-		else if(RequestType==Comunications::TransmissionType::YourHand){
+			break;
+		case Comunications::TransmissionType::YourHand:
 			incom >> intlists;
 			emit MyHand(intlists);
-		}
-		else if(RequestType==Comunications::TransmissionType::PlayerLibrary){
+			break;
+		case Comunications::TransmissionType::PlayerLibrary:
 			incom >> int1;
 			incom >> int2;
 			emit PlayerLibrary(int1,int2);
-		}
-		else if(RequestType==Comunications::TransmissionType::OthersHand){
+			break;
+		case Comunications::TransmissionType::OthersHand:
 			incom >> int1 >> int2;
 			emit OtherHand(int1,int2);
-		}
-		else if(RequestType==Comunications::TransmissionType::WaitingFor){
+			break;
+		case Comunications::TransmissionType::WaitingFor:
 			incom >> strings;
 			emit WaitingFor(strings);
-		}
-		else if(RequestType==Comunications::TransmissionType::StopWaitingFor){
+			break;
+		case Comunications::TransmissionType::StopWaitingFor:
 			emit StopWaitingFor();
-		}
-		else if(RequestType==Comunications::TransmissionType::PhaseChanged){
+			break;
+		case Comunications::TransmissionType::PhaseChanged:
 			incom >> int1;
 			emit CurrentPhaseChanged(int1);
-		}
-		else if(RequestType==Comunications::TransmissionType::UntapCards){
+			break;
+		case Comunications::TransmissionType::UntapCards:
 			incom >> intlists;
 			emit CardsToUntap(intlists);
-		}
-		else if(RequestType==Comunications::TransmissionType::YouDrawnCard){
+			break;
+		case Comunications::TransmissionType::YouDrawnCard:
 			incom >> int1;
 			emit CardDrawn(int1);
-		}
-		else if(RequestType==Comunications::TransmissionType::OtherDrawnCard){
+			break;
+		case Comunications::TransmissionType::OtherDrawnCard:
 			incom >> int1;
 			emit OtherDrawn(int1);
-		}
-		else if(RequestType==Comunications::TransmissionType::StopTimers){
+			break;
+		case Comunications::TransmissionType::StopTimers:
 			emit StopTimer();
-		}
-		else if(RequestType==Comunications::TransmissionType::StopTurnTimer){
+			break;
+		case Comunications::TransmissionType::StopTurnTimer:
 			emit StopTurnTimer();
-		}
-		else if(RequestType==Comunications::TransmissionType::ResumeTurnTimer){
+			break;
+		case Comunications::TransmissionType::ResumeTurnTimer:
 			emit ResumeTurnTimer();
-		}
-		else if(RequestType==Comunications::TransmissionType::ResumeStackTimer){
+			break;
+		case Comunications::TransmissionType::ResumeStackTimer:
 			emit ResumeStackTimer();
-		}
-		else if(RequestType==Comunications::TransmissionType::EffectAddedStack){
+			break;
+		case Comunications::TransmissionType::EffectAddedStack:
 			incom >> UnsInt1;
 			incom >> effect;
 			emit EffectAddedToStack(effect,UnsInt1);
-		}
-		else if(RequestType==Comunications::TransmissionType::EffectResolved){
+			break;
+		case Comunications::TransmissionType::EffectResolved:
 			emit EffectResolved();
-		}
-		else if(RequestType==Comunications::TransmissionType::PlayableCards){
+			break;
+		case Comunications::TransmissionType::PlayableCards:
 			incom >> intlists;
 			emit PlayableCards(intlists);
-		}
-		else if(RequestType==Comunications::TransmissionType::PlayedCard){
+			break;
+		case Comunications::TransmissionType::PlayedCard:
 			incom >> int1;
 			incom >> int2;
 			emit PlayedCard(int2,int1);
-		}
-		else if(RequestType==Comunications::TransmissionType::RemoveCardFromHand){
+			break;
+		case Comunications::TransmissionType::RemoveCardFromHand:
 			incom >> int1;
 			incom >> int2;
 			emit RemoveFromHand(int1,int2);
-		}
-		else if(RequestType==Comunications::TransmissionType::PermanentResolved){
+			break;
+		case Comunications::TransmissionType::PermanentResolved:
 			incom >> int1;
 			incom >> int2;
 			emit PermanentResolved(int1,int2);
-		}
-		else if(RequestType==Comunications::TransmissionType::TapCards){
+			break;
+		case Comunications::TransmissionType::TapCards:
 			incom >> intlists;
 			emit CardsToTap(intlists);
-		}
-		else if(RequestType==Comunications::TransmissionType::CardsThatCanAttack){
+			break;
+		case Comunications::TransmissionType::CardsThatCanAttack:
 			incom >> intlists;
 			emit AttackAbleCards(intlists);
-		}
-		else if(RequestType==Comunications::TransmissionType::AttackingCards){
+			break;
+		case Comunications::TransmissionType::AttackingCards:
 			incom >> intHash;
 			emit AttackingCards(intHash);
+			break;
+		case Comunications::TransmissionType::YourTurn:
+			incom >> Logicals;
+			emit IsMyTurn(Logicals);
+			break;
 		}
 ////////////////////////////////////////////////////////////////////////////
 

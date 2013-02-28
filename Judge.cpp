@@ -161,6 +161,7 @@ void Judge::NextTurn(){
 	PhaseTimerRunning=true;
 	QList<int> UntappedCards;
 	int WhosTurn=PlayersOrder.value(TurnNumber%PlayersOrder.size());
+	emit IDofTurnOwner(WhosTurn);
 	SetCurrentPhase(Constants::Phases::Untap);
 	NextPhase=Constants::Phases::Upkeep;
 	for(QList<CardData>::const_iterator i=PlayersList.value(WhosTurn)->GetControlledCards().constBegin();i!=PlayersList.value(WhosTurn)->GetControlledCards().constEnd();i++){
@@ -214,6 +215,10 @@ void Judge::ContinueToNextPhase(int who){
 	PhaseTimerRunning=true;
 	CheckPlayableCards();
 }
+void Judge::DeclareBlockers(){
+	SetCurrentPhase(Constants::Phases::DeclareBlockers);
+	NextPhase=Constants::Phases::CombatDamage;
+}
 void Judge::DeclareAttackers(){
 	SetCurrentPhase(Constants::Phases::DeclareAttackers);
 	NextPhase=Constants::Phases::DeclareBlockers;
@@ -231,6 +236,7 @@ void Judge::SetAttackingCards(int who, QHash<int,int> crdIDs){
 	AttackingCards.clear();
 	AttackingCards=crdIDs;
 	emit SendAttackingCards(AttackingCards);
+	PhaseTimerRunning=true;
 }
 void Judge::TimerFinished(int SocID){
 	MagiQPlayer* TempPoint=PlayersList.value(SocID,NULL);
@@ -259,6 +265,7 @@ void Judge::TimerFinished(int SocID){
 			case Constants::Phases::PreCombatMain:
 			case Constants::Phases::PostCombatMain:	return MainStep();
 			case Constants::Phases::DeclareAttackers: return DeclareAttackers();
+			case Constants::Phases::DeclareBlockers: return DeclareBlockers();
 			default: return;
 			}
 		}

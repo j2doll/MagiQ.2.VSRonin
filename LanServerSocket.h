@@ -59,6 +59,7 @@ public slots:
 	void SendCardsToTap(QList<int> crdIDs);
 	void SendAttackAbleCards(int who,QList<int> crdIDs);
 	void SendAttackingCards(const QHash<int,int>& crdIDs);
+	void SendIsMyTurn(int socID);
 signals:
 	void ChatMessageRecieved(QString);
 	void RequestJoin(int,QString,QPixmap);

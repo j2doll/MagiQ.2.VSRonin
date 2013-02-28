@@ -73,6 +73,7 @@ signals:
 	void CardsToTap(QList<int>);
 	void AttackAbleCards(QList<int>);
 	void AttackingCards(QHash<int,int>);
+	void IsMyTurn(bool);
 private slots:
 	void IncomingTransmission();
 public slots:

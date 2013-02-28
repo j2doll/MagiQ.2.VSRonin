@@ -33,6 +33,7 @@ PlayerInfoDisplayer::PlayerInfoDisplayer(QWidget* parent)
 	AvatarLabel=new RoundedCornersLabel(this);
 	AvatarLabel->setObjectName("AvatarLabel");
 	AvatarLabel->SetRadious(12);
+	AvatarLabel->installEventFilter(this);
 	HandSizeLabel=new QLabel(this);
 	HandSizeLabel->setObjectName("HandSizeLabel");
 	HandSizeLabel->setAlignment(Qt::AlignCenter);

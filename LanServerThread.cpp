@@ -53,5 +53,5 @@ LanServerThread::LanServerThread(int SockDesc,QObject* parent)
 	connect(this,SIGNAL(AttackAbleCards(int,QList<int>)),tcpSocket,SLOT(SendAttackAbleCards(int,QList<int>)));
 	connect(tcpSocket,SIGNAL(AttackingCards(int,QHash<int,int>)),this,SIGNAL(AttackingCards(int,QHash<int,int>)));
 	connect(this,SIGNAL(SendAttackingCards(const QHash<int,int>&)),tcpSocket,SLOT(SendAttackingCards(const QHash<int,int>&)));
-	
+	connect(this,SIGNAL(IDofTurnOwner(int)),tcpSocket,SLOT(SendIsMyTurn(int)));
 }

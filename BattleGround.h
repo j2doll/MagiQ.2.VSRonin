@@ -74,9 +74,9 @@ private:
 	PhasesDisplayer* PhaseDisp;
 	QList<SignalerArrow*> Arrows;
 //Game Properties
+	bool YourTurn;
 	QMap<int,Card*> AllCards;
 	QHash<int,int> LibrarySizes;
-	//QMap<int,MagiQPlayer*> Players;
 	QList<int> PlayersOrder;
 	int CurrentPhase;
 	QTimer* PhaseTimer;
@@ -155,6 +155,7 @@ public slots:
 	void SetAllCards(QList<CardData> a);
 	void SetAttackAbleCards(QList<int> crdIDs);
 	void SetAttackingCards(QHash<int,int> crdIDs);
+	void SetYourTurn(bool a){YourTurn=a;}
 public:
 	BattleGround(QWidget* parent=0);
 	int GetNumOfPlayers() const {return PlayersOrder.size();}
