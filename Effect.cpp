@@ -3,7 +3,7 @@
 #include "StyleSheets.h"
 #include "CostantsDefinition.h"
 #include "MagiQPlayer.h"
-#include <QtGui>
+
 Effect::Effect(QWidget* parent/* =0 */)
 	:QWidget(parent)
 	,AttachedCard(NULL)
@@ -18,7 +18,7 @@ Effect::Effect(QWidget* parent/* =0 */)
 	UpdateAspect();
 }
 void Effect::PrepareUi(){
-	EffectButton=new QPushButton(this);
+    EffectButton = new QPushButton(this);
 	EffectButton->setObjectName("EffectButton");
 	EffectButton->setCheckable(false);
 	EffectButton->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
@@ -35,8 +35,14 @@ void Effect::PrepareUi(){
 	MainLayout->setSpacing(0);
 	MainLayout->addWidget(EffectButton);
 }
-int Effect::GetMinimumHeight() const{return EffectLabel->sizeHint().height()+2;}
-void Effect::UpdateAspect(){
+
+int Effect::GetMinimumHeight() const
+{
+    return EffectLabel->sizeHint().height()+2;
+}
+
+void Effect::UpdateAspect()
+{
 	if (EffectType!=EffectsConstants::EffectTypes::ActivatedEffect) EffectButton->setFlat(true);
 	EffectLabel->setText(EffectText);
 	if (EffectLabel->sizeHint().height()>height())
@@ -236,6 +242,7 @@ QDataStream &operator<<(QDataStream &out, const Effect &effect)
 	;
 	return out;
 }
+
 QDataStream &operator>>(QDataStream &input, Effect &effect){
 	qint32 Numbers;
 	QString Strings;

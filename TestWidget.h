@@ -1,6 +1,13 @@
 #ifndef TESTWIDGET_H
 #define TESTWIDGET_H
+
+#include <QtGlobal>
+#include <QList>
 #include <QtGui>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QFrame>
+
 #include "LanClient.h"
 #include "LanServer.h"
 //#include "TestWidgetThread.h"
@@ -8,8 +15,9 @@
 #include "ChatWidget.h"
 #include "CardData.h"
 #include "StackDisplayer.h"
-#include <QList>
-class TestWidget : public QWidget{
+
+class TestWidget : public QWidget
+{
 	Q_OBJECT
 private:
 	QPushButton* ConnectButton;

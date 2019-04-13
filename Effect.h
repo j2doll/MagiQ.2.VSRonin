@@ -1,13 +1,22 @@
 #ifndef EFFECT_H
 #define EFFECT_H
+
+#include <QtGlobal>
 #include <QWidget>
 #include <QMap>
+
+#include <QLabel>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QtGui>
+#include <QMessageBox>
+
 #include "EffectData.h"
 #include "EffectsConstants.h"
-class QPushButton;
+
 class Card;
-class QLabel;
-class Effect: public QWidget{
+
+class Effect : public QWidget {
 	Q_OBJECT
 	Q_PROPERTY(int EffectType READ GetEffectType)
 private:

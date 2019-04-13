@@ -1,11 +1,14 @@
 #ifndef CAMPODIGIOCO_H
 #define CAMPODIGIOCO_H
+
 #include <QWidget>
 #include <QList>
 #include <QMap>
 #include <QPixmap>
 #include <QHash>
+
 #include "CardData.h"
+
 class HandLayout;
 class MagiQPlayer;
 class QFrame;
@@ -21,6 +24,7 @@ class HandLayout;
 class ControlledLayout;
 class ManaCostLabel;
 class SignalerArrow;
+
 class BattleGround : public QWidget
 {
 	Q_OBJECT
@@ -174,4 +178,3 @@ signals:
 	void SendAttackingCards(const QHash<int,int>&);
 };
 #endif
-

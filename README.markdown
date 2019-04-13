@@ -18,3 +18,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 a copy of the GNU General Public License is included in this program.
+
+- original link : https://github.com/VSRonin/MagiQ
+- MagiQ2 : fixing now, by j2doll

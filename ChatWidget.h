@@ -1,7 +1,9 @@
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
+
 #include <QWidget>
 #include <QAbstractSocket>
+
 class QFrame;
 class QPushButton;
 class QTextEdit;

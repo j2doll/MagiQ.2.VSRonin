@@ -1,9 +1,12 @@
-#include "StackDisplayer.h"
+
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QHeaderView>
+
+#include "StackDisplayer.h"
 #include "Card.h"
 #include "CardViewer.h"
+
 StackDispalyer::StackDispalyer(QWidget* parent)
 	:QWidget(parent)
 {
@@ -12,9 +15,13 @@ StackDispalyer::StackDispalyer(QWidget* parent)
 	StackList->setObjectName("StackList");
 	StackList->setColumnCount(1);
 	StackList->setRowCount(1);
-	QHeaderView* VerHea=StackList->verticalHeader();
-	VerHea->setResizeMode(QHeaderView::ResizeToContents);
-	VerHea->setResizeMode(0,QHeaderView::Stretch);
+    QHeaderView* VerHea = StackList->verticalHeader();
+
+    // VerHea->setResizeMode( QHeaderView::ResizeToContents );
+    // VerHea->setResizeMode( 0, QHeaderView::Stretch );
+    VerHea->setSectionResizeMode( QHeaderView::ResizeToContents );
+    VerHea->setSectionResizeMode( 0, QHeaderView::Stretch );
+
 	VerHea->setVisible(false);
 	StackList->horizontalHeader()->setVisible(false);
 	StackList->horizontalHeader()->setStretchLastSection(true);

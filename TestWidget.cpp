@@ -1,5 +1,9 @@
+
+#include <QHBoxLayout>
+
 #include "TestWidget.h"
 #include "EffectsConstants.h"
+
 TestWidget::TestWidget(QWidget* parent)
 	:QWidget(parent)
 {

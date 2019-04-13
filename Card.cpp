@@ -265,7 +265,11 @@ void Card::UpdateAspect(){
 		else if (CardSubType.contains(Constants::CardSubTypes::Mountain)) FlavorTextLabel->setPixmap(QPixmap(":/CardImage/MountainSymbol.png"));
 		else if (CardSubType.contains(Constants::CardSubTypes::Forest)) FlavorTextLabel->setPixmap(QPixmap(":/CardImage/ForestSymbol.png"));
 		EffectsTable->insertRow(0);
-		EffectsTable->setItem(0,0,&QTableWidgetItem());
+
+        // EffectsTable->setItem(0,0,&QTableWidgetItem());
+        QTableWidgetItem tblItem;
+        EffectsTable->setItem(0 ,0, &tblItem);
+
 		EffectsTable->setCellWidget(0,0,FlavorTextLabel);
 		EffectsTable->setRowHeight(0,EffectsTable->height());
 	}
@@ -284,7 +288,11 @@ void Card::UpdateAspect(){
 			RequiredHeight+=eff->GetMinimumHeight()+4;
 		}
 		EffectsTable->insertRow(EffectsTable->rowCount());
-		EffectsTable->setItem(EffectsTable->rowCount()-1,0,&QTableWidgetItem());
+
+        // EffectsTable->setItem(EffectsTable->rowCount()-1,0,&QTableWidgetItem());
+        QTableWidgetItem tblItem;
+        EffectsTable->setItem(EffectsTable->rowCount()-1, 0, &tblItem );
+
 		EffectsTable->setCellWidget(EffectsTable->rowCount()-1,0,FlavorTextLabel);
 		EffectsTable->setRowHeight(EffectsTable->rowCount()-1,qMax(FlavorTextLabel->sizeHint().height(),EffectsTable->height()-RequiredHeight));
 	}
@@ -586,12 +594,20 @@ Card::Card(const CardData& a,QWidget* parent):QWidget(parent)
 	,Attacking(a.GetAttacking())
 {
 	PrepareUi();
-	if (HasFlipped==Constants::CardFlipMode::HasFlip){
+
+    if (HasFlipped==Constants::CardFlipMode::HasFlip) {
 		FlippedCard=new Card(*a.GetFlippedCard(),parent);
 		FlippedCard->SetFlippedCard(this);
 	}
+
 	foreach(EffectData eff,a.GetEffects())
-		AddEffect(Effect(eff));
+    {
+        // AddEffect( Effect(eff) );
+
+        Effect effectObject(eff);
+        AddEffect( effectObject );
+    }
+
 	UpdateAspect();
 }
 int Card::GetConvertedManaCost() const{
@@ -644,8 +660,15 @@ CardData Card::ExtractData() const{
 	Result.SetCardID(CardID);
 	Result.SetIsNull(IsNull);
 	Result.SetActivable(Activable);
+
 	if(HasFlipped==Constants::CardFlipMode::HasFlip)
-		Result.SetFlippedCard(&(FlippedCard->ExtractData()));
+    {
+        // Result.SetFlippedCard(&(FlippedCard->ExtractData()));
+
+        CardData cd = FlippedCard->ExtractData();
+        Result.SetFlippedCard( &cd );
+    }
+
 	//TODO add effects
 	return Result;
 }

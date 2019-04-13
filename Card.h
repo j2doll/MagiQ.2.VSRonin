@@ -1,23 +1,29 @@
 #ifndef CARD_H
 #define CARD_H
-#include "CostantsDefinition.h"
-#include "CardData.h"
+
+#include <QtGlobal>
 #include <QWidget>
 #include <QList>
 #include <QMap>
 #include <QPixmap>
 #include <QDataStream>
 #include <QStringList>
+#include <QFrame>
+#include <QLabel>
+#include <QScrollArea>
+#include <QPushButton>
+#include <QTableWidget>
+
+#include "CostantsDefinition.h"
+#include "CardData.h"
+
 class ManaCostLabel;
-class QFrame;
-class QLabel;
-class QScrollArea;
-class QPushButton;
 class PowerToughnesLabel;
 class MagiQPlayer;
 class Effect;
-class QTableWidget;
-class Card : public QWidget{
+
+class Card : public QWidget
+{
 	Q_OBJECT
 	Q_PROPERTY(int CardRarity READ GetCardRarity)
 	Q_PROPERTY(int CardBackground READ GetCardBackground)
